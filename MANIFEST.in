@@ -1,0 +1,10 @@
+include AUTHORS
+include LICENSE.txt
+include CHANGELOG.rst
+include README.rst
+include MANIFEST.in
+include nublas-logo.png
+recursive-include docs *.rst
+recursive-include nublas *
+recursive-include example *
+global-exclude *.sqlite3
