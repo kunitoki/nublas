@@ -15,7 +15,7 @@
 import os
 
 f = os.path.dirname(__file__)
-f = os.path.join(os.path.dirname(f), 'custard', '__init__.py')
+f = os.path.join(os.path.dirname(f), 'nublas', '__init__.py')
 source = open(f).read()
 try:
     exec source in globals(), locals()
