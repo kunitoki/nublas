@@ -1,7 +1,7 @@
 import re
 from django.db import models
 from django.core.validators import RegexValidator
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -22,7 +22,7 @@ class RGBColorField(models.CharField):
         if value[0] != '#':
             value = '#' + value
         value = super(RGBColorField, self).clean(value, model_instance)
-        return smart_unicode(value)
+        return smart_text(value)
 
     def deconstruct(self):
         name, path, args, kwargs = super(RGBColorField, self).deconstruct()
