@@ -4,9 +4,10 @@ from django.utils.translation import ugettext_lazy as _
 
 from .utils import BaseModelLinkedToAssociation
 
-__all__ = [ "AddressType", "PhoneType", "PhoneKind", "EmailType", "WebsiteType",
-            "RelationshipType", "ReverseRelationshipType", "ContactType",
-            "PrefixType", "SuffixType", "GenderType", "SubscriptionType" ]
+__all__ = [ "Country", "AddressType", "PhoneType", "PhoneKind", "EmailType",
+            "WebsiteType", "RelationshipType", "ReverseRelationshipType",
+            "ContactType", "PrefixType", "SuffixType", "GenderType",
+            "SubscriptionType" ]
 
 
 #==============================================================================
@@ -16,12 +17,13 @@ class Country(BaseModelLinkedToAssociation('countries')):
         An address type, this usually can be 'Home', 'Work'...
     """
     name = models.CharField(_('name'), max_length=100)
-    code = models.CharField(_('code'), max_length=2)
+    iso3166 = models.CharField(_('iso3166'), max_length=2)
 
     class Meta:
         app_label = 'nublas'
         verbose_name = _('country')
         verbose_name_plural = _('countries')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -39,6 +41,7 @@ class AddressType(BaseModelLinkedToAssociation('address_types')):
         app_label = 'nublas'
         verbose_name = _('address type')
         verbose_name_plural = _('address types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -56,6 +59,7 @@ class PhoneType(BaseModelLinkedToAssociation('phone_types')):
         app_label = 'nublas'
         verbose_name = _('phone type')
         verbose_name_plural = _('phone types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -71,6 +75,7 @@ class PhoneKind(BaseModelLinkedToAssociation('phone_kinds')):
         app_label = 'nublas'
         verbose_name = _('phone kind')
         verbose_name_plural = _('phone kinds')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -88,6 +93,7 @@ class EmailType(BaseModelLinkedToAssociation('email_types')):
         app_label = 'nublas'
         verbose_name = _('email type')
         verbose_name_plural = _('email types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -105,6 +111,7 @@ class WebsiteType(BaseModelLinkedToAssociation('website_types')):
         app_label = 'nublas'
         verbose_name = _('website type')
         verbose_name_plural = _('website types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -126,6 +133,7 @@ class RelationshipType(BaseModelLinkedToAssociation('relationship_types')):
         app_label = 'nublas'
         verbose_name = _('relationship type')
         verbose_name_plural = _('relationship types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.symmetrical_slug if self.symmetrical_slug else self.from_slug
@@ -137,6 +145,7 @@ class ReverseRelationshipType(RelationshipType):
         app_label = 'nublas'
         verbose_name = _('relationship type')
         verbose_name_plural = _('relationship types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.symmetrical_slug if self.symmetrical_slug else self.to_slug
@@ -157,6 +166,7 @@ class ContactType(BaseModelLinkedToAssociation('contact_types')):
         app_label = 'nublas'
         verbose_name = _('contact type')
         verbose_name_plural = _('contact types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -174,6 +184,7 @@ class PrefixType(BaseModelLinkedToAssociation('prefix_types')):
         app_label = 'nublas'
         verbose_name = _('prefix type')
         verbose_name_plural = _('prefix types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -191,6 +202,7 @@ class SuffixType(BaseModelLinkedToAssociation('suffix_types')):
         app_label = 'nublas'
         verbose_name = _('suffix type')
         verbose_name_plural = _('suffix types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -208,6 +220,7 @@ class GenderType(BaseModelLinkedToAssociation('gender_types')):
         app_label = 'nublas'
         verbose_name = _('gender type')
         verbose_name_plural = _('gender types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
@@ -272,6 +285,7 @@ class SubscriptionType(BaseModelLinkedToAssociation('subscription_types')):
         app_label = 'nublas'
         verbose_name = _('subscription type')
         verbose_name_plural = _('subscription types')
+        ordering = [ 'name' ]
 
     def __str__(self):
         return self.name
