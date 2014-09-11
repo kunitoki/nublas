@@ -1,7 +1,7 @@
 import uuid
 from django import forms
 from django.db.models import Field, SubfieldBase
-from django.utils.encoding import smart_unicode
+from django.utils.encoding import smart_text
 
 __all__ = [ "UUIDField" ]
 
@@ -127,7 +127,7 @@ class UUIDField(Field):
             return None
         # attempt to parse a UUID including cases in which value is a UUID
         # instance already to be able to get our StringUUID in.
-        return StringUUID(smart_unicode(value))
+        return StringUUID(smart_text(value))
 
     def formfield(self, **kwargs):
         defaults = {
