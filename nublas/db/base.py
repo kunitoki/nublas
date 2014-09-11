@@ -114,11 +114,11 @@ class BaseModel(import_class(settings.BASE_MODEL_CLASS)):
 
     def get_name(self):
         """ Returns the singular name of the model """
-        return u"%s" % self._meta.name
+        return "%s" % self._meta.name
 
     def get_verbose_name(self):
         """ Returns the singular verbose name of the model """
-        return u"%s" % self._meta.verbose_name
+        return "%s" % self._meta.verbose_name
 
     def get_fields(self):
         """ Get all fields and their display strings """
