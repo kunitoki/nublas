@@ -1,4 +1,5 @@
 import os
+import urllib
 import datetime
 from django.db import models
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
@@ -10,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from ...conf import settings
 from ..base import BaseModel
-from ..fields import location, country
+from ..fields import location
 from .utils import BaseModelLinkedToAssociation
 
 __all__ = [ "Address", "Phone", "Email", "Website", "Relationship",
@@ -28,7 +29,7 @@ class Address(BaseModel):
     address = models.CharField(_('address'), max_length=200, blank=True, null=True)
     city = models.CharField(_('city'), max_length=100, blank=True, null=True)
     cap = models.CharField(_('cap'), max_length=20, blank=True, null=True)
-    country = country.CountryField(_('country'), blank=True, null=True)
+    country = models.ForeignKey('nublas.Country', verbose_name=_('country'))
     is_billing = models.BooleanField(_('is billing'), default=False)
     location = location.LocationField(_('location'), blank=True, null=True)
     main = models.BooleanField(_('main address'), default=False)
@@ -48,7 +49,6 @@ class Address(BaseModel):
 
     @staticmethod
     def geocode(address):
-        import urllib
         params = urllib.urlencode({'q': address, 'output': 'csv', 'key': settings.GOOGLE_API_KEY, 'oe': 'utf8'})
         request = "http://maps.google.com/maps/geo?%s" % params
         data = urllib.urlopen(request).read()
@@ -214,7 +214,7 @@ class Contact(BaseModelLinkedToAssociation('contacts')):
     prefix = models.ForeignKey('nublas.PrefixType', blank=True, null=True, verbose_name=_('prefix'))
     suffix = models.ForeignKey('nublas.SuffixType', blank=True, null=True, verbose_name=_('suffix'))
     type = models.ForeignKey('nublas.ContactType', blank=True, null=True, verbose_name=_('contact type'))
-    sex = models.ForeignKey('nublas.GenderType', blank=True, null=True, verbose_name=_('sex'))
+    gender = models.ForeignKey('nublas.GenderType', blank=True, null=True, verbose_name=_('gender'))
     # TODO - nationality
     birth_date = models.DateField(_('birth date'), blank=True, null=True)
     # TODO - place of birth (useful for fiscal code)

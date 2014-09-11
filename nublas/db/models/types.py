@@ -8,6 +8,25 @@ __all__ = [ "AddressType", "PhoneType", "PhoneKind", "EmailType", "WebsiteType",
             "RelationshipType", "ReverseRelationshipType", "ContactType",
             "PrefixType", "SuffixType", "GenderType", "SubscriptionType" ]
 
+
+#==============================================================================
+@python_2_unicode_compatible
+class Country(BaseModelLinkedToAssociation('countries')):
+    """
+        An address type, this usually can be 'Home', 'Work'...
+    """
+    name = models.CharField(_('name'), max_length=100)
+    code = models.CharField(_('code'), max_length=2)
+
+    class Meta:
+        app_label = 'nublas'
+        verbose_name = _('country')
+        verbose_name_plural = _('countries')
+
+    def __str__(self):
+        return self.name
+
+
 #==============================================================================
 @python_2_unicode_compatible
 class AddressType(BaseModelLinkedToAssociation('address_types')):

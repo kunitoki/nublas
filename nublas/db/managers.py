@@ -15,7 +15,7 @@ class NonTrashManager(BaseManagerClass):
     use_for_related_fields = True
 
     def get_queryset(self):
-        queryset = super(NonTrashManager, self).get_query_set()
+        queryset = super(NonTrashManager, self).get_queryset()
         return queryset.filter(_trashed__isnull=True)
 
 
@@ -23,5 +23,5 @@ class TrashManager(BaseManagerClass):
     """ Query only objects which have been trashed. """
 
     def get_queryset(self):
-        queryset = super(TrashManager, self).get_query_set()
+        queryset = super(TrashManager, self).get_queryset()
         return queryset.filter(_trashed__isnull=False)

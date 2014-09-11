@@ -32,6 +32,10 @@ class LazySettingsDict(object):
         return getattr(self.settings, 'ENABLE_MULTILANGUAGE', True)
 
     @settings_property
+    def ENABLE_ADMIN(self):
+        return getattr(self.settings, 'ENABLE_ADMIN', True)
+
+    @settings_property
     def BASE_MODEL_CLASS(self):
         return getattr(self.settings, 'BASE_MODEL_CLASS', 'django.db.models.Model')
 
