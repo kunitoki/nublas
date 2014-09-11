@@ -15,10 +15,16 @@ def execute_tests():
 
 #==============================================================================
 @task
+def demo_rebuild_db():
+    with lcd("example"):
+        with settings(warn_only=True):
+            local("rm db.sqlite3")
+        local("python manage.py syncdb")
+
+@task
 def demo_server():
     with lcd("example"):
         local("python manage.py runserver")
-
 
 @task
 def demo_shell():
@@ -38,7 +44,6 @@ def update_docs():
 def pypi_register(where="pypitest"):
     with lcd("."):
         local("python setup.py register -r %s" % where)
-
 
 @task
 def pypi_upload(where="pypitest"):

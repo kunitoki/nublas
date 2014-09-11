@@ -65,6 +65,7 @@ DATABASES = {
     }
 }
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
@@ -77,6 +78,16 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# Templates
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.messages.context_processors.messages',
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    'nublas.context_processors.settings',
+)
 
 
 # Static files (CSS, JavaScript, Images)
