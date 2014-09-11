@@ -263,7 +263,7 @@ class SubscriptionType(BaseModelLinkedToAssociation('subscription_types')):
         (12, _('December')),
     )
 
-    DAYS_CHOICES = tuple((d, str(d)) for d in xrange(1, 32))
+    DAYS_CHOICES = tuple((d, str(d)) for d in range(1, 32))
 
     name = models.CharField(_('name'), max_length=200)
     description = models.TextField(_('description'), blank=True, null=True)
