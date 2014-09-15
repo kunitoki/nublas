@@ -1,0 +1,30 @@
+{% load static from staticfiles %}
+{% load i18n %}
+{% load classname from nublas_filters %}
+
+<p class="form-control-static">
+{% if field.field|classname == "booleanfield" %}
+    <span class="glyphicon {% if field.value %}glyphicon-ok{% else %}glyphicon-remove{% endif %}"></span> {{ field.label }}
+{% elif field.field|classname == "modelchoicefield" %}
+    {% for choice in field.field.choices %}
+        {% ifequal field.value choice.0 %}
+            {{ choice.1 }}
+        {% endifequal %}
+    {% endfor %}
+{% elif field.field|classname == "urlfield" %}
+    {% if field.value %}
+        <a href="{{ field.value }}" title="{% trans 'Go to website...' %}" target="_blank">{{ field.value }}</a>
+    {% else %}
+        &nbsp;
+    {% endif %}
+{% elif field.field|classname == "tagfield" %}
+    <div class="tagsinput readonlytags">
+        {% for tag in field.value %}
+            <span class="tag"><span>{{ tag.tag }}</span></span>
+        {% endfor %}
+        <div class="tags_clear"></div>
+    </div>
+{% else %}
+    {{ field.value|default_if_none:'&nbsp;' }}
+{% endif %}
+</p>

@@ -1,0 +1,44 @@
+{% load i18n %}
+{% load static %}
+
+<div class="panel panel-default">
+    <table cellpadding="0" cellspacing="0" border="0" id="phonesTable" class="table table-striped table-condensed">
+        <thead>
+        <tr>
+            <th>{% trans "Id" %}</th>
+            <th>{% trans "Type" %}</th>
+            <th>{% trans "Number" %}</th>
+            <th>{% trans "Is main" %}</th>
+            <th>
+                {% if editing %}
+                    <div class="btn-group pull-right"><a href="{% url 'nublas:contact_phone_add' contact.uuid %}" class="btn btn-primary btn-xs">{% trans "Add" %}</a></div>
+                {% endif %}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+            {% spaceless %}
+                {% for p in phones %}
+                <tr>
+                    <td>{{ p.pk }}</td>
+                    <td>{{ p.type }} {{ p.kind }}</td>
+                    <td>{{ p.number }}</td>
+                    <td class="center"><img src="{% if p.main %}{% static 'images/forms/checked.png' %}{% else %}{% static 'images/forms/unchecked.png' %}{% endif %}" /></td>
+                    <td class="center">
+                        {% if editing %}
+                        <div class="button">
+                            <a href="{% url 'nublas:contact_phone_delete' p.uuid %}" class="redNum deleteButton">{% trans "Delete" %}</a>
+                        </div>
+                        <div class="button">
+                            <a href="{% url 'nublas:contact_phone_edit' p.uuid %}" class="blueNum">{% trans "Edit" %}</a>
+                        </div>
+                        {% else %}
+                        &nbsp;
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endspaceless %}
+        </tbody>
+    </table>
+</div>

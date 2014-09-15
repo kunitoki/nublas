@@ -17,6 +17,7 @@ class LazySettingsDict(object):
     def settings(self):
         return getattr(django_settings, 'NUBLAS_SETTINGS', {})
 
+
     """ django settings variables """
     @settings_property
     def AUTH_USER_MODEL(self):
@@ -26,32 +27,47 @@ class LazySettingsDict(object):
     def INSTALLED_APPS(self):
         return getattr(django_settings, 'INSTALLED_APPS', ())
 
+
     """ nublas settings variables """
     @settings_property
     def ENABLE_MULTILANGUAGE(self):
-        return getattr(self.settings, 'ENABLE_MULTILANGUAGE', True)
+        return self.settings.get('ENABLE_MULTILANGUAGE', True)
 
     @settings_property
     def ENABLE_ADMIN(self):
-        return getattr(self.settings, 'ENABLE_ADMIN', True)
+        return self.settings.get('ENABLE_ADMIN', True)
+
+    @settings_property
+    def FRONTEND_SKIN(self):
+        return self.settings.get('FRONTEND_SKIN', 'default')
+
+    @settings_property
+    def LOGIN_URL(self):
+        return self.settings.get('LOGIN_URL', django_settings.LOGIN_URL)
+
+    @settings_property
+    def LOGOUT_URL(self):
+        return self.settings.get('LOGOUT_URL', django_settings.LOGOUT_URL)
 
     @settings_property
     def BASE_MODEL_CLASS(self):
-        return getattr(self.settings, 'BASE_MODEL_CLASS', 'django.db.models.Model')
+        return self.settings.get('BASE_MODEL_CLASS', 'django.db.models.Model')
 
     @settings_property
     def BASE_MANAGER_CLASS(self):
-        return getattr(self.settings, 'BASE_MANAGER_CLASS', 'django.db.models.Manager')
+        return self.settings.get('BASE_MANAGER_CLASS', 'django.db.models.Manager')
 
     @settings_property
     def GOOGLE_API_KEY(self):
-        return getattr(self.settings, 'GOOGLE_API_KEY', '')
+        return self.settings.get('GOOGLE_API_KEY', '')
 
+
+    """ Unused """
     @settings_property
     def CUSTOM_FIELD_TYPES(self):
         return dict({
             '1':     'django.forms.fields.CharField',
-        }, **getattr(self.settings, 'CUSTOM_FIELD_TYPES', {}))
+        }, **self.settings.get('CUSTOM_FIELD_TYPES', {}))
 
 
 #==============================================================================

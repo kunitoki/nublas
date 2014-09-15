@@ -1,0 +1,82 @@
+{% extends_skin "base.html" %}
+{% load i18n %}
+
+
+{% block content-title %}
+    <div class="title"><h5>
+        {{ title }} {% if object_name %}<strong>{{ object_name }}</strong>{% endif %}
+    </h5></div>
+{% endblock %}
+
+
+{% block content-inner %}
+
+    {% block form-before %}{% endblock %}
+
+    <form action="." class="validation mainForm" method="POST">{% csrf_token %}
+
+        <!-- Base inline form -->
+        {% if inline_form and inline_form.fields|length > 0 %}
+        <div class="widget first">
+            <div class="head">
+                <h5 class="{{ section_icon }}">{{ section_title }}</h5>
+                {% if back_url %}
+                    <div class="num">
+                        <a href="{{ back_url }}" class="blueNum">{{ back_text }}</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% include_skin "generic/form_snippet.html" with form=inline_form %}
+
+            <div class="fix"></div>
+        </div>
+        {% endif %}
+
+        <!-- Custom form fields -->
+        {% if custom_form and custom_form.fields|length > 0 %}
+        <div class="widget first">
+            <div class="head">
+                <h5 class="iSignPost">{% trans "Custom fields" %}</h5>
+            </div>
+
+            {% include_skin "generic/form_snippet.html" with form=custom_form %}
+
+            <div class="fix"></div>
+        </div>
+        {% endif %}
+
+        <!-- Tags form -->
+        {% if tags_form %}
+            {% if tags_form.has_tags or editing or adding %}
+            <div class="widget first">
+                <div class="head">
+                    <h5 class="iTags">{% trans "Tags" %}</h5>
+                </div>
+
+                {% include_skin "generic/form_snippet.html" with form=tags_form %}
+
+                <div class="fix"></div>
+            </div>
+            {% endif %}
+        {% endif %}
+
+        {% block form-before-submit %}{% endblock %}
+        {% block form-submit %}
+            <div class="widget first">
+                <div class="head">
+                    <h5 class="iAlert">{{ save_title }}</h5>
+                </div>
+
+                <div class="body aligncenter">
+                    <input type="submit" value="{{ submit_text }}" class="greyishBtn mr10 ml10" />
+                </div>
+            </div>
+        {% endblock %}
+        {% block form-after-submit %}{% endblock %}
+
+    </form>
+
+    {% block form-after %}{% endblock %}
+
+{% endblock %}

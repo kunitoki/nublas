@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load classname from nublas_filters %}
+{% load nublas_field from nublas_tags %}
+
+{% if field.field|classname == "modelchoicefield" %}
+    {% nublas_field field class="form-control" %}
+{% elif field.field|classname == "modelmultiplechoicefield" %}
+    {% nublas_field field class="form-control" %}
+{% elif field.field|classname == "tagfield" %}
+    <script type="text/javascript">
+    (function($) {
+        $(document).ready(function() {
+            $("input[name='{{ field.html_name }}']").tagsInput({
+                "defaultText": "{% trans 'add a tag' %}",
+                "width": "100%",
+                "height": "20px",
+                "removeWithBackspace": false,
+                "autocomplete_url": "{% url 'base:tags' %}"
+            });
+        });
+    })(jQuery);
+    </script>{{ field }}
+{% elif field.field|classname == "booleanfield" %}
+    {{ field }}{{ field.label }}
+{% else %}
+    {% nublas_field field class="form-control" %}
+{% endif %}

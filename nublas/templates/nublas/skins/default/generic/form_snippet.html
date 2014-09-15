@@ -1,0 +1,31 @@
+{% load i18n %}
+
+{% comment %}
+    <!-- See CustomDefaultWidgetsForm in library/forms.py for default widgets -->
+{% endcomment %}
+
+{% spaceless %}
+    {% if form.fieldsets %}
+        <pre>
+            --== TODO: generic/form_snippet.html ==--
+        </pre>
+        {% comment %}
+            {% for fieldset in form.fieldsets %}
+                {{ fieldset }}
+            {% endfor %}
+        {% endcomment %}
+    {% else %}
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+        {% if editing %}
+            {% for field in form %}
+                {% include_skin "generic/field_edit.html" %}
+            {% endfor %}
+        {% else %}
+            {% for field in form %}
+                {% include_skin "generic/field_view.html" %}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+{% endspaceless %}

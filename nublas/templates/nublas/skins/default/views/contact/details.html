@@ -1,0 +1,242 @@
+{% extends_skin "base.html" %}
+{% load i18n %}
+
+{% block styles-after %}
+{% endblock %}
+
+{% block javascript-after %}
+    <script type="text/javascript">
+        $(function() {
+            $(document).ready(function() {
+                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                    $.cookie('contact-last-tab', $(this).attr('href'));
+                });
+                var lastTab = $.cookie('contact-last-tab');
+                if (lastTab) {
+                    $('ul.nav-tabs').children().removeClass('active');
+                    $('a[href='+ lastTab +']').parents('li:first').addClass('active');
+                    $('div.tab-content').children().removeClass('active');
+                    $(lastTab).addClass('active');
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+
+{% block content-title %}
+    <div class="page-header">
+        {% if adding %}
+            <h1>{% trans "Adding new contact" %}</h1>
+        {% else %}
+            <h1>{% trans "Contact details" %}: <small>{{ contact.first_name }} {{ contact.last_name }}</small></h1>
+        {% endif %}
+    </div>
+
+    <ol class="breadcrumb">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Library</a></li>
+        <li class="active">Data</li>
+    </ol>
+{% endblock %}
+
+
+{% block content-inner %}
+
+    {% comment %}
+    {% if not adding %}
+        {% include_skin "contact/tabs.html" %}
+    {% endif %}
+    {% endcomment %}
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active"><a href="#personal-details" role="tab" data-toggle="tab">{% trans "Personal details" %}</a></li>
+        {% if contact %}
+        <li><a href="#groups" role="tab" data-toggle="tab">{% trans "Groups" %}</a></li>
+        {% endif %}
+        {% if contact %}
+        <li class="pull-right">
+            <div class="btn-group">
+                {% if editing or adding %}
+                    <button class="btn btn-default btn-sm" type="submit">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> {% trans 'Save Contact' %}</button>
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu">
+                        <li><a href="#">{% trans "Save and add another" %}</a></li>
+                        {% if not adding %}
+                        <li><a href="#">{% trans "Save as a copy" %}</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'nublas:contact_details' contact.uuid %}">
+                            <span class="glyphicon glyphicon-eye-open"></span> {% trans "View" %}</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'nublas:contact_delete' contact.uuid %}">
+                            <span class="glyphicon glyphicon-remove"></span> {% trans "Delete" %}</a></li>
+                        {% endif %}
+                    </ul>
+                {% else %}
+                    <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-sm">
+                        <span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a>
+                {% endif %}
+
+            {% comment %}
+            {% if editing %}
+                <a href="{% url 'nublas:contact_details' contact.uuid %}" class="btn btn-default btn-sm">
+                    <span class="glyphicon glyphicon-eye-open"></span> {% trans "View" %}</a>
+                <a href="{% url 'nublas:contact_delete' contact.uuid %}" class="btn btn-danger btn-sm">
+                    <span class="glyphicon glyphicon-remove"></span> {% trans "Delete" %}</a>
+            {% else %}
+                <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a>
+            {% endif %}
+                {#<a href="{% url 'nublas:association_contact_list' association.uuid %}" class="btn btn-default btn-sm">{% trans "< Back to contact list" %}</a>#}
+            {% endcomment %}
+
+            </div>
+        </li>
+        {% endif %}
+    </ul>
+
+    <!-- Tha form -->
+    <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
+
+        <div class="tab-content">
+
+            <!-- Personal details -->
+            <div class="tab-pane active" id="personal-details">
+
+                <!-- Main form -->
+                {% include_skin "generic/form_snippet.html" with form=personal_form %}
+
+                <!-- Other infos -->
+                {% if contact %}
+                <div class="form-group">
+                    <!-- Addresses -->
+                    <label class="col-sm-2 control-label">
+                        {% trans 'Addresses' %}
+                    </label>
+                    <div class="col-sm-4">
+                        {% include_skin "views/contact/tables/addresses.html" with addresses=contact.addresses.all %}
+                    </div>
+
+                    <!-- Phone numbers -->
+                    <label class="col-sm-2 control-label">
+                        {% trans 'Phones' %}
+                    </label>
+                    <div class="col-sm-4">
+                        {% include_skin "views/contact/tables/phones.html" with phones=contact.phones.all %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <!-- Emails -->
+                    <label class="col-sm-2 control-label">
+                        {% trans 'Emails' %}
+                    </label>
+                    <div class="col-sm-4">
+                        {% include_skin "views/contact/tables/emails.html" with emails=contact.emails.all %}
+                    </div>
+
+                    <!-- Websites -->
+                    <label class="col-sm-2 control-label">
+                        {% trans 'Websites' %}
+                    </label>
+                    <div class="col-sm-4">
+                        {% include_skin "views/contact/tables/websites.html" with websites=contact.websites.all %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Communication preferences -->
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        {% trans 'Communication' %}
+                    </label>
+
+                    <div class="col-sm-10">
+                        <table cellpadding="0" cellspacing="0" border="0" id="communicationTable" class="table">
+                            <tbody>
+                                <tr>
+                                {% spaceless %}
+                                    {% for field in communication_form %}
+                                        <td>
+                                            {% if editing or adding %}
+                                                {% include_skin "generic/field_edit_value.html" %}
+                                            {% else %}
+                                                {% include_skin "generic/field_view_value.html" %}
+                                            {% endif %}
+                                        </td>
+                                    {% endfor %}
+                                {% endspaceless %}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                {% if notes_form.notes.value or editing or adding %}
+                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                    <label class="col-sm-2 control-label" for="{{ notes_form.notes.id }}">
+                        {% trans 'Notes' %}
+                    </label>
+                    <div class="col-sm-10">
+                        {% if editing %}
+                            <textarea class="form-control" rows="5" cols="" id="notes"
+                                      name="{{ notes_form.notes.html_name }}">{{ notes_form.notes.value|safe }}</textarea>
+                        {% else %}
+                            <div class="body">{{ notes_form.notes.value|safe }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+            {% if contact %}
+            <!-- Groups -->
+            <div class="tab-pane" id="groups">
+                {% include_skin "views/contact/tables/groups.html" with groups=contact.groups.all %}
+            </div>
+            {% endif %}
+        </div>
+
+
+        <!-- Custom form fields -->
+        {% if custom_form and custom_form.fields|length > 0 %}
+        <div class="widget first">
+            <div class="head">
+                <h5 class="iSignPost">{% trans "Custom fields" %}</h5>
+            </div>
+            {% include_skin "generic/form_snippet.html" with form=custom_form %}
+        </div>
+        {% endif %}
+
+        <!-- Tags form -->
+        {% if tags_form %}
+            {% if tags_form.has_tags or editing or adding %}
+            <div class="widget first">
+                <div class="head">
+                    <h5 class="iTags">{% trans "Tags" %}</h5>
+                </div>
+                {% include_skin "generic/form_snippet.html" with form=tags_form %}
+            </div>
+            {% endif %}
+        {% endif %}
+
+
+        <!-- Save form -->
+        {% if editing or adding %}
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button class="btn btn-default" type="submit">
+                    <span class="glyphicon glyphicon-floppy-disk"></span> {% trans 'Save Contact' %}</button>
+            </div>
+        </div>
+        {% endif %}
+
+    </form>
+
+{% endblock %}

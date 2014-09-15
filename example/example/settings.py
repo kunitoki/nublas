@@ -94,3 +94,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Nublas settings
+
+NUBLAS_SETTINGS = {
+    'LOGIN_URL': '/nublas/auth/login',
+}

@@ -14,10 +14,11 @@ __all__ = [ "Country", "AddressType", "PhoneType", "PhoneKind", "EmailType",
 @python_2_unicode_compatible
 class Country(BaseModelLinkedToAssociation('countries')):
     """
-        An address type, this usually can be 'Home', 'Work'...
+        A country
     """
     name = models.CharField(_('name'), max_length=100)
     iso3166 = models.CharField(_('iso3166'), max_length=2)
+    is_enabled = models.BooleanField(_('enabled'), default=True)
 
     class Meta:
         app_label = 'nublas'
@@ -120,6 +121,9 @@ class WebsiteType(BaseModelLinkedToAssociation('website_types')):
 #==============================================================================
 @python_2_unicode_compatible
 class RelationshipType(BaseModelLinkedToAssociation('relationship_types')):
+    """
+        Represent a type of relationship
+    """
     name = models.CharField(_('name'), max_length=100)
     from_slug = models.CharField(_('from slug'), max_length=100,
         help_text=_("Denote the relationship from the contact, i.e. 'following'"))
@@ -140,6 +144,9 @@ class RelationshipType(BaseModelLinkedToAssociation('relationship_types')):
 
 @python_2_unicode_compatible
 class ReverseRelationshipType(RelationshipType):
+    """
+        Represent a reverse type of relationship (proxy model)
+    """
     class Meta:
         proxy = True
         app_label = 'nublas'
@@ -212,7 +219,7 @@ class SuffixType(BaseModelLinkedToAssociation('suffix_types')):
 @python_2_unicode_compatible
 class GenderType(BaseModelLinkedToAssociation('gender_types')):
     """
-        A sex type, common values are 'Man', 'Woman'
+        A gender type, common values are 'Male', 'Female'
     """
     name = models.CharField(_('name'), max_length=100)
 
@@ -267,7 +274,7 @@ class SubscriptionType(BaseModelLinkedToAssociation('subscription_types')):
 
     name = models.CharField(_('name'), max_length=200)
     description = models.TextField(_('description'), blank=True, null=True)
-    minimum_cost = models.DecimalField(max_digits=30, decimal_places=2, verbose_name=_('minimum cost'), default=0.00)
+    minimum_cost = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('minimum cost'), default=0.00)
     #contribution_type = models.ForeignKey(ContributionType, verbose_name=_('contribution type'))
     length = models.PositiveIntegerField(_('length'), default=1)
     length_type = models.PositiveIntegerField(_('length type'), choices=LENGTH_CHOICES, default=LENGTH_YEARS)

@@ -1,0 +1,27 @@
+{% load i18n %}
+{% load classname from nublas_filters %}
+
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+    {% if field.field|classname == "booleanfield" %}
+        <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+                <label>
+                    {% include_skin "generic/field_edit_value.html" %}
+                </label>
+                {% for error in field.errors %}
+                    <p class="text-danger">{{ error }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <label class="col-sm-2 control-label" for="{{ field.html_name }}">
+            {{ field.label }} {% if field.field.required %}*{% endif %}
+        </label>
+        <div class="col-sm-10">
+            {% include_skin "generic/field_edit_value.html" %}
+            {% for error in field.errors %}
+                <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

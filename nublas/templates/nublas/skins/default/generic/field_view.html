@@ -1,0 +1,25 @@
+{% load i18n %}
+{% load classname from nublas_filters %}
+
+{% if field.field|classname == "booleanfield" %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+                <label>
+                    {% include_skin "generic/field_view_value.html" %}
+                </label>
+            </div>
+        </div>
+    </div>
+{% else %}
+    {% if field.value %}
+    <div class="form-group">
+        <label class="col-sm-2 control-label" for="{{ field.html_name }}">
+            {{ field.label }} {% if field.field.required %}*{% endif %}
+        </label>
+        <div class="col-sm-10">
+            {% include_skin "generic/field_view_value.html" %}
+        </div>
+    </div>
+    {% endif %}
+{% endif %}

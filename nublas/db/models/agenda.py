@@ -8,22 +8,22 @@ from ..base import BaseModel
 from ..fields import color
 from .utils import BaseModelLinkedToAssociation
 
-__all__ = [ "Calendar", "Event", "ContactAppointment"
-]
+__all__ = [ "Calendar", "Event", "ContactAppointment" ]
+
 
 #==============================================================================
 @python_2_unicode_compatible
 class Calendar(BaseModelLinkedToAssociation('calendars')):
     name = models.CharField(_('name'), max_length=50)
     colour = color.RGBColorField(_('colour'), default='#ff0000')
-    public = models.BooleanField(_('public'), default=True)
-    enabled = models.BooleanField(_('enabled'), default=True)
+    is_public = models.BooleanField(_('is public'), default=True)
+    is_enabled = models.BooleanField(_('is enabled'), default=True)
 
-    def colored_list(self):
-        return '<div style="width:16px;height:16px;background-color: %s;border:1px solid #CCCCCC;"></div>' % (self.colour)
-    colored_list.allow_tags = True
-    colored_list.admin_order_field = 'colour'
-    colored_list.short_description = _('Colour')
+    #def colored_list(self):
+    #    return '<div style="width:16px;height:16px;background-color: %s;border:1px solid #CCCCCC;"></div>' % (self.colour)
+    #colored_list.allow_tags = True
+    #colored_list.admin_order_field = 'colour'
+    #colored_list.short_description = _('Colour')
 
     class Meta:
         app_label = 'nublas'
@@ -46,7 +46,7 @@ class Calendar(BaseModelLinkedToAssociation('calendars')):
 class Event(BaseModel):
     title = models.CharField(_('title'), max_length=200)
     details = models.TextField(_('details'), blank=True, null=True)
-    calendar = models.ForeignKey('nublas.Calendar', default=1, limit_choices_to = { 'enabled__exact': True }, verbose_name=_('calendar'))
+    calendar = models.ForeignKey('nublas.Calendar', default=1, limit_choices_to = { 'is_enabled__exact': True }, verbose_name=_('calendar'))
     start_date = models.DateTimeField(_('start date'))
     end_date = models.DateTimeField(_('end date'))
     allday = models.BooleanField(_('all day'), default=False)

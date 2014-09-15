@@ -2,6 +2,7 @@ import os
 import urllib
 import datetime
 from django.db import models
+from django.db.models import get_model
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 #from django.core.files.base import ContentFile
 from django.utils.encoding import python_2_unicode_compatible
@@ -30,11 +31,11 @@ class Address(BaseModel):
     city = models.CharField(_('city'), max_length=100, blank=True, null=True)
     cap = models.CharField(_('cap'), max_length=20, blank=True, null=True)
     country = models.ForeignKey('nublas.Country', verbose_name=_('country'))
-    is_billing = models.BooleanField(_('is billing'), default=False)
     location = location.LocationField(_('location'), blank=True, null=True)
-    main = models.BooleanField(_('main address'), default=False)
+    is_billing = models.BooleanField(_('is billing'), default=False)
+    is_main = models.BooleanField(_('is main'), default=False)
 
-    UNIQUE_BOOLEAN = [ ('main', ['contact']) ]
+    UNIQUE_BOOLEAN = [ ('is_main', ['contact']) ]
 
     class Meta:
         app_label = 'nublas'
@@ -72,9 +73,9 @@ class Phone(BaseModel):
     number = models.CharField(_('number'), max_length=20)
     kind = models.ForeignKey('nublas.PhoneKind', verbose_name=_('phone kind'))
     type = models.ForeignKey('nublas.PhoneType', verbose_name=_('phone type'))
-    main = models.BooleanField(_('main phone'), default=False)
+    is_main = models.BooleanField(_('is main'), default=False)
 
-    UNIQUE_BOOLEAN = [ ('main', ['contact']) ]
+    UNIQUE_BOOLEAN = [ ('is_main', ['contact']) ]
 
     class Meta:
         app_label = 'nublas'
@@ -94,9 +95,9 @@ class Email(BaseModel):
     contact = models.ForeignKey('nublas.Contact', related_name='emails', verbose_name=_('contact'))
     address = models.EmailField(_('address'), max_length=200)
     type = models.ForeignKey('nublas.EmailType', verbose_name=_('email type'))
-    main = models.BooleanField(_('main email'), default=False)
+    is_main = models.BooleanField(_('is main'), default=False)
 
-    UNIQUE_BOOLEAN = [ ('main', ['contact']) ]
+    UNIQUE_BOOLEAN = [ ('is_main', ['contact']) ]
 
     class Meta:
         app_label = 'nublas'
@@ -218,13 +219,13 @@ class Contact(BaseModelLinkedToAssociation('contacts')):
     # TODO - nationality
     birth_date = models.DateField(_('birth date'), blank=True, null=True)
     # TODO - place of birth (useful for fiscal code)
-    deceased = models.BooleanField(_('deceased'), default=False)
+    is_deceased = models.BooleanField(_('is deceased'), default=False)
     decease_date = models.DateField(_('decease date'), blank=True, null=True)
-    is_active = models.BooleanField(_('is active'), default=True)
-    dont_call = models.BooleanField(_("don't call"), default=False)
-    dont_sms = models.BooleanField(_("don't sms"), default=False)
-    dont_mail = models.BooleanField(_("don't mail"), default=False)
-    dont_post = models.BooleanField(_("don't post"), default=False)
+    is_enabled = models.BooleanField(_('is enabled'), default=True)
+    do_not_call = models.BooleanField(_('do not call'), default=False)
+    do_not_sms = models.BooleanField(_('do not sms'), default=False)
+    do_not_mail = models.BooleanField(_('do not mail'), default=False)
+    do_not_contact = models.BooleanField(_('do not contact'), default=False)
     notes = models.TextField(_('notes'), blank=True, null=True)
     groups = models.ManyToManyField('nublas.Group', through='nublas.ContactGroup', related_name='groups', verbose_name=_('groups'))
     # TODO - add photo of contact (enable gravatars?)
@@ -238,7 +239,7 @@ class Contact(BaseModelLinkedToAssociation('contacts')):
         objects = self.addresses.all()
         if len(objects):
             for o in objects:
-                if o.main: return repr(o)
+                if o.is_main: return repr(o)
             return repr(objects[0])
         return None
 
@@ -246,7 +247,7 @@ class Contact(BaseModelLinkedToAssociation('contacts')):
         objects = self.phones.all()
         if len(objects):
             for o in objects:
-                if o.main: return repr(o)
+                if o.is_main: return repr(o)
             return repr(objects[0])
         return None
 
@@ -254,7 +255,7 @@ class Contact(BaseModelLinkedToAssociation('contacts')):
         objects = self.emails.all()
         if len(objects):
             for o in objects:
-                if o.main: return repr(o)
+                if o.is_main: return repr(o)
             return repr(objects[0])
         return None
 
@@ -392,19 +393,19 @@ class Subscription(BaseModel):
         super(Subscription, self).save(*args, **kwargs)
 
     def to_date_real(self):
-        from .types import SubscriptionType
+        subscription_class = get_model('nublas', 'SubscriptionType')
         if self.to_date:
             return self.to_date
-        if self.type.period == SubscriptionType.PERIODIC_FIXED:
+        if self.type.period == subscription_class.PERIODIC_FIXED:
             return datetime.date(self.from_date.year, self.type.to_month, self.type.to_day)
         else: # self.type.period == SubscriptionType.PERIODIC_LENGTH
-            if self.type.length_type == SubscriptionType.LENGTH_DAYS:
+            if self.type.length_type == subscription_class.LENGTH_DAYS:
                 delta = datetime.timedelta(days=self.type.length)
-            elif self.type.length_type == SubscriptionType.LENGTH_WEEKS:
+            elif self.type.length_type == subscription_class.LENGTH_WEEKS:
                 delta = datetime.timedelta(days=7)
-            elif self.type.length_type == SubscriptionType.LENGTH_MONTHS:
+            elif self.type.length_type == subscription_class.LENGTH_MONTHS:
                 delta = datetime.timedelta(days=30)
-            elif self.type.length_type == SubscriptionType.LENGTH_YEARS:
+            elif self.type.length_type == subscription_class.LENGTH_YEARS:
                 delta = datetime.timedelta(days=365)
             return self.from_date + delta
 

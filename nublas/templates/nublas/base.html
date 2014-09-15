@@ -1,0 +1,28 @@
+{% load staticfiles %}{% load i18n %}{% get_current_language as LANGUAGE_CODE %}<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{{ LANGUAGE_CODE }}">
+{% block head-outer %}
+<head>
+    {% block head %}
+
+        {% block meta-before %}{% endblock %}
+        {% block meta-inner %}{% endblock %}
+        {% block meta-after %}{% endblock %}
+
+        <title>{% block title %}{% endblock %}</title>
+        {% block styles-before %}{% endblock %}
+        {% block styles-inner %}{% endblock %}
+        {% block styles-after %}{% endblock %}
+
+        {% block javascript-before %}{% endblock %}
+        {% block javascript-inner %}{% endblock %}
+        {% block javascript-after %}{% endblock %}
+
+    {% endblock %}
+</head>
+{% endblock %}
+{% block body-outer %}
+<body>
+    {% block body %}{% endblock %}
+</body>
+{% endblock %}
+</html>

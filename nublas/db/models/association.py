@@ -34,9 +34,8 @@ class Association(BaseModel):
     name = models.CharField(_('name'), max_length=100)
     description = models.TextField(_('description'), blank=True, null=True)
     website = models.URLField(_('website'), blank=True, null=True)
-    holder = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='associations', verbose_name=_('holder'))
-    #collaborators = models.ManyToManyField(settings.AUTH_USER_MODEL, through='backend.Collaborator', related_name='collaborators', verbose_name=_('collaborators'))
-    #main = models.BooleanField(_('main association')) # TODO - or keep out !?
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='associations', verbose_name=_('owner'))
+    collaborators = models.ManyToManyField(settings.AUTH_USER_MODEL, through='nublas.Collaborator', related_name='collaborators', verbose_name=_('collaborators'))
     # TODO - logo image
     # TODO - Partita IVA (???)
     # TODO - Codice Fiscale (???)
