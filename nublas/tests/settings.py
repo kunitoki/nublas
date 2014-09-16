@@ -51,6 +51,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
 
+    'taggit',
+
     'nublas',
     'nublas.tests',
 )
