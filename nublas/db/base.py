@@ -10,10 +10,7 @@ from .managers import NonTrashManager, TrashManager
 from .fields import uniqueid as uuidfields
 from .fields import date as datefields
 
-TAGS_SUPPORT = False
-if 'taggit' in settings.INSTALLED_APPS:
-    from taggit.managers import TaggableManager
-    TAGS_SUPPORT = True
+from taggit.managers import TaggableManager
 
 __all__ = [ "BaseModel" ]
 
@@ -44,8 +41,7 @@ class BaseModel(import_class(settings.BASE_MODEL_CLASS)):
 
     objects = NonTrashManager()
     trash = TrashManager()
-    if TAGS_SUPPORT:
-        tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     @property
     def uuid(self):

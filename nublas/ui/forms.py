@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models
 
-#from taggit.forms import TagField
+from taggit.forms import TagField
 
 
 #==============================================================================
@@ -95,16 +95,16 @@ class BaseModelForm(ValidatingForm, CustomWidgetsForm, forms.ModelForm):
 
 
 #==============================================================================
-#class BaseModelTagsForm(BaseModelForm):
-#    """
-#    Base form for adding tags to our models
-#    """
-#    tags = TagField(required=False)
-#
-#    def has_tags(self):
-#        t = []
-#        for field in self:
-#            if field.name == 'tags' and field.value() is not None:
-#                t = field.value()
-#                break
-#        return True if len(t) > 0 else False
+class BaseModelTagsForm(BaseModelForm):
+    """
+    Base form for adding tags to our models
+    """
+    tags = TagField(required=False)
+
+    def has_tags(self):
+        t = []
+        for field in self:
+            if field.name == 'tags' and field.value() is not None:
+                t = field.value()
+                break
+        return True if len(t) > 0 else False

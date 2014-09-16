@@ -56,6 +56,7 @@ class AssociationAdmin(BaseAdmin):
 
 #==============================================================================
 class ContactAdmin(BaseAdmin):
+    list_display = ('__str__', '_uuid',)
     inlines = [stacked_inline(Address),
                tabular_inline(Phone),
                tabular_inline(Email),

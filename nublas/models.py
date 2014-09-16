@@ -9,3 +9,4 @@ from .db.models.types import *
 # register tags
 add_to_builtins("nublas.templatetags.nublas_extends")
 add_to_builtins("nublas.templatetags.nublas_include")
+add_to_builtins("nublas.templatetags.nublas_static")

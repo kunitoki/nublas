@@ -18,16 +18,30 @@
 {% endblock %}
 
 {% block styles-inner %}
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <!-- Bootstrap 3 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <!-- Icons -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- Font -->
+    <link href="http://fonts.googleapis.com/css?family=Roboto:300,700,400italic,300italic,400,700italic" rel="stylesheet" type="text/css" />
+
+    <!-- Plugin themes -->
+    <link href="{% nublas_static 'js/bootstrap-tagsinput/bootstrap-tagsinput.css' %}" rel="stylesheet" type="text/css" />
 
     <!-- Custom theme -->
     <style type="text/css">
+        body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+            font-family: "Roboto", Helvetica, Arial, sans-serif!important;
+        }
         .tab-pane { padding-top: 15px; }
-        .glyphicon { top: 2px; }
+        .navbar-brand { margin-top: -6px; }
+        .page-header { margin: 0px 0 20px; }
+        /** Bootstrap Taginput Css */
+        .bootstrap-tagsinput { width: 100%; }
+        .bootstrap-tagsinput.readonly { border: 0px solid transparent; }
+        /* .table { margin-bottom: 0px; } */
     </style>
 {% endblock %}
 
@@ -39,110 +53,22 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
     <!-- Custom code -->
-    <script type="text/javascript">
-        /*!
-         * jQuery Cookie Plugin v1.4.1
-         * https://github.com/carhartl/jquery-cookie
-         *
-         * Copyright 2013 Klaus Hartl
-         * Released under the MIT license
-         */
-        (function (factory) {
-            if (typeof define === 'function' && define.amd) {
-                // AMD
-                define(['jquery'], factory);
-            } else if (typeof exports === 'object') {
-                // CommonJS
-                factory(require('jquery'));
-            } else {
-                // Browser globals
-                factory(jQuery);
-            }
-        }(function ($) {
-            var pluses = /\+/g;
-            function encode(s) {
-                return config.raw ? s : encodeURIComponent(s);
-            }
-            function decode(s) {
-                return config.raw ? s : decodeURIComponent(s);
-            }
-            function stringifyCookieValue(value) {
-                return encode(config.json ? JSON.stringify(value) : String(value));
-            }
-            function parseCookieValue(s) {
-                if (s.indexOf('"') === 0) {
-                    // This is a quoted cookie as according to RFC2068, unescape...
-                    s = s.slice(1, -1).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-                }
-
-                try {
-                    // Replace server-side written pluses with spaces.
-                    // If we can't decode the cookie, ignore it, it's unusable.
-                    // If we can't parse the cookie, ignore it, it's unusable.
-                    s = decodeURIComponent(s.replace(pluses, ' '));
-                    return config.json ? JSON.parse(s) : s;
-                } catch(e) {}
-            }
-            function read(s, converter) {
-                var value = config.raw ? s : parseCookieValue(s);
-                return $.isFunction(converter) ? converter(value) : value;
-            }
-            var config = $.cookie = function (key, value, options) {
-                // Write
-                if (value !== undefined && !$.isFunction(value)) {
-                    options = $.extend({}, config.defaults, options);
-                    if (typeof options.expires === 'number') {
-                        var days = options.expires, t = options.expires = new Date();
-                        t.setTime(+t + days * 864e+5);
-                    }
-                    return (document.cookie = [
-                        encode(key), '=', stringifyCookieValue(value),
-                        options.expires ? '; expires=' + options.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
-                        options.path    ? '; path=' + options.path : '',
-                        options.domain  ? '; domain=' + options.domain : '',
-                        options.secure  ? '; secure' : ''
-                    ].join(''));
-                }
-                // Read
-                var result = key ? undefined : {};
-                // To prevent the for loop in the first place assign an empty array
-                // in case there are no cookies at all. Also prevents odd result when
-                // calling $.cookie().
-                var cookies = document.cookie ? document.cookie.split('; ') : [];
-                for (var i = 0, l = cookies.length; i < l; i++) {
-                    var parts = cookies[i].split('=');
-                    var name = decode(parts.shift());
-                    var cookie = parts.join('=');
-                    if (key && key === name) {
-                        // If second argument (value) is a function it's a converter...
-                        result = read(cookie, value);
-                        break;
-                    }
-                    // Prevent storing a cookie that we couldn't decode.
-                    if (!key && (cookie = read(cookie)) !== undefined) {
-                        result[name] = cookie;
-                    }
-                }
-                return result;
-            };
-            config.defaults = {};
-            $.removeCookie = function (key, options) {
-                if ($.cookie(key) === undefined) {
-                    return false;
-                }
-                // Must not alter options, thus extending a fresh object...
-                $.cookie(key, '', $.extend({}, options, { expires: -1 }));
-                return !$.cookie(key);
-            };
-        }));
-    </script>
+    <script src="{% nublas_static 'js/bootstrap-tagsinput/bootstrap-tagsinput.js' %}" type="text/javascript"></script>
+    <script src="{% nublas_static 'js/jquery.cookie/jquery.cookie.js' %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block body %}
+    {% block header %}{% endblock %}
+
+    {% block navbar %}{% endblock %}
+
     {% block content %}
         <div class="container-fluid">
             {% block content-title %}{% endblock %}
+            {% block content-breadcrumb %}{% endblock %}
             {% block content-inner %}{% endblock %}
         </div>
     {% endblock %}
+
+    {% block footer %}{% endblock %}
 {% endblock %}

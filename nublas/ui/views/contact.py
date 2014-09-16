@@ -21,7 +21,7 @@ from django.views.generic.base import View
 #from ..generic.fileserve import GenericFileServeView
 
 from ..skins import get_skin_relative_path
-from ..forms import BaseForm, BaseModelForm #, BaseModelTagsForm
+from ..forms import BaseForm, BaseModelForm, BaseModelTagsForm
 #from ..forms import CustomFieldModelForm
 from ...conf import settings
 from ...models import (Association, Contact, Group, ContactGroup,
@@ -111,7 +111,7 @@ class GenericContactInlineView(View):
         self.title = None
         self.section_title = None
         self.section_icon = None
-        self.back_text = _('< Back to Contact')
+        self.back_text = _('Back to Contact')
         self.submit_text = None
         self.success_text = None
         self.error_text = None
@@ -327,10 +327,10 @@ class ContactCommunicationForm(BaseModelForm):
 #        model = Contact
 #        exclude = ('tags',)
 
-#class ContactTagsForm(BaseModelTagsForm):
-#    class Meta:
-#        model = Contact
-#        fields = ('tags',)
+class ContactTagsForm(BaseModelTagsForm):
+    class Meta:
+        model = Contact
+        fields = ('tags',)
 
 
 #==============================================================================
@@ -366,14 +366,14 @@ class ContactDetailsView(View):
         communication_form = ContactCommunicationForm(instance=c)
         notes_form = ContactNotesForm(instance=c)
         #custom_form = ContactCustomFieldsForm(instance=c, association=a)
-        #tags_form = ContactTagsForm(instance=c)
+        tags_form = ContactTagsForm(instance=c)
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
                                       'communication_form': communication_form,
                                       'notes_form': notes_form,
                                       #'custom_form': custom_form,
-                                      #'tags_form': tags_form,
+                                      'tags_form': tags_form,
                                       'association': a,
                                       'contact': c }))
 
@@ -394,15 +394,15 @@ class ContactEditView(View):
             communication_form = ContactCommunicationForm(request.POST, instance=c)
             notes_form = ContactNotesForm(request.POST, instance=c)
             #custom_form = ContactCustomFieldsForm(request.POST, instance=c, association=a)
-            #tags_form = ContactTagsForm(request.POST, instance=c)
+            tags_form = ContactTagsForm(request.POST, instance=c)
             if personal_form.is_valid() and communication_form.is_valid() \
-               and notes_form.is_valid(): # and custom_form.is_valid() and tags_form.is_valid():
+               and notes_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
                 # save the forms
                 personal_form.save()
                 communication_form.save()
                 notes_form.save()
                 #custom_form.save()
-                #tags_form.save()
+                tags_form.save()
                 # message the user and redirect to view
                 messages.add_message(request, messages.SUCCESS, _('Contact saved successfully.'))
                 return HttpResponseRedirect(reverse('nublas:contact_details', args=[c.uuid]))
@@ -414,14 +414,14 @@ class ContactEditView(View):
             communication_form = ContactCommunicationForm(instance=c)
             notes_form = ContactNotesForm(instance=c)
             #custom_form = ContactCustomFieldsForm(instance=c, association=a)
-            #tags_form = ContactTagsForm(instance=c)
+            tags_form = ContactTagsForm(instance=c)
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
                                       'communication_form': communication_form,
                                       'notes_form': notes_form,
                                       #'custom_form': custom_form,
-                                      #'tags_form': tags_form,
+                                      'tags_form': tags_form,
                                       'association': a,
                                       'contact': c,
                                       'editing': True }))
@@ -443,15 +443,15 @@ class ContactAddView(View):
             communication_form = ContactCommunicationForm(request.POST, instance=c)
             notes_form = ContactNotesForm(request.POST, instance=c)
             #custom_form = ContactCustomFieldsForm(request.POST, instance=c, association=a)
-            #tags_form = ContactTagsForm(request.POST, instance=c)
+            tags_form = ContactTagsForm(request.POST, instance=c)
             if personal_form.is_valid() and communication_form.is_valid() \
-               and notes_form.is_valid(): # and custom_form.is_valid() and tags_form.is_valid():
+               and notes_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
                 # save the forms
                 personal_form.save()
                 communication_form.save()
                 notes_form.save()
                 #custom_form.save()
-                #tags_form.save()
+                tags_form.save()
                 # message the user and redirect to view
                 messages.add_message(request, messages.SUCCESS, _('Contact created successfully.'))
                 return HttpResponseRedirect(reverse('nublas:contact_details', args=[c.uuid]))
@@ -463,7 +463,7 @@ class ContactAddView(View):
             communication_form = ContactCommunicationForm()
             notes_form = ContactNotesForm()
             #custom_form = ContactCustomFieldsForm(association=a)
-            #tags_form = ContactTagsForm()
+            tags_form = ContactTagsForm()
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
@@ -549,6 +549,7 @@ class AddressForm(BaseModelForm):
                    'location',
                    'tags',)
 
+
 class ContactAddressAddView(GenericContactInlineAddView):
     def __init__(self):
         super(ContactAddressAddView, self).__init__()
@@ -556,10 +557,11 @@ class ContactAddressAddView(GenericContactInlineAddView):
         self.form = AddressForm
         self.title = _('Adding new address for ')
         self.section_title = _('Address data')
-        self.section_icon = 'iMap'
+        self.section_icon = 'fa-flag'
         self.submit_text = _('Create new address')
         self.success_text = _('Address created successfully.')
         self.error_text = _('Cannot save the address.')
+
 
 class ContactAddressEditView(GenericContactInlineEditView):
     def __init__(self):
@@ -568,10 +570,11 @@ class ContactAddressEditView(GenericContactInlineEditView):
         self.form = AddressForm
         self.title = _('Editing address for ')
         self.section_title = _('Address data')
-        self.section_icon = 'iMap'
+        self.section_icon = 'fa-flag'
         self.submit_text = _('Save address')
         self.success_text = _('Address modified successfully.')
         self.error_text = _('Cannot save the address.')
+
 
 class ContactAddressDeleteView(GenericContactInlineDeleteView):
     def __init__(self):
@@ -596,6 +599,7 @@ class PhoneForm(BaseModelForm):
         exclude = ('contact',
                    'tags',)
 
+
 class ContactPhoneAddView(GenericContactInlineAddView):
     def __init__(self):
         super(ContactPhoneAddView, self).__init__()
@@ -603,10 +607,11 @@ class ContactPhoneAddView(GenericContactInlineAddView):
         self.form = PhoneForm
         self.title = _('Adding new phone for ')
         self.section_title = _('Phone data')
-        self.section_icon = 'iPhone'
+        self.section_icon = 'fa-phone'
         self.submit_text = _('Create new phone')
         self.success_text = _('Phone created successfully.')
         self.error_text = _('Cannot save the phone.')
+
 
 class ContactPhoneEditView(GenericContactInlineEditView):
     def __init__(self):
@@ -615,10 +620,11 @@ class ContactPhoneEditView(GenericContactInlineEditView):
         self.form = PhoneForm
         self.title = _('Editing phone for ')
         self.section_title = _('Phone data')
-        self.section_icon = 'iPhone'
+        self.section_icon = 'fa-phone'
         self.submit_text = _('Save phone')
         self.success_text = _('Phone modified successfully.')
         self.error_text = _('Cannot save the phone.')
+
 
 class ContactPhoneDeleteView(GenericContactInlineDeleteView):
     def __init__(self):
@@ -642,6 +648,7 @@ class EmailForm(BaseModelForm):
         exclude = ('contact',
                    'tags',)
 
+
 class ContactEmailAddView(GenericContactInlineAddView):
     def __init__(self):
         super(ContactEmailAddView, self).__init__()
@@ -649,10 +656,11 @@ class ContactEmailAddView(GenericContactInlineAddView):
         self.form = EmailForm
         self.title = _('Adding new email for ')
         self.section_title = _('Email data')
-        self.section_icon = 'iMail'
+        self.section_icon = 'fa-envelope'
         self.submit_text = _('Create new email')
         self.success_text = _('Email created successfully.')
         self.error_text = _('Cannot save the email.')
+
 
 class ContactEmailEditView(GenericContactInlineEditView):
     def __init__(self):
@@ -661,10 +669,11 @@ class ContactEmailEditView(GenericContactInlineEditView):
         self.form = EmailForm
         self.title = _('Editing email for ')
         self.section_title = _('Email data')
-        self.section_icon = 'iMail'
+        self.section_icon = 'fa-envelope'
         self.submit_text = _('Save email')
         self.success_text = _('Email modified successfully.')
         self.error_text = _('Cannot save the email.')
+
 
 class ContactEmailDeleteView(GenericContactInlineDeleteView):
     def __init__(self):
@@ -688,6 +697,7 @@ class WebsiteForm(BaseModelForm):
         exclude = ('contact',
                    'tags',)
 
+
 class ContactWebsiteAddView(GenericContactInlineAddView):
     def __init__(self):
         super(ContactWebsiteAddView, self).__init__()
@@ -695,10 +705,11 @@ class ContactWebsiteAddView(GenericContactInlineAddView):
         self.form = WebsiteForm
         self.title = _('Adding new website for ')
         self.section_title = _('Website data')
-        self.section_icon = 'iGlobe'
+        self.section_icon = 'fa-globe'
         self.submit_text = _('Create new website')
         self.success_text = _('Website created successfully.')
         self.error_text = _('Cannot save the website.')
+
 
 class ContactWebsiteEditView(GenericContactInlineEditView):
     def __init__(self):
@@ -707,10 +718,11 @@ class ContactWebsiteEditView(GenericContactInlineEditView):
         self.form = WebsiteForm
         self.title = _('Editing website for ')
         self.section_title = _('Website data')
-        self.section_icon = 'iGlobe'
+        self.section_icon = 'fa-globe'
         self.submit_text = _('Save website')
         self.success_text = _('Website modified successfully.')
         self.error_text = _('Cannot save the website.')
+
 
 class ContactWebsiteDeleteView(GenericContactInlineDeleteView):
     def __init__(self):
@@ -734,6 +746,7 @@ class ContactGroupForm(BaseModelForm):
         exclude = ('contact',
                    'tags',)
 
+
 class ContactGroupAddView(GenericContactInlineAddView):
     def __init__(self):
         super(ContactGroupAddView, self).__init__()
@@ -741,10 +754,11 @@ class ContactGroupAddView(GenericContactInlineAddView):
         self.form = ContactGroupForm
         self.title = _('Assigning new group to ')
         self.section_title = _('Group data')
-        self.section_icon = 'iUsers'
+        self.section_icon = 'fa-users'
         self.submit_text = _('Assign group')
         self.success_text = _('Group assigned successfully.')
         self.error_text = _('Cannot assign the group.')
+
 
 class ContactGroupEditView(GenericContactInlineEditView):
     def __init__(self):
@@ -753,10 +767,11 @@ class ContactGroupEditView(GenericContactInlineEditView):
         self.form = ContactGroupForm
         self.title = _('Editing a group assignment for ')
         self.section_title = _('Group assignment data')
-        self.section_icon = 'iUsers'
+        self.section_icon = 'fa-users'
         self.submit_text = _('Save group assignment')
         self.success_text = _('Group assignment modified successfully.')
         self.error_text = _('Cannot save the group assignment.')
+
 
 class ContactGroupDeleteView(GenericContactInlineDeleteView):
     def __init__(self):
@@ -780,15 +795,18 @@ class SubscriptionForm(BaseModelForm):
         exclude = ('contact',
                    'tags',)
 
+
 #class SubscriptionCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
 #        model = Subscription
 #        exclude = ('tags',)
 
-#class SubscriptionTagsForm(BaseModelTagsForm):
-#    class Meta:
-#        model = Subscription
-#        fields = ('tags',)
+
+class SubscriptionTagsForm(BaseModelTagsForm):
+    class Meta:
+        model = Subscription
+        fields = ('tags',)
+
 
 class ContactSubscriptionView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
@@ -803,16 +821,17 @@ class ContactSubscriptionView(View):
             RequestContext(request, { 'association': a,
                                       'contact': c }))
 
+
 class ContactSubscriptionAddView(GenericContactInlineAddView):
     def __init__(self):
         super(ContactSubscriptionAddView, self).__init__()
         self.cls = Subscription
         self.form = SubscriptionForm
         #self.custom_form = SubscriptionCustomFieldsForm
-        #self.tags_form = SubscriptionTagsForm
+        self.tags_form = SubscriptionTagsForm
         self.title = _('Adding new subscription for ')
         self.section_title = _('Subscription data')
-        self.section_icon = 'iArchive'
+        self.section_icon = 'fa-book'
         self.submit_text = _('Create new subscription')
         self.success_text = _('Subscription created successfully.')
         self.error_text = _('Cannot save the subscription.')
@@ -820,22 +839,24 @@ class ContactSubscriptionAddView(GenericContactInlineAddView):
     def redirect_url(self, *args):
         return reverse('nublas:contact_subscriptions', args=args)
 
+
 class ContactSubscriptionEditView(GenericContactInlineEditView):
     def __init__(self):
         super(ContactSubscriptionEditView, self).__init__()
         self.cls = Subscription
         self.form = SubscriptionForm
         #self.custom_form = SubscriptionCustomFieldsForm
-        #self.tags_form = SubscriptionTagsForm
+        self.tags_form = SubscriptionTagsForm
         self.title = _('Editing subscription for ')
         self.section_title = _('Subscription data')
-        self.section_icon = 'iArchive'
+        self.section_icon = 'fa-book'
         self.submit_text = _('Save subscription')
         self.success_text = _('Subscription modified successfully.')
         self.error_text = _('Cannot save the subscription.')
 
     def redirect_url(self, *args):
         return reverse('nublas:contact_subscriptions', args=args)
+
 
 class ContactSubscriptionDeleteView(GenericContactInlineDeleteView):
     def __init__(self):
@@ -880,6 +901,7 @@ class RelationshipForm(BaseModelForm):
         exclude = ('from_contact',
                    'tags',)
 
+
 class ContactRelationshipView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
     def dispatch(self, request, *args, **kwargs):
@@ -893,6 +915,7 @@ class ContactRelationshipView(View):
             RequestContext(request, { 'association': a,
                                       'contact': c }))
 
+
 class ContactRelationshipAddView(GenericContactInlineAddView):
     def __init__(self):
         super(ContactRelationshipAddView, self).__init__()
@@ -901,13 +924,14 @@ class ContactRelationshipAddView(GenericContactInlineAddView):
         self.contact_fieldname = 'from_contact'
         self.title = _('Adding new relationship for ')
         self.section_title = _('Relationship data')
-        self.section_icon = 'iUsers2'
+        self.section_icon = 'fa-child'
         self.submit_text = _('Create new relationship')
         self.success_text = _('Relationship created successfully.')
         self.error_text = _('Cannot save the relationship.')
 
     def redirect_url(self, *args):
         return reverse('nublas:contact_relationships', args=args)
+
 
 class ContactRelationshipEditView(GenericContactInlineEditView):
     def __init__(self):
@@ -917,13 +941,14 @@ class ContactRelationshipEditView(GenericContactInlineEditView):
         self.contact_fieldname = 'from_contact'
         self.title = _('Editing relationship for ')
         self.section_title = _('Relationship data')
-        self.section_icon = 'iUsers2'
+        self.section_icon = 'fa-child'
         self.submit_text = _('Save relationship')
         self.success_text = _('Relationship modified successfully.')
         self.error_text = _('Cannot save the relationship.')
 
     def redirect_url(self, *args):
         return reverse('nublas:contact_relationships', args=args)
+
 
 class ContactRelationshipDeleteView(GenericContactInlineDeleteView):
     def __init__(self):

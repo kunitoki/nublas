@@ -39,7 +39,7 @@ class IncludeNode(Node):
 
 
 @register.tag
-def include_skin(parser, token):
+def nublas_include(parser, token):
     """
     Loads a template and renders it with the current context. You can pass
     additional context using keyword arguments.

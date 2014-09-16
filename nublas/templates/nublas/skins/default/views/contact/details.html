@@ -1,4 +1,4 @@
-{% extends_skin "base.html" %}
+{% nublas_extends "base_site.html" %}
 {% load i18n %}
 
 {% block styles-after %}
@@ -32,12 +32,6 @@
             <h1>{% trans "Contact details" %}: <small>{{ contact.first_name }} {{ contact.last_name }}</small></h1>
         {% endif %}
     </div>
-
-    <ol class="breadcrumb">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Library</a></li>
-        <li class="active">Data</li>
-    </ol>
 {% endblock %}
 
 
@@ -45,62 +39,45 @@
 
     {% comment %}
     {% if not adding %}
-        {% include_skin "contact/tabs.html" %}
+        {% nublas_include "contact/tabs.html" %}
     {% endif %}
     {% endcomment %}
 
-    <ul class="nav nav-tabs" role="tablist">
-        <li class="active"><a href="#personal-details" role="tab" data-toggle="tab">{% trans "Personal details" %}</a></li>
-        {% if contact %}
-        <li><a href="#groups" role="tab" data-toggle="tab">{% trans "Groups" %}</a></li>
-        {% endif %}
-        {% if contact %}
-        <li class="pull-right">
-            <div class="btn-group">
-                {% if editing or adding %}
-                    <button class="btn btn-default btn-sm" type="submit">
-                        <span class="glyphicon glyphicon-floppy-disk"></span> {% trans 'Save Contact' %}</button>
-                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                        <span class="caret"></span>
-                        <span class="sr-only">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu pull-right" role="menu">
-                        <li><a href="#">{% trans "Save and add another" %}</a></li>
-                        {% if not adding %}
-                        <li><a href="#">{% trans "Save as a copy" %}</a></li>
-                        <li class="divider"></li>
-                        <li><a href="{% url 'nublas:contact_details' contact.uuid %}">
-                            <span class="glyphicon glyphicon-eye-open"></span> {% trans "View" %}</a></li>
-                        <li class="divider"></li>
-                        <li><a href="{% url 'nublas:contact_delete' contact.uuid %}">
-                            <span class="glyphicon glyphicon-remove"></span> {% trans "Delete" %}</a></li>
-                        {% endif %}
-                    </ul>
-                {% else %}
-                    <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-sm">
-                        <span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a>
-                {% endif %}
-
-            {% comment %}
-            {% if editing %}
-                <a href="{% url 'nublas:contact_details' contact.uuid %}" class="btn btn-default btn-sm">
-                    <span class="glyphicon glyphicon-eye-open"></span> {% trans "View" %}</a>
-                <a href="{% url 'nublas:contact_delete' contact.uuid %}" class="btn btn-danger btn-sm">
-                    <span class="glyphicon glyphicon-remove"></span> {% trans "Delete" %}</a>
-            {% else %}
-                <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-sm">
-                    <span class="glyphicon glyphicon-pencil"></span> {% trans "Edit" %}</a>
-            {% endif %}
-                {#<a href="{% url 'nublas:association_contact_list' association.uuid %}" class="btn btn-default btn-sm">{% trans "< Back to contact list" %}</a>#}
-            {% endcomment %}
-
-            </div>
-        </li>
-        {% endif %}
-    </ul>
-
-    <!-- Tha form -->
     <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
+
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="active"><a href="#personal-details" role="tab" data-toggle="tab">{% trans "Personal details" %}</a></li>
+            {% if contact %}
+            <li><a href="#groups" role="tab" data-toggle="tab">{% trans "Groups" %}</a></li>
+            {% endif %}
+            <li class="pull-right">
+                <div class="btn-group">
+                    {% if editing or adding %}
+                        <button class="btn btn-default btn-sm" type="submit">
+                            <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Contact' %}</button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <i class="caret"></i>
+                            <i class="sr-only">Toggle Dropdown</i>
+                        </button>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li><a href="#">{% trans "Save and add another" %}</a></li>
+                            {% if contact and not adding %}
+                            <li><a href="#">{% trans "Save as a copy" %}</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url 'nublas:contact_details' contact.uuid %}">
+                                <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url 'nublas:contact_delete' contact.uuid %}">
+                                <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a></li>
+                            {% endif %}
+                        </ul>
+                    {% else %}
+                        <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                    {% endif %}
+                </div>
+            </li>
+        </ul>
 
         <div class="tab-content">
 
@@ -108,7 +85,7 @@
             <div class="tab-pane active" id="personal-details">
 
                 <!-- Main form -->
-                {% include_skin "generic/form_snippet.html" with form=personal_form %}
+                {% nublas_include "generic/form_snippet.html" with form=personal_form %}
 
                 <!-- Other infos -->
                 {% if contact %}
@@ -118,7 +95,7 @@
                         {% trans 'Addresses' %}
                     </label>
                     <div class="col-sm-4">
-                        {% include_skin "views/contact/tables/addresses.html" with addresses=contact.addresses.all %}
+                        {% nublas_include "views/contact/tables/addresses.html" with addresses=contact.addresses.all %}
                     </div>
 
                     <!-- Phone numbers -->
@@ -126,7 +103,7 @@
                         {% trans 'Phones' %}
                     </label>
                     <div class="col-sm-4">
-                        {% include_skin "views/contact/tables/phones.html" with phones=contact.phones.all %}
+                        {% nublas_include "views/contact/tables/phones.html" with phones=contact.phones.all %}
                     </div>
                 </div>
 
@@ -136,7 +113,7 @@
                         {% trans 'Emails' %}
                     </label>
                     <div class="col-sm-4">
-                        {% include_skin "views/contact/tables/emails.html" with emails=contact.emails.all %}
+                        {% nublas_include "views/contact/tables/emails.html" with emails=contact.emails.all %}
                     </div>
 
                     <!-- Websites -->
@@ -144,7 +121,7 @@
                         {% trans 'Websites' %}
                     </label>
                     <div class="col-sm-4">
-                        {% include_skin "views/contact/tables/websites.html" with websites=contact.websites.all %}
+                        {% nublas_include "views/contact/tables/websites.html" with websites=contact.websites.all %}
                     </div>
                 </div>
                 {% endif %}
@@ -155,25 +132,19 @@
                         {% trans 'Communication' %}
                     </label>
 
-                    <div class="col-sm-10">
-                        <table cellpadding="0" cellspacing="0" border="0" id="communicationTable" class="table">
-                            <tbody>
-                                <tr>
-                                {% spaceless %}
-                                    {% for field in communication_form %}
-                                        <td>
-                                            {% if editing or adding %}
-                                                {% include_skin "generic/field_edit_value.html" %}
-                                            {% else %}
-                                                {% include_skin "generic/field_view_value.html" %}
-                                            {% endif %}
-                                        </td>
-                                    {% endfor %}
-                                {% endspaceless %}
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    {% for field in communication_form %}
+                        <div class="col-sm-2">
+                            <div class="checkbox">
+                                <label>
+                                {% if editing or adding %}
+                                    {% nublas_include "generic/field_edit_value.html" %}
+                                {% else %}
+                                    {% nublas_include "generic/field_view_value.html" %}
+                                {% endif %}
+                                </label>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
 
                 <!-- Notes -->
@@ -198,7 +169,7 @@
             {% if contact %}
             <!-- Groups -->
             <div class="tab-pane" id="groups">
-                {% include_skin "views/contact/tables/groups.html" with groups=contact.groups.all %}
+                {% nublas_include "views/contact/tables/groups.html" with groups=contact.groups.all %}
             </div>
             {% endif %}
         </div>
@@ -206,35 +177,14 @@
 
         <!-- Custom form fields -->
         {% if custom_form and custom_form.fields|length > 0 %}
-        <div class="widget first">
-            <div class="head">
-                <h5 class="iSignPost">{% trans "Custom fields" %}</h5>
-            </div>
-            {% include_skin "generic/form_snippet.html" with form=custom_form %}
-        </div>
+            {% nublas_include "generic/form_snippet.html" with form=custom_form %}
         {% endif %}
 
         <!-- Tags form -->
         {% if tags_form %}
             {% if tags_form.has_tags or editing or adding %}
-            <div class="widget first">
-                <div class="head">
-                    <h5 class="iTags">{% trans "Tags" %}</h5>
-                </div>
-                {% include_skin "generic/form_snippet.html" with form=tags_form %}
-            </div>
+                {% nublas_include "generic/form_snippet.html" with form=tags_form %}
             {% endif %}
-        {% endif %}
-
-
-        <!-- Save form -->
-        {% if editing or adding %}
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <button class="btn btn-default" type="submit">
-                    <span class="glyphicon glyphicon-floppy-disk"></span> {% trans 'Save Contact' %}</button>
-            </div>
-        </div>
         {% endif %}
 
     </form>

@@ -20,6 +20,7 @@ setup(
     },
     install_requires=[
         "Django >= 1.7",
+        "django-taggit >= 0.12.1",
     ],
     keywords=[
         'django',

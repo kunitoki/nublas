@@ -1,82 +1,71 @@
-{% extends_skin "base.html" %}
+{% nublas_extends "base_site.html" %}
 {% load i18n %}
 
-
 {% block content-title %}
-    <div class="title"><h5>
-        {{ title }} {% if object_name %}<strong>{{ object_name }}</strong>{% endif %}
-    </h5></div>
+    <div class="page-header">
+        <h1>{{ title }} {% if object_name %}<small>{{ object_name }}</small>{% endif %}</h1>
+    </div>
 {% endblock %}
 
 
 {% block content-inner %}
+    <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
 
-    {% block form-before %}{% endblock %}
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="active"><a href="#inline-edit" role="tab" data-toggle="tab">
+                {% if section_icon %}<i class="fa {{ section_icon }} fa-fw"></i> {% endif %}{{ section_title }}</a></li>
+            <li class="pull-right">
+                <div class="btn-group">
+                    {% if back_url %}
+                    <a href="{{ back_url }}" class="btn btn-default btn-sm">
+                        <i class="fa fa-arrow-circle-left fa-fw"></i> {{ back_text }}</a>
+                    {% endif %}
+                    <button class="btn btn-default btn-sm" type="submit">
+                        <i class="fa fa-floppy-o fa-fw"></i> {{ submit_text }}</button>
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                        <i class="caret"></i>
+                        <i class="sr-only">Toggle Dropdown</i>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu">
+                        <li><a href="#">{% trans "Save and add another" %}</a></li>
+                        {% if not contact and not adding %}
+                        <li><a href="#">{% trans "Save as a copy" %}</a></li>
+                        {% comment %}
+                        <li class="divider"></li>
+                        <li><a href="{% url 'nublas:contact_details' contact.uuid %}">
+                            <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a></li>
+                        <li class="divider"></li>
+                        <li><a href="{% url 'nublas:contact_delete' contact.uuid %}">
+                            <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a></li>
+                        {% endcomment %}
+                        {% endif %}
+                    </ul>
+                </div>
+            </li>
+        </ul>
 
-    <form action="." class="validation mainForm" method="POST">{% csrf_token %}
+        <div class="tab-content">
+            <div class="tab-pane active" id="inline-edit">
 
-        <!-- Base inline form -->
-        {% if inline_form and inline_form.fields|length > 0 %}
-        <div class="widget first">
-            <div class="head">
-                <h5 class="{{ section_icon }}">{{ section_title }}</h5>
-                {% if back_url %}
-                    <div class="num">
-                        <a href="{{ back_url }}" class="blueNum">{{ back_text }}</a>
-                    </div>
+                <!-- Base inline form -->
+                {% if inline_form and inline_form.fields|length > 0 %}
+                    {% nublas_include "generic/form_snippet.html" with form=inline_form %}
                 {% endif %}
+
+                <!-- Custom form fields -->
+                {% if custom_form and custom_form.fields|length > 0 %}
+                    {% nublas_include "generic/form_snippet.html" with form=custom_form %}
+                {% endif %}
+
+                <!-- Tags form -->
+                {% if tags_form %}
+                    {% if tags_form.has_tags or editing or adding %}
+                        {% nublas_include "generic/form_snippet.html" with form=tags_form %}
+                    {% endif %}
+                {% endif %}
+
             </div>
-
-            {% include_skin "generic/form_snippet.html" with form=inline_form %}
-
-            <div class="fix"></div>
         </div>
-        {% endif %}
-
-        <!-- Custom form fields -->
-        {% if custom_form and custom_form.fields|length > 0 %}
-        <div class="widget first">
-            <div class="head">
-                <h5 class="iSignPost">{% trans "Custom fields" %}</h5>
-            </div>
-
-            {% include_skin "generic/form_snippet.html" with form=custom_form %}
-
-            <div class="fix"></div>
-        </div>
-        {% endif %}
-
-        <!-- Tags form -->
-        {% if tags_form %}
-            {% if tags_form.has_tags or editing or adding %}
-            <div class="widget first">
-                <div class="head">
-                    <h5 class="iTags">{% trans "Tags" %}</h5>
-                </div>
-
-                {% include_skin "generic/form_snippet.html" with form=tags_form %}
-
-                <div class="fix"></div>
-            </div>
-            {% endif %}
-        {% endif %}
-
-        {% block form-before-submit %}{% endblock %}
-        {% block form-submit %}
-            <div class="widget first">
-                <div class="head">
-                    <h5 class="iAlert">{{ save_title }}</h5>
-                </div>
-
-                <div class="body aligncenter">
-                    <input type="submit" value="{{ submit_text }}" class="greyishBtn mr10 ml10" />
-                </div>
-            </div>
-        {% endblock %}
-        {% block form-after-submit %}{% endblock %}
 
     </form>
-
-    {% block form-after %}{% endblock %}
-
 {% endblock %}

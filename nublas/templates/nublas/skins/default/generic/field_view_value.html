@@ -2,29 +2,35 @@
 {% load i18n %}
 {% load classname from nublas_filters %}
 
-<p class="form-control-static">
+
 {% if field.field|classname == "booleanfield" %}
-    <span class="glyphicon {% if field.value %}glyphicon-ok{% else %}glyphicon-remove{% endif %}"></span> {{ field.label }}
+    <p class="form-control-static">
+        <i class="fa {% if field.value %}fa-check-square-o{% else %}fa-square-o{% endif %}"></i> {{ field.label }}
+    </p>
 {% elif field.field|classname == "modelchoicefield" %}
-    {% for choice in field.field.choices %}
-        {% ifequal field.value choice.0 %}
-            {{ choice.1 }}
-        {% endifequal %}
-    {% endfor %}
-{% elif field.field|classname == "urlfield" %}
-    {% if field.value %}
-        <a href="{{ field.value }}" title="{% trans 'Go to website...' %}" target="_blank">{{ field.value }}</a>
-    {% else %}
-        &nbsp;
-    {% endif %}
-{% elif field.field|classname == "tagfield" %}
-    <div class="tagsinput readonlytags">
-        {% for tag in field.value %}
-            <span class="tag"><span>{{ tag.tag }}</span></span>
+    <p class="form-control-static">
+        {% for choice in field.field.choices %}
+            {% ifequal field.value choice.0 %}
+                {{ choice.1 }}
+            {% endifequal %}
         {% endfor %}
-        <div class="tags_clear"></div>
+    </p>
+{% elif field.field|classname == "urlfield" %}
+    <p class="form-control-static">
+        {% if field.value %}
+            <a href="{{ field.value }}" title="{% trans 'Go to website...' %}" target="_blank">{{ field.value }}</a>
+        {% else %}
+            &nbsp;
+        {% endif %}
+    </p>
+{% elif field.field|classname == "tagfield" %}
+    <div class="bootstrap-tagsinput readonly">
+        {% for tag in field.value %}
+            <span class="tag label label-info">{{ tag.tag.name }}</span>
+        {% endfor %}
     </div>
 {% else %}
-    {{ field.value|default_if_none:'&nbsp;' }}
+    <p class="form-control-static">
+        {{ field.value|default_if_none:'&nbsp;' }}
+    </p>
 {% endif %}
-</p>

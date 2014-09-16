@@ -111,7 +111,7 @@ class SkinExtendsNode(ExtendsNode):
 
 
 @register.tag
-def extends_skin(parser, token):
+def nublas_extends(parser, token):
     """
     Extended version of Django's ``extends`` tag that allows circular
     inheritance to occur, eg a template can both be overridden and

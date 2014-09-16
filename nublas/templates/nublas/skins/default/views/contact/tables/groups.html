@@ -5,11 +5,13 @@
     <table cellpadding="0" cellspacing="0" border="0" id="groupsTable" class="table table-striped">
         <thead>
         <tr>
-            <th>{% trans "Id" %}</th>
             <th>{% trans "Name" %}</th>
             <th>
                 {% if editing %}
-                    <div class="btn-group pull-right"><a href="{% url 'nublas:contact_group_add' contact.uuid %}" class="btn btn-primary btn-xs">{% trans "Add" %}</a></div>
+                    <div class="btn-group pull-right">
+                        <a href="{% url 'nublas:contact_group_add' contact.uuid %}" class="btn btn-primary btn-xs">
+                            <i class="fa fa-plus-circle fa-fw"></i> {% trans "Add" %}</a>
+                    </div>
                 {% endif %}
             </th>
         </tr>
@@ -18,15 +20,14 @@
             {% spaceless %}
                 {% for g in groups %}
                 <tr>
-                    <td>{{ g.pk }}</td>
                     <td>{{ g.name }}</td>
                     <td class="center">
                         {% if editing %}
-                        <div class="button">
-                            <a href="{% url 'nublas:contact_group_delete' g.uuid %}" class="redNum deleteButton">{% trans "Delete" %}</a>
-                        </div>
-                        <div class="button">
-                            <a href="{% url 'nublas:contact_group_edit' g.uuid %}" class="blueNum">{% trans "Edit" %}</a>
+                        <div class="btn-group pull-right">
+                            <a href="{% url 'nublas:contact_group_edit' g.uuid %}" class="btn btn-primary btn-xs">
+                                <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                            <a href="{% url 'nublas:contact_group_delete' g.uuid %}" class="btn btn-danger btn-xs">
+                                <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a>
                         </div>
                         {% else %}
                         &nbsp;

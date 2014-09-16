@@ -20,11 +20,11 @@
         {% endfor %}
         {% if editing %}
             {% for field in form %}
-                {% include_skin "generic/field_edit.html" %}
+                {% nublas_include "generic/field_edit.html" %}
             {% endfor %}
         {% else %}
             {% for field in form %}
-                {% include_skin "generic/field_view.html" %}
+                {% nublas_include "generic/field_view.html" %}
             {% endfor %}
         {% endif %}
     {% endif %}
