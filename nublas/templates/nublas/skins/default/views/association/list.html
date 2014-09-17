@@ -1,0 +1,76 @@
+{% nublas_extends "base_site.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block javascript-after %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#associationList').listnav({
+               //initLetter: 'a',
+               includeAll: true,
+               includeOther: true,
+               flagDisabled: true,
+               noMatchText: '{% trans "Nothing matched your filter, please click another letter." %}'
+               //prefixes: ['the','a']
+            });
+        });
+    </script>
+{% endblock %}
+
+
+{% block content-title %}
+    <div class="title"><h5>{% trans "Association list" %}</h5></div>
+{% endblock %}
+
+
+{% block content-inner %}
+
+    <!-- Statistics -->
+    <!--
+    <div class="stats first">
+        <ul>
+            <li><a href="#" class="count grey" title="">52</a><span>new pending tasks</span></li>
+            <li><a href="#" class="count grey" title="">520</a><span>pending orders</span></li>
+            <li><a href="#" class="count grey" title="">14</a><span>new opened tickets</span></li>
+            <li class="last"><a href="#" class="count grey" title="">48</a><span>new user registrations</span></li>
+        </ul>
+        <div class="fix"></div>
+    </div>
+    -->
+
+    <!-- Search -->
+    <div class="searchWidget first">
+        <form action="." method="POST">{% csrf_token %}
+            <input type="text" name="search" placeholder="{% trans 'Enter search text...' %}" value="{{ form.data.search }}" />
+            <input type="submit" value="" />
+        </form>
+    </div>
+
+    <!-- Contact list -->
+    <div class="widget first">
+        <div class="head">
+            <h5 class="iUsers">Association list</h5>
+            <div class="num">
+                <a href="{% url 'nublas:association_add' %}" class="blueNum">Create new</a>
+            </div>
+        </div>
+        <div id="associationList-nav"></div>
+        <ul id="associationList" class="listNavTable">
+            {% spaceless %}
+                {% for a in associations %}
+                <li><a href="{% url 'nublas:association_details' a.uuid %}">{{ a.name }}</a>
+                    {% comment %}<!--
+                    <ul class="listData">
+                        {% for e in c.emails.all %}<li><a href="mailto:{{ e.address }}" title="">{{ e.address }}</a></li>{% endfor %}
+                        {% for p in c.phones.all %}<li><span class="red">{{ p.number }}</span></li>{% endfor %}
+                        <li><span class="cNote">friend</span></li>
+                    </ul>
+                    -->{% endcomment %}
+                </li>
+                {% endfor %}
+            {% endspaceless %}
+        </ul>
+        <div class="fix"></div>
+    </div>
+
+{% endblock %}

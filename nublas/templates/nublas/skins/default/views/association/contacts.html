@@ -1,0 +1,201 @@
+{% nublas_extends "base_site.html" %}
+{% load i18n %}
+{% load nublas_tags %}
+
+
+{% block javascript-after %}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+
+                //===== Contact list buttons =====//
+
+                $(".selectAllButton").click(function(e){
+                    e.preventDefault();
+                    $("#contactList input[type='checkbox']").attr('checked','checked');
+                    $.uniform.update();
+                });
+
+                $(".selectClearButton").click(function(e){
+                    e.preventDefault();
+                    $("#contactList input[type='checkbox']").removeAttr('checked');
+                    $.uniform.update();
+                });
+
+                $(".applyButton").click(function(e){
+                    e.preventDefault();
+                    var action = $(".actionForm select option:selected").val();
+                    if (action)
+                    {
+                        var text = $(".actionForm select option:selected").text();
+                        jConfirm("{% trans 'Are you sure you wish to ' %}" + text + "?", "{% trans 'Confirm action' %}", function(val) {
+                            if (val) {
+                                $(".actionForm").submit();
+                            }
+                        });
+                    }
+                });
+
+
+                //===== Letters navigation =====//
+
+                $("#contactList-nav .ln-letters a").click(function(e){
+                    e.preventDefault();
+                    $("#letter").val($(this).text());
+                    $(".searchForm").submit();
+                });
+
+
+                //===== Pagination navigation =====//
+                {% if contacts.has_previous %}
+                $(".pagination .pages li.prev a").click(function(e){
+                    e.preventDefault();
+                    $("#page").val({{ contacts.previous_page_number }});
+                    $(".searchForm").submit();
+                });
+                {% endif %}
+
+                {% if contacts.has_next %}
+                $(".pagination .pages li.next a").click(function(e){
+                    e.preventDefault();
+                    $("#page").val({{ contacts.next_page_number }});
+                    $(".searchForm").submit();
+                });
+                {% endif %}
+
+                $(".pagination .pages li:not(.prev):not(.next) a").click(function(e){
+                    e.preventDefault();
+                    $("#page").val($(this).text());
+                    $(".searchForm").submit();
+                });
+
+            });
+        })(jQuery);
+    </script>
+{% endblock %}
+
+
+{% block content-title %}
+    <div class="title"><h5>{% trans "Association contacts: " %} <strong>{{ association.name }}</strong></h5></div>
+{% endblock %}
+
+
+{% block content-inner %}
+    <div class="widgets">
+
+        {% comment %}{% include "base/association/tabs.html" %}{% endcomment %}
+
+        <form action="." class="searchForm" method="POST">{% csrf_token %}
+            <div class="first">
+                <!-- Search -->
+                <div class="searchWidget first">
+                    <input type="hidden" id="letter" name="letter" value="{{ letter }}" />
+                    <input type="hidden" id="page" name="page" value="{{ contacts.number }}" />
+                    <input type="text" name="search" value="{{ searchtext }}" />
+                    <input type="submit" value="" />
+                </div>
+            </div>
+        </form>
+
+        <form action="{% url 'nublas:association_contacts_action' association.uuid %}" class="validation actionForm mainForm" method="POST">{% csrf_token %}
+
+            <div class="widget first">
+
+                <!-- Head -->
+                <div class="head">
+                    <h5 class="iUsers">{% trans 'Contacts list ' %} - {{ contacts|length }}{% trans " of " %}{{ association.contacts.count }}</h5>
+                    <div class="num">
+                        <a href="{% url 'nublas:contact_add' association.uuid %}" class="blueNum">{% trans "Add" %}</a>
+                    </div>
+                    <div class="action">
+                        <a href="#" class="selectClearButton">{% trans "Clear selection" %}</a>
+                    </div>
+                    <div class="action">
+                        <a href="#" class="selectAllButton">{% trans "Select all" %}</a>
+                    </div>
+                    <div class="action">
+                        <select name="contact_action">
+                            <option value="">{% trans "Choose an action..." %}</option>
+                            <option value="delete">{% trans "Delete selected" %}</option>
+                            <option value="export">{% trans "Export selected" %}</option>
+                            <option value="create_event">{% trans "Create new event" %}</option>
+                        </select>
+                        <a href="#" class="applyButton">{% trans "Apply" %}</a>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div id="contactList-nav">
+                    <div class="ln-letters">
+                        <a class="all {% if letter == 'ALL' %}ln-selected{% endif %}" href="#">ALL</a>
+                        <a class="_ {% if letter == '0-9' %}ln-selected{% endif %}" href="#">0-9</a>
+                        <a class="a {% if letter == 'A' %}ln-selected{% endif %}" href="#">A</a>
+                        <a class="b {% if letter == 'B' %}ln-selected{% endif %}" href="#">B</a>
+                        <a class="c {% if letter == 'C' %}ln-selected{% endif %}" href="#">C</a>
+                        <a class="d {% if letter == 'D' %}ln-selected{% endif %}" href="#">D</a>
+                        <a class="e {% if letter == 'E' %}ln-selected{% endif %}" href="#">E</a>
+                        <a class="f {% if letter == 'F' %}ln-selected{% endif %}" href="#">F</a>
+                        <a class="g {% if letter == 'G' %}ln-selected{% endif %}" href="#">G</a>
+                        <a class="h {% if letter == 'H' %}ln-selected{% endif %}" href="#">H</a>
+                        <a class="i {% if letter == 'I' %}ln-selected{% endif %}" href="#">I</a>
+                        <a class="j {% if letter == 'J' %}ln-selected{% endif %}" href="#">J</a>
+                        <a class="k {% if letter == 'K' %}ln-selected{% endif %}" href="#">K</a>
+                        <a class="l {% if letter == 'L' %}ln-selected{% endif %}" href="#">L</a>
+                        <a class="m {% if letter == 'M' %}ln-selected{% endif %}" href="#">M</a>
+                        <a class="n {% if letter == 'N' %}ln-selected{% endif %}" href="#">N</a>
+                        <a class="o {% if letter == 'O' %}ln-selected{% endif %}" href="#">O</a>
+                        <a class="p {% if letter == 'P' %}ln-selected{% endif %}" href="#">P</a>
+                        <a class="q {% if letter == 'Q' %}ln-selected{% endif %}" href="#">Q</a>
+                        <a class="r {% if letter == 'R' %}ln-selected{% endif %}" href="#">R</a>
+                        <a class="s {% if letter == 'S' %}ln-selected{% endif %}" href="#">S</a>
+                        <a class="t {% if letter == 'T' %}ln-selected{% endif %}" href="#">T</a>
+                        <a class="u {% if letter == 'U' %}ln-selected{% endif %}" href="#">U</a>
+                        <a class="v {% if letter == 'V' %}ln-selected{% endif %}" href="#">V</a>
+                        <a class="w {% if letter == 'W' %}ln-selected{% endif %}" href="#">W</a>
+                        <a class="x {% if letter == 'X' %}ln-selected{% endif %}" href="#">X</a>
+                        <a class="y {% if letter == 'Y' %}ln-selected{% endif %}" href="#">Y</a>
+                        <a class="z {% if letter == 'Z' %}ln-selected{% endif %}" href="#">Z</a>
+                        <a class="- {% if letter == '...' %}ln-selected{% endif %} ln-last" href="#">...</a>
+                    </div>
+                </div>
+
+                <!-- Table with form-->
+                <ul id="contactList" class="listNavTable">
+                    {% spaceless %}
+                        {% for c in contacts %}
+                        <li><a href="{% url 'nublas:contact_details' c.uuid %}">{{ c.last_name }} {{ c.first_name }}</a>
+                            <ul class="listData">
+                                {% for e in c.emails.all %}<li><a href="mailto:{{ e.address }}" title="">{{ e.address }}</a></li>{% endfor %}
+                                {% for p in c.phones.all %}<li><span class="red">{{ p.number }}</span></li>{% endfor %}
+                                <li><input type="checkbox" name="contact_list_selected" value="{{ c.uuid }}" /></li>
+                                {% if c.type %}<li><span class="cNote">{{ c.type }}</span></li>{% endif %}
+                            </ul>
+                        </li>
+                        {% empty %}
+                        <li><center>{% trans "Nothing matched your filter, please click another letter." %}</center></li>
+                        {% endfor %}
+                    {% endspaceless %}
+                </ul>
+
+                <div class="fix"></div>
+            </div>
+
+            <!-- Pagination -->
+            <ul class="pagination">
+                <li{% if not contacts.has_previous %} class="disabled"{% endif %}><a href="#">&laquo;</a></li>
+                {% nublas_xrange 1 contacts.paginator.num_pages|add:1 1 as pages %}
+                {% for p in pages %}
+                    {% if contacts.number == p %}
+                        <li class="active"><span>{{ p }} <span class="sr-only">(current)</span></span></li>
+                    {% else %}
+                        <li><a href="#">{{ p }}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li{% if not contacts.has_next %} class="disabled"{% endif %}><a href="#">&raquo;</a></li>
+            </ul>
+
+        </form>
+
+        <div class="fix"></div>
+    </div>
+{% endblock %}

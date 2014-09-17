@@ -80,7 +80,7 @@ class Association(BaseModel):
     def get_object_or_404(uuid, user):
         # This returns an association in which a user work on
         return get_object_or_404(Association,
-                                 Q(_uuid=uuid) & (Q(holder=user) | Q(collaborators=user)))
+                                 Q(_uuid=uuid) & (Q(owner=user) | Q(collaborators=user)))
 
     def __str__(self):
         return self.name
@@ -111,7 +111,7 @@ class Association(BaseModel):
 @python_2_unicode_compatible
 class Collaborator(BaseModelLinkedToAssociation()):
     """
-        A user partner of the association's holder
+        A user partner of the association's owner
     """
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('user'))
 

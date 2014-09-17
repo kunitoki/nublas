@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from .ui.views.home import *
+from .ui.views.association import *
 from .ui.views.contact import *
 
 
@@ -13,11 +14,45 @@ urlpatterns = patterns('',
 
 #==============================================================================
 urlpatterns += patterns('',
+    # association editing
+    url(r'^association/list/$', AssociationListView.as_view(), name='association_list'),
+    url(r'^association/add/$', AssociationAddView.as_view(), name='association_add'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/details/$', AssociationDetailsView.as_view(), name='association_details'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/edit/$', AssociationEditView.as_view(), name='association_edit'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/delete/$', AssociationDeleteView.as_view(), name='association_delete'),
 
+    # association contacts handling
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/contacts/$', AssociationContactListView.as_view(), name='association_contacts'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/contacts/action/$', AssociationContactListActionView.as_view(), name='association_contacts_action'),
+
+    # association file handling
+    #url(r'^association/(?P<association>[a-fA-F0-9]{32})/files/$', AssociationFilesView.as_view(), name='association_files'),
+    #url(r'^association/(?P<association>[a-fA-F0-9]{32})/fileserve/$', AssociationFileServeView.as_view(), name='association_fileserve'),
+
+    # association agenda handling
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/agenda/$', AssociationAgendaView.as_view(), name='association_agenda'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/agenda/latest/$', AssociationAgendaLatestView.as_view(), name='association_agenda_latest'),
+
+    # association custom fields
+    #url(r'^(?P<association>[a-fA-F0-9]{32})/custom/$', AssociationCustomView.as_view(), name='association_custom'),
+    #url(r'^(?P<association>[a-fA-F0-9]{32})/custom/add/$', AssociationCustomAddView.as_view(), name='association_custom_add'),
+    #url(r'^custom/(?P<object>[a-fA-F0-9]{32})/edit/$', AssociationCustomEditView.as_view(), name='association_custom_edit'),
+    #url(r'^custom/(?P<object>[a-fA-F0-9]{32})/delete/$', AssociationCustomDeleteView.as_view(), name='association_custom_delete'),
+
+    # association settings
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/settings/$', AssociationSettingsView.as_view(), name='association_settings'),
+
+    # TODO - add specific settings
+)
+
+
+#==============================================================================
+urlpatterns += patterns('',
     # globals
-    url(r'^(?P<association>[a-fA-F0-9]{32})/contact/add/$', ContactAddView.as_view(), name='contact_add'),
-    url(r'^(?P<association>[a-fA-F0-9]{32})/contact/autocomplete/$', ContactAutoCompleteView.as_view(), name='contact_search_autocomplete'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/contact/add/$', ContactAddView.as_view(), name='contact_add'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/contact/autocomplete/$', ContactAutoCompleteView.as_view(), name='contact_search_autocomplete'),
 
+    # details
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/details/$', ContactDetailsView.as_view(), name='contact_details'),
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/edit/$', ContactEditView.as_view(), name='contact_edit'),
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/delete/$', ContactDeleteView.as_view(), name='contact_delete'),

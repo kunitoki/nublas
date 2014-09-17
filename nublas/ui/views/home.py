@@ -17,6 +17,9 @@ from ...conf import settings
 from ...models import Contact
 from ..skins import get_skin_relative_path
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 #==============================================================================
 class HomeView(TemplateView):

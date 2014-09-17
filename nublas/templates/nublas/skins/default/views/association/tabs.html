@@ -1,0 +1,6 @@
+{% if association %}
+<li class="active"><a href="{% url 'nublas:association_details' association.uuid %}" role="tab">{% trans "Association details" %}</a></li>
+<li><a href="{% url 'nublas:association_contacts' association.uuid %}" role="tab">{% trans "Contacts" %}</a></li>
+<li><a href="{% url 'nublas:association_agenda' association.uuid %}" role="tab"{% trans "Agenda" %}</a></li>
+<!--<li><a href="{% url 'nublas:association_mailing' association.uuid %}" role="tab" data-toggle="tab">{% trans "Mailing" %}</a></li>-->
+{% endif %}
