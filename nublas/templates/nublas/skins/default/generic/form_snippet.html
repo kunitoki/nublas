@@ -1,30 +1,49 @@
 {% load i18n %}
 
-{% comment %}
-    <!-- See CustomDefaultWidgetsForm in library/forms.py for default widgets -->
-{% endcomment %}
-
 {% spaceless %}
+    {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+
     {% if form.fieldsets %}
-        <pre>
-            --== TODO: generic/form_snippet.html ==--
-        </pre>
-        {% comment %}
-            {% for fieldset in form.fieldsets %}
-                {{ fieldset }}
-            {% endfor %}
-        {% endcomment %}
+        {% for fieldset in form.fieldsets %}
+            <fieldset class="{{ fieldset.classes }}">
+                {% if fieldset.legend %}
+                    <legend>{{ fieldset.legend }}</legend>
+                {% endif %}
+                {% if fieldset.description %}
+                    <p class="description">{{ fieldset.description }}</p>
+                {% endif %}
+                {% for fieldline in fieldset %}
+                    <div class="form-group">
+                    {% for field, field_size in fieldline %}
+                        {% if field.is_hidden %}
+                            {{ field }}
+                        {% else %}
+                            {% if editing %}
+                                {% nublas_include "generic/field_edit.html" %}
+                            {% else %}
+                                {% nublas_include "generic/field_view.html" %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                {% endfor %}
+            </fieldset>
+        {% endfor %}
     {% else %}
         {% for hidden in form.hidden_fields %}
             {{ hidden }}
         {% endfor %}
         {% if editing %}
             {% for field in form %}
-                {% nublas_include "generic/field_edit.html" %}
+                <div class="form-group {% if field.errors %}has-error{% endif %}">
+                    {% nublas_include "generic/field_edit.html" %}
+                </div>
             {% endfor %}
         {% else %}
             {% for field in form %}
-                {% nublas_include "generic/field_view.html" %}
+                <div class="form-group">
+                    {% nublas_include "generic/field_view.html" %}
+                </div>
             {% endfor %}
         {% endif %}
     {% endif %}

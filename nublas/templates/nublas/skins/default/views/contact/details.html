@@ -126,44 +126,6 @@
                 </div>
                 {% endif %}
 
-                <!-- Communication preferences -->
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">
-                        {% trans 'Communication' %}
-                    </label>
-
-                    {% for field in communication_form %}
-                        <div class="col-sm-2">
-                            <div class="checkbox">
-                                <label>
-                                {% if editing or adding %}
-                                    {% nublas_include "generic/field_edit_value.html" %}
-                                {% else %}
-                                    {% nublas_include "generic/field_view_value.html" %}
-                                {% endif %}
-                                </label>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-
-                <!-- Notes -->
-                {% if notes_form.notes.value or editing or adding %}
-                <div class="form-group {% if field.errors %}has-error{% endif %}">
-                    <label class="col-sm-2 control-label" for="{{ notes_form.notes.id }}">
-                        {% trans 'Notes' %}
-                    </label>
-                    <div class="col-sm-10">
-                        {% if editing %}
-                            <textarea class="form-control" rows="5" cols="" id="notes"
-                                      name="{{ notes_form.notes.html_name }}">{{ notes_form.notes.value|safe }}</textarea>
-                        {% else %}
-                            <div class="body">{{ notes_form.notes.value|safe }}</div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endif %}
-
                 <!-- Custom form fields -->
                 {% if custom_form and custom_form.fields|length > 0 %}
                     {% nublas_include "generic/form_snippet.html" with form=custom_form %}

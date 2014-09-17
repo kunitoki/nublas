@@ -1,27 +1,12 @@
 {% load i18n %}
 {% load classname from nublas_filters %}
 
-<div class="form-group {% if field.errors %}has-error{% endif %}">
-    {% if field.field|classname == "booleanfield" %}
-        <div class="col-sm-offset-2 col-sm-10">
-            <div class="checkbox">
-                <label>
-                    {% nublas_include "generic/field_edit_value.html" %}
-                </label>
-                {% if field.help_text %}
-                    <p class="help-text">{{ field.help_text }}</p>
-                {% endif %}
-                {% for error in field.errors %}
-                    <p class="text-danger">{{ error }}</p>
-                {% endfor %}
-            </div>
-        </div>
-    {% else %}
-        <label class="col-sm-2 control-label" for="{{ field.html_name }}">
-             {{ field.label }} {% if field.field.required %}*{% endif %}
-        </label>
-        <div class="col-sm-10">
-            {% nublas_include "generic/field_edit_value.html" %}
+{% if field.field|classname == "booleanfield" %}
+    <div class="col-sm-offset-{% if forloop.first %}2{% else %}1{% endif %} col-sm-{{ field_size|default_if_none:10 }} {% if field.errors %}has-error{% endif %}">
+        <div class="checkbox">
+            <label>
+                {% nublas_include "generic/field_edit_value.html" %}
+            </label>
             {% if field.help_text %}
                 <p class="help-text">{{ field.help_text }}</p>
             {% endif %}
@@ -29,5 +14,25 @@
                 <p class="text-danger">{{ error }}</p>
             {% endfor %}
         </div>
-    {% endif %}
-</div>
+    </div>
+{% else %}
+    <div class="col-sm-{% if forloop.first %}2{% else %}1{% endif %} text-right {% if field.errors %}has-error{% endif %}">
+        <label class="control-label" for="{{ field.html_name }}">
+             {{ field.label }} {% if field.field.required %}*{% endif %}
+        </label>
+    </div>
+<!--
+    <label class="col-sm-{% if forloop.first %}2{% else %}1{% endif %} control-label {% if field.errors %}has-error{% endif %}" for="{{ field.html_name }}">
+         {{ field.label }} {% if field.field.required %}*{% endif %}
+    </label>
+    -->
+    <div class="col-sm-{{ field_size|default_if_none:10 }}{% if field.errors %} has-error{% endif %}">
+        {% nublas_include "generic/field_edit_value.html" %}
+        {% if field.help_text %}
+            <p class="help-text">{{ field.help_text }}</p>
+        {% endif %}
+        {% for error in field.errors %}
+            <p class="text-danger">{{ error }}</p>
+        {% endfor %}
+    </div>
+{% endif %}

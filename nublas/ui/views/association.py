@@ -68,7 +68,7 @@ class AssociationListView(View):
         #        return HttpResponseRedirect(reverse('nublas:association_details', args=[associations[0].uuid]))
         #    else:
         #        messages.info(request, _('You need to create an association to continue.'))
-        #        return HttpResponseRedirect(reverse('association:add', args=[]))
+        #        return HttpResponseRedirect(reverse('nublas:association_add', args=[]))
 
         # real search
         search_query = user_filter
@@ -88,7 +88,7 @@ class AssociationListView(View):
             #    messages.error(request, _('Something went wrong with your configuration. Plase contact administrators.'))
             #else:
             messages.info(request, _('You need to create an association to continue.'))
-            return HttpResponseRedirect(reverse('association:add', args=[]))
+            return HttpResponseRedirect(reverse('nublas:association_add', args=[]))
 
         return render_to_response(get_skin_relative_path('views/association/list.html'),
             RequestContext(request, { 'form': form,

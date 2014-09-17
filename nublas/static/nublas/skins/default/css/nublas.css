@@ -1,0 +1,15 @@
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: "Roboto", Helvetica, Arial, sans-serif!important;
+}
+
+.tab-pane { padding-top: 15px; }
+
+.navbar-brand { margin-top: -6px; }
+
+.page-header { margin: 0px 0 20px; }
+
+/** Bootstrap Taginput Css */
+.bootstrap-tagsinput { width: 100%; }
+.bootstrap-tagsinput.readonly { border: 0px solid transparent; }
+
+/* .table { margin-bottom: 0px; } */

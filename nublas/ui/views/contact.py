@@ -234,27 +234,23 @@ class ContactPersonalForm(BaseModelForm):
 
     class Meta:
         model = Contact
+        fieldsets = (
+            ('Fieldset title', {
+                'fields': (
+                    ('first_name', 'middle_name', 'last_name'),
+                    ('nickname', 'prefix', 'suffix'),
+                    ('type', 'is_enabled'),
+                    'gender',
+                    'birth_date',
+                    ('is_deceased', 'decease_date'),
+                    ('do_not_contact', 'do_not_call', 'do_not_sms', 'do_not_mail'),
+                    'notes',
+                )
+            }),
+        )
         exclude = ('association',
-                   'do_not_call',
-                   'do_not_sms',
-                   'do_not_mail',
-                   'do_not_contact',
                    'groups',
-                   'notes',
                    'tags',)
-
-class ContactNotesForm(BaseModelForm):
-    class Meta:
-        model = Contact
-        fields = ('notes',)
-
-class ContactCommunicationForm(BaseModelForm):
-    class Meta:
-        model = Contact
-        fields = ('do_not_call',
-                  'do_not_sms',
-                  'do_not_mail',
-                  'do_not_contact',)
 
 #class ContactCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
@@ -297,15 +293,11 @@ class ContactDetailsView(View):
         a = c.association
 
         personal_form = ContactPersonalForm(instance=c, association=a)
-        communication_form = ContactCommunicationForm(instance=c)
-        notes_form = ContactNotesForm(instance=c)
         #custom_form = ContactCustomFieldsForm(instance=c, association=a)
         tags_form = ContactTagsForm(instance=c)
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
-                                      'communication_form': communication_form,
-                                      'notes_form': notes_form,
                                       #'custom_form': custom_form,
                                       'tags_form': tags_form,
                                       'association': a,
@@ -325,16 +317,11 @@ class ContactEditView(View):
 
         if request.method == 'POST':
             personal_form = ContactPersonalForm(request.POST, instance=c, association=a)
-            communication_form = ContactCommunicationForm(request.POST, instance=c)
-            notes_form = ContactNotesForm(request.POST, instance=c)
             #custom_form = ContactCustomFieldsForm(request.POST, instance=c, association=a)
             tags_form = ContactTagsForm(request.POST, instance=c)
-            if personal_form.is_valid() and communication_form.is_valid() \
-               and notes_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
+            if personal_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
                 # save the forms
                 personal_form.save()
-                communication_form.save()
-                notes_form.save()
                 #custom_form.save()
                 tags_form.save()
                 # message the user and redirect to view
@@ -345,15 +332,11 @@ class ContactEditView(View):
                 messages.add_message(request, messages.ERROR, _('Cannot save the contact.'))
         else:
             personal_form = ContactPersonalForm(instance=c, association=a)
-            communication_form = ContactCommunicationForm(instance=c)
-            notes_form = ContactNotesForm(instance=c)
             #custom_form = ContactCustomFieldsForm(instance=c, association=a)
             tags_form = ContactTagsForm(instance=c)
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
-                                      'communication_form': communication_form,
-                                      'notes_form': notes_form,
                                       #'custom_form': custom_form,
                                       'tags_form': tags_form,
                                       'association': a,
@@ -374,16 +357,11 @@ class ContactAddView(View):
         if request.method == 'POST':
             c = Contact(association=a)
             personal_form = ContactPersonalForm(request.POST, instance=c, association=a)
-            communication_form = ContactCommunicationForm(request.POST, instance=c)
-            notes_form = ContactNotesForm(request.POST, instance=c)
             #custom_form = ContactCustomFieldsForm(request.POST, instance=c, association=a)
             tags_form = ContactTagsForm(request.POST, instance=c)
-            if personal_form.is_valid() and communication_form.is_valid() \
-               and notes_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
+            if personal_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
                 # save the forms
                 personal_form.save()
-                communication_form.save()
-                notes_form.save()
                 #custom_form.save()
                 tags_form.save()
                 # message the user and redirect to view
@@ -394,14 +372,11 @@ class ContactAddView(View):
                 messages.add_message(request, messages.ERROR, _('Cannot save the contact.'))
         else:
             personal_form = ContactPersonalForm(association=a)
-            communication_form = ContactCommunicationForm()
-            notes_form = ContactNotesForm()
             #custom_form = ContactCustomFieldsForm(association=a)
             tags_form = ContactTagsForm()
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
-                                      'communication_form': communication_form,
                                       #'custom_form': custom_form,
                                       #'tags_form': tags_form,
                                       'association': a,

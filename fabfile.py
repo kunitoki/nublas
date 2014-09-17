@@ -20,6 +20,8 @@ def demo_rebuild_db():
         with settings(warn_only=True):
             local("rm db.sqlite3")
         local("python manage.py syncdb")
+        local("python manage.py makemigrations")
+        local("python manage.py migrate")
 
 @task
 def demo_server():

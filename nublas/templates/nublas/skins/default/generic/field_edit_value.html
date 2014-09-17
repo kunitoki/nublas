@@ -1,30 +1,51 @@
 {% load i18n %}
+{% load attr render_field from widget_tweaks %}
 {% load classname from nublas_filters %}
-{% load nublas_field from nublas_tags %}
+
+{% get_current_language as LANGUAGE_CODE %}
 
 {% if field.field|classname == "modelchoicefield" %}
-    {% nublas_field field class="form-control" %}
-{% elif field.field|classname == "modelmultiplechoicefield" %}
-    {% nublas_field field class="form-control" %}
-{% elif field.field|classname == "tagfield" %}
-    {% nublas_field field data_role="tagsinput" %}
-    <!--
+    {% render_field field %}
     <script type="text/javascript">
-    (function($) {
+    $(function() {
         $(document).ready(function() {
-            $("input[name='{{ field.html_name }}']").tagsInput({
-                "defaultText": "{% trans 'add a tag' %}",
-                "width": "100%",
-                "height": "20px",
-                "removeWithBackspace": false,
-                "autocomplete_url": "{ % url 'base:tags' % }"
+            $("#{{ field.auto_id }}").select2({
+                allowClear: true
             });
         });
-    })(jQuery);
-    </script>{{ field }}
-    -->
+    });
+    </script>
+{% elif field.field|classname == "modelmultiplechoicefield" %}
+    {% render_field field %}
+    <script type="text/javascript">
+    $(function() {
+        $(document).ready(function() {
+            $("#{{ field.auto_id }}").select2({
+                allowClear: true
+            });
+        });
+    });
+    </script>
+{% elif field.field|classname == "tagfield" %}
+    {{ field|attr:"data-role:tagsinput" }}
+{% elif field.field|classname == "datefield" %}
+    <div class="input-group date date-{{ field.auto_id }}">
+        <input type="text" id="{{ field.auto_id }}" name="{{ field.html_name }}" class="form-control" />
+        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+    </div>
+    <script type="text/javascript">
+    $(function() {
+        $(document).ready(function() {
+            $('.input-group.date.date-{{ field.auto_id }}').datepicker({
+                language: "{{ LANGUAGE_CODE }}",
+                autoclose: true,
+                todayHighlight: true
+            });
+        });
+    });
+    </script>
 {% elif field.field|classname == "booleanfield" %}
     {{ field }} {{ field.label }}
 {% else %}
-    {% nublas_field field class="form-control" %}
+    {% render_field field class="form-control" %}
 {% endif %}
