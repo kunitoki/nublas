@@ -2,7 +2,7 @@
 {% load classname from nublas_filters %}
 
 {% if field.field|classname == "booleanfield" %}
-    <div class="col-sm-offset-{% if forloop.first %}2{% else %}1{% endif %} col-sm-{{ field_size|default_if_none:10 }} {% if field.errors %}has-error{% endif %}">
+    <div class="col-sm-offset-{% if forloop.first %}2{% else %}0{% endif %} col-sm-{{ field_size|default_if_none:10 }} {% if field.errors %}has-error{% endif %}">
         <div class="checkbox">
             <label>
                 {% nublas_include "generic/field_edit_value.html" %}

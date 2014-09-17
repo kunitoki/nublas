@@ -231,6 +231,7 @@ class ContactPersonalForm(BaseModelForm):
             self.fields['suffix'].queryset = SuffixType.objects.filter(association=a)
             self.fields['type'].queryset = ContactType.objects.filter(association=a)
             self.fields['gender'].queryset = GenderType.objects.filter(association=a)
+            self.fields['notes'].widget = GenderType.objects.filter(association=a)
 
     class Meta:
         model = Contact

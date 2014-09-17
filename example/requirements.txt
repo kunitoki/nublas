@@ -1,5 +1,4 @@
 Django>=1.7.0
-django-form-utils>=1.0.2
 https://github.com/deschler/django-modeltranslation/archive/0.8b2.zip
 django-taggit>=0.12.1
 django-widget-tweaks>=1.3

@@ -18,7 +18,12 @@ setup(
     package_data={
         'nublas': ['templates/nublas/admin/*.html'],
     },
-    install_requires=open('example/requirements.txt').read().splitlines(),
+    install_requires=[ #open('example/requirements.txt').read().splitlines(),
+        "Django >= 1.7.0",
+        "django-modeltranslation >= 0.8",
+        "django-taggit >= 0.12.1",
+        "django-widget-tweaks >= 1.3",
+    ],
     keywords=[
         'django',
         'crm',
