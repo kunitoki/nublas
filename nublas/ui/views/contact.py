@@ -218,11 +218,6 @@ class GenericContactInlineDeleteView(GenericContactInlineView):
 
 #==============================================================================
 class ContactPersonalForm(BaseModelForm):
-    # TODO - handle those ?
-    #fieldsets = (
-    #    ('Personal Data', { 'fields': ('first_name', 'middle_name', 'last_name',), 'icon': 'iVcard' }),
-    #    ('Communication', { 'fields': ('street', 'number', 'city', 'zip_code'), 'icon': 'iSpeaker' }),
-    #)
     def __init__(self, *args, **kwargs):
         a = kwargs.pop('association')
         super(ContactPersonalForm, self).__init__(*args, **kwargs)
@@ -231,7 +226,6 @@ class ContactPersonalForm(BaseModelForm):
             self.fields['suffix'].queryset = SuffixType.objects.filter(association=a)
             self.fields['type'].queryset = ContactType.objects.filter(association=a)
             self.fields['gender'].queryset = GenderType.objects.filter(association=a)
-            self.fields['notes'].widget = GenderType.objects.filter(association=a)
 
     class Meta:
         model = Contact
@@ -249,9 +243,12 @@ class ContactPersonalForm(BaseModelForm):
                 )
             }),
         )
-        exclude = ('association',
-                   'groups',
-                   'tags',)
+        widgets = {
+            'notes': forms.Textarea(attrs={'rows': 5}),
+        }
+        #exclude = ('association',
+        #           'groups',
+        #           'tags',)
 
 #class ContactCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:

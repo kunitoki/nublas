@@ -11,5 +11,6 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 /** Bootstrap Taginput Css */
 .bootstrap-tagsinput { width: 100%; }
 .bootstrap-tagsinput.readonly { border: 0px solid transparent; }
+.bootstrap-tagsinput .label { font-size: 100%; font-weight: 400; }
 
 /* .table { margin-bottom: 0px; } */

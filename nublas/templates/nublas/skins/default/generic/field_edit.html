@@ -21,12 +21,7 @@
              {{ field.label }} {% if field.field.required %}*{% endif %}
         </label>
     </div>
-<!--
-    <label class="col-sm-{% if forloop.first %}2{% else %}1{% endif %} control-label {% if field.errors %}has-error{% endif %}" for="{{ field.html_name }}">
-         {{ field.label }} {% if field.field.required %}*{% endif %}
-    </label>
-    -->
-    <div class="col-sm-{{ field_size|default_if_none:10 }}{% if field.errors %} has-error{% endif %}">
+    <div class="col-sm-{{ field_size|default:10 }}{% if field.errors %} has-error{% endif %}">
         {% nublas_include "generic/field_edit_value.html" %}
         {% if field.help_text %}
             <p class="help-text">{{ field.help_text }}</p>
