@@ -1,0 +1,29 @@
+{% nublas_extends "base_site.html" %}
+{% load i18n %}
+
+{% block content-inner %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <h1>
+                    {% blocktrans %}Oops!{% endblocktrans %}</h1>
+                <h2>
+                    {% blocktrans %}404 Not Found{% endblocktrans %}</h2>
+                <div class="error-details">
+                    {% blocktrans %}Sorry, an error has occured. Requested page not found!{% endblocktrans %}
+                </div>
+                <div class="error-actions">
+                    <a href="{% url 'nublas:home' %}" class="btn btn-primary btn-lg"><i class="fa fa-home"></i>
+                        {% blocktrans %}Take Me Home{% endblocktrans %}</a>
+                    <a href="{% url 'nublas:home' %}" class="btn btn-default btn-lg"><i class="fa fa-envelope"></i>
+                        {% blocktrans %}Contact Support{% endblocktrans %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

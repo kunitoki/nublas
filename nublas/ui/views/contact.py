@@ -32,6 +32,21 @@ from ...models import (Association, Contact, Group, ContactGroup,
 import logging
 logger = logging.getLogger(__name__)
 
+__all__ = [ "ContactListView", "ContactAddView", "ContactDetailsView",
+            "ContactDeleteView", "ContactEditView", "ContactAddressAddView",
+            "ContactAddressDeleteView", "ContactAddressEditView",
+            "ContactAutoCompleteView", "ContactEmailAddView",
+            "ContactEmailDeleteView", "ContactEmailEditView",
+            "ContactFilesView", "ContactGroupAddView", "ContactGroupDeleteView",
+            "ContactGroupEditView", "ContactPartecipationView",
+            "ContactPhoneAddView", "ContactPhoneDeleteView",
+            "ContactPhoneEditView", "ContactRelationshipAddView",
+            "ContactRelationshipDeleteView", "ContactRelationshipEditView",
+            "ContactRelationshipView", "ContactSubscriptionAddView",
+            "ContactSubscriptionDeleteView", "ContactSubscriptionEditView",
+            "ContactSubscriptionView", "ContactWebsiteAddView",
+            "ContactWebsiteDeleteView", "ContactWebsiteEditView" ]
+
 
 #==============================================================================
 class GenericContactInlineView(View):
@@ -230,14 +245,14 @@ class ContactPersonalForm(BaseModelForm):
     class Meta:
         model = Contact
         fieldsets = (
-            ('Fieldset title', {
+            (None, {
                 'fields': (
                     ('first_name', 'middle_name', 'last_name'),
                     ('nickname', 'prefix', 'suffix'),
                     ('type', 'is_enabled'),
                     'gender',
                     'birth_date',
-                    ('is_deceased', 'decease_date'),
+                    ('decease_date', 'is_deceased'),
                     ('do_not_contact', 'do_not_call', 'do_not_sms', 'do_not_mail'),
                     'notes',
                 )
@@ -246,9 +261,9 @@ class ContactPersonalForm(BaseModelForm):
         widgets = {
             'notes': forms.Textarea(attrs={'rows': 5}),
         }
-        #exclude = ('association',
-        #           'groups',
-        #           'tags',)
+        exclude = ('association',
+                   'groups',
+                   'tags',)
 
 #class ContactCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
@@ -291,8 +306,11 @@ class ContactDetailsView(View):
         a = c.association
 
         personal_form = ContactPersonalForm(instance=c, association=a)
+        personal_form.set_readonly(True)
         #custom_form = ContactCustomFieldsForm(instance=c, association=a)
+        #custom_form.set_readonly(True)
         tags_form = ContactTagsForm(instance=c)
+        tags_form.set_readonly(True)
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,

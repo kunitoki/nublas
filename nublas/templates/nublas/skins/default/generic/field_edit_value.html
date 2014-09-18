@@ -5,7 +5,11 @@
 {% get_current_language as LANGUAGE_CODE %}
 
 {% if field.field|classname == "modelchoicefield" %}
-    {% render_field field %}
+    {% if field.field.required %}
+        {% render_field field required="required" %}
+    {% else %}
+        {% render_field field %}
+    {% endif %}
     <script type="text/javascript">
     $(function() {
         $(document).ready(function() {
@@ -16,7 +20,11 @@
     });
     </script>
 {% elif field.field|classname == "modelmultiplechoicefield" %}
-    {% render_field field %}
+    {% if field.field.required %}
+        {% render_field field required="required" %}
+    {% else %}
+        {% render_field field %}
+    {% endif %}
     <script type="text/javascript">
     $(function() {
         $(document).ready(function() {
@@ -27,7 +35,11 @@
     });
     </script>
 {% elif field.field|classname == "tagfield" %}
-    {{ field|attr:"data-role:tagsinput" }}
+    {% if field.field.required %}
+        {{ field|attr:"data-role:tagsinput"|attr:"required:required" }}
+    {% else %}
+        {{ field|attr:"data-role:tagsinput" }}
+    {% endif %}
 {% elif field.field|classname == "datefield" %}
     <div class="input-group date date-{{ field.auto_id }}">
         <input type="text" id="{{ field.auto_id }}" name="{{ field.html_name }}" class="form-control" />
@@ -47,5 +59,9 @@
 {% elif field.field|classname == "booleanfield" %}
     {{ field }} {{ field.label }}
 {% else %}
-    {% render_field field class="form-control" %}
+    {% if field.field.required %}
+        {% render_field field class="form-control" required="required" %}
+    {% else %}
+        {% render_field field class="form-control" %}
+    {% endif %}
 {% endif %}

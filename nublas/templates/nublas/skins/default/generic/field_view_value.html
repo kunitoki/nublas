@@ -13,6 +13,8 @@
             {% ifequal field.value choice.0 %}
                 {{ choice.1 }}
             {% endifequal %}
+        {% empty %}
+            -
         {% endfor %}
     </p>
 {% elif field.field|classname == "urlfield" %}
@@ -20,17 +22,19 @@
         {% if field.value %}
             <a href="{{ field.value }}" title="{% trans 'Go to website...' %}" target="_blank">{{ field.value }}</a>
         {% else %}
-            &nbsp;
+            -
         {% endif %}
     </p>
 {% elif field.field|classname == "tagfield" %}
     <div class="bootstrap-tagsinput readonly">
         {% for tag in field.value %}
             <span class="tag label label-info">{{ tag.tag.name }}</span>
+        {% empty %}
+            -
         {% endfor %}
     </div>
 {% else %}
     <p class="form-control-static">
-        {{ field.value|default_if_none:'&nbsp;' }}
+        {{ field.value|default:'-' }}
     </p>
 {% endif %}

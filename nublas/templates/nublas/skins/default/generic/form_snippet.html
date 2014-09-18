@@ -1,7 +1,13 @@
 {% load i18n %}
 
 {% spaceless %}
-    {% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+    {% if form.non_field_errors %}
+        <div class="alert alert-block alert-error">
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+        </div>
+    {% endif %}
 
     {% if form.fieldsets %}
         {% for fieldset in form.fieldsets %}
@@ -14,14 +20,17 @@
                 {% endif %}
                 {% for fieldline in fieldset %}
                     <div class="form-group">
-                    {% for field, field_size in fieldline %}
-                        {% if field.is_hidden %}
+                    {% for field, is_hidden, field_size in fieldline %}
+                        {% if is_hidden %}
                             {{ field }}
-                        {% else %}
-                            {% if editing %}
-                                {% nublas_include "generic/field_edit.html" %}
+                        {% endif %}
+                    {% endfor %}
+                    {% for field, is_hidden, field_size in fieldline %}
+                        {% if not field.is_hidden %}
+                            {% if not field.field.is_readonly %}
+                                {% nublas_include "generic/field_edit.html" with first=forloop.first %}
                             {% else %}
-                                {% nublas_include "generic/field_view.html" %}
+                                {% nublas_include "generic/field_view.html" with first=forloop.first %}
                             {% endif %}
                         {% endif %}
                     {% endfor %}
@@ -33,18 +42,14 @@
         {% for hidden in form.hidden_fields %}
             {{ hidden }}
         {% endfor %}
-        {% if editing %}
-            {% for field in form %}
-                <div class="form-group {% if field.errors %}has-error{% endif %}">
-                    {% nublas_include "generic/field_edit.html" %}
-                </div>
-            {% endfor %}
-        {% else %}
-            {% for field in form %}
-                <div class="form-group">
-                    {% nublas_include "generic/field_view.html" %}
-                </div>
-            {% endfor %}
-        {% endif %}
+        {% for field in form.visible_fields %}
+            <div class="form-group{% if not field.is_readonly and field.errors %} has-error{% endif %}">
+                {% if not field.field.is_readonly %}
+                    {% nublas_include "generic/field_edit.html" with first=1 %}
+                {% else %}
+                    {% nublas_include "generic/field_view.html" with first=1 %}
+                {% endif %}
+            </div>
+        {% endfor %}
     {% endif %}
 {% endspaceless %}

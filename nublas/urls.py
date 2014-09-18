@@ -1,14 +1,20 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import patterns, url
+from django.views.generic.base import TemplateView, RedirectView
 
+from .conf import settings
+
+from .ui.skins import get_skin_relative_path
 from .ui.views.home import *
+from .ui.views.auth import *
 from .ui.views.association import *
 from .ui.views.contact import *
 
 
 #==============================================================================
 urlpatterns = patterns('',
-    url(r'^$', HomeView.as_view(), name='home'),
+    url(r'^$', RedirectView.as_view(url=settings.INDEX_URL), name='home'),
     url(r'^dashboard/$', DashboardView.as_view(), name='dashboard'),
+    url(r'^tags/$', TagsAutoCompleteView.as_view(), name='tags'),
 )
 
 
@@ -99,3 +105,44 @@ urlpatterns += patterns('',
     url(r'^contact/relationship/(?P<object>[a-fA-F0-9]{32})/edit/$', ContactRelationshipEditView.as_view(), name='contact_relationship_edit'),
     url(r'^contact/relationship/(?P<object>[a-fA-F0-9]{32})/delete/$', ContactRelationshipDeleteView.as_view(), name='contact_relationship_delete'),
 )
+
+
+#==============================================================================
+# Only enable login based urls if requested
+if settings.ENABLE_USER_LOGIN:
+    urlpatterns += patterns('',
+        # profile login
+        url(r'^auth/login/$', LoginView.as_view(), name='auth_login'),
+        url(r'^auth/logout/$', LogoutView.as_view(), name='auth_logout'),
+
+        # user profile editing
+        url(r'^auth/profile/$', ProfileView.as_view(), name='auth_profile'),
+
+        # lost password and username
+        url(r'^auth/lost_password/$', LostPasswordView.as_view(), name='auth_lost_password'),
+        url(r'^auth/lost_password_change/(?P<lost_password_key>.*)/$', LostPasswordChangeView.as_view(), name='auth_lost_password_change'),
+        url(r'^auth/lost_username/$', LostUsernameView.as_view(), name='auth_lost_username'),
+
+        # su
+        url(r'^su/(?P<username>.*)/$', SuperuserView, { 'redirect_url': settings.INDEX_URL }),
+    )
+
+
+#==============================================================================
+# Only enable new registration if requested
+if settings.ENABLE_USER_REGISTRATION:
+    urlpatterns += patterns('',
+        # user registration and activation
+        url(r'^auth/register/$', RegisterView.as_view(), name='auth_register'),
+        url(r'^auth/activate/(?P<activation_key>.*)/$', ActivateView.as_view(), name='auth_activate'),
+    )
+
+
+#==============================================================================
+# Debug views
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        (r'^500/$', TemplateView.as_view(template_name=get_skin_relative_path('500.html'))),
+        (r'^404/$', TemplateView.as_view(template_name=get_skin_relative_path('404.html'))),
+        (r'^403/$', TemplateView.as_view(template_name=get_skin_relative_path('403.html'))),
+    )

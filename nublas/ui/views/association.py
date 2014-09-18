@@ -31,6 +31,13 @@ from ...models import Association, Contact, Event
 import logging
 logger = logging.getLogger(__name__)
 
+__all__ = [ "AssociationAddView", "AssociationAgendaLatestView",
+            "AssociationAgendaView", "AssociationContactListActionView",
+            "AssociationContactListView", "AssociationDeleteView",
+            "AssociationDetailsView", "AssociationEditView",
+            "AssociationFilesView", "AssociationListView",
+            "AssociationSettingsView" ]
+
 
 #==============================================================================
 class AssociationDetailsForm(BaseModelForm):
