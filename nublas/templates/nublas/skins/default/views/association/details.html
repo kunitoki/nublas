@@ -37,7 +37,7 @@
         {% if adding %}
             <h1>{% trans "Adding new association" %}</h1>
         {% else %}
-            <h1>{% trans "Association details" %}: <small>{{ association.name }}</small></h1>
+            <h1>{{ association.name }} <small>{% trans "Association details" %}</small></h1>
         {% endif %}
     </div>
 {% endblock %}
@@ -45,22 +45,11 @@
 
 {% block content-inner %}
 
-    {% comment %}
-    {% if not adding %}
-        {% nublas_include "association/tabs.html" %}
-    {% endif %}
-    {% endcomment %}
-
     <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
 
         <ul class="nav nav-tabs" role="tablist">
-            <li class="active"><a href="#association-details" role="tab" data-toggle="tab">{% trans "Association details" %}</a></li>
-            {% if association %}
-            <li><a href="{% url 'nublas:association_contacts' association.uuid %}" role="tab">{% trans "Contacts" %}</a></li>
-            <!--<li><a href="#contacts" role="tab" data-toggle="tab">{% trans "Contacts" %}</a></li>-->
-            <li><a href="#agenda" role="tab" data-toggle="tab">{% trans "Agenda" %}</a></li>
-            <li><a href="#mailing" role="tab" data-toggle="tab">{% trans "Mailing" %}</a></li>
-            {% endif %}
+            {% nublas_include "views/association/tabs.html" with activetab="details" %}
+
             <li class="pull-right">
                 <div class="btn-group">
                     {% if editing or adding %}
@@ -93,7 +82,7 @@
         <div class="tab-content">
 
             <!-- Association details -->
-            <div class="tab-pane active" id="association-details">
+            <div class="tab-pane active">
                 <!-- Main form -->
                 {% nublas_include "generic/form_snippet.html" with form=details_form %}
 
@@ -108,15 +97,6 @@
                         {% nublas_include "generic/form_snippet.html" with form=tags_form %}
                     {% endif %}
                 {% endif %}
-            </div>
-
-            <div class="tab-pane" id="contacts">
-            </div>
-
-            <div class="tab-pane" id="agenda">
-            </div>
-
-            <div class="tab-pane" id="mailing">
             </div>
 
         </div>

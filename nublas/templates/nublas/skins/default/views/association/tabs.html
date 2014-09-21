@@ -1,6 +1,16 @@
+{% load i18n %}
+
+<li {% if activetab == 'details' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'details' %}{% url 'nublas:association_details' association.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Association details" %}</a></li>
 {% if association %}
-<li class="active"><a href="{% url 'nublas:association_details' association.uuid %}" role="tab">{% trans "Association details" %}</a></li>
-<li><a href="{% url 'nublas:association_contacts' association.uuid %}" role="tab">{% trans "Contacts" %}</a></li>
-<li><a href="{% url 'nublas:association_agenda' association.uuid %}" role="tab"{% trans "Agenda" %}</a></li>
-<!--<li><a href="{% url 'nublas:association_mailing' association.uuid %}" role="tab" data-toggle="tab">{% trans "Mailing" %}</a></li>-->
+<li {% if activetab == 'contacts' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'contacts' %}{% url 'nublas:association_contacts' association.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Contacts" %}</a></li>
+<li {% if activetab == 'agenda' %}class="active"{% endif %}>
+    <a href="#agenda" role="tab">
+        {% trans "Agenda" %}</a></li>
+<li {% if activetab == 'mailing' %}class="active"{% endif %}>
+    <a href="#mailing" role="tab">
+        {% trans "Mailing" %}</a></li>
 {% endif %}

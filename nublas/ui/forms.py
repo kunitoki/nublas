@@ -39,7 +39,7 @@ class Fieldline(object):
         if len(self.fields) > 1:
             remaining_size = remaining_size / len(self.fields) - 1
         for index, field in enumerate(self.fields):
-            yield self.form[field], self.form[field].is_hidden, remaining_size
+            yield self.form[field], remaining_size
 
 
 class Fieldset(object):
@@ -124,7 +124,7 @@ class BaseForm(ValidatingForm, FieldsetForm, ReadonlyForm, forms.Form):
         super(BaseForm, self).__init__(*args, **kwargs)
         # Update fieldsets
         self._build_fieldsets()
-         # Initialize values from initial parameters
+        # Initialize values from initial parameters
         if initial:
             for key, value in initial.items():
                 try:

@@ -59,7 +59,6 @@ class LazySettingsDict(object):
 
     @settings_property
     def INDEX_URL(self):
-        print self.settings.get('INDEX_URL', '/')
         return self.settings.get('INDEX_URL', '/')
 
     @settings_property

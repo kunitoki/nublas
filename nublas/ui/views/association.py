@@ -144,9 +144,9 @@ class AssociationEditView(View):
                 return HttpResponseRedirect(reverse('nublas:association_details', args=[a.uuid]))
             else:
                 # forms are invalid
-                print(details_form.errors)
-                #print(custom_form.errors)
-                print(tags_form.errors)
+                logger.debug(details_form.errors)
+                #logger.debug(custom_form.errors)
+                logger.debug(tags_form.errors)
                 messages.error(request, _('Cannot save the association.'))
         else:
             details_form = AssociationDetailsForm(instance=a)
@@ -183,7 +183,7 @@ class AssociationAddView(View):
                 return HttpResponseRedirect(reverse('nublas:association_details', args=[a.uuid]))
             else:
                 # forms are invalid
-                print(details_form.errors)
+                logger.debug(details_form.errors)
                 messages.error(request, _('Cannot save the association.'))
         else:
             details_form = AssociationDetailsForm()
@@ -300,7 +300,7 @@ class AssociationContactListActionView(View):
                     messages.error(request, _('Error executing the selected action on an empty set.'))
             else:
                 # TODO - rewrite it better
-                print(form.errors)
+                logger.debug(form.errors)
                 messages.error(request, _('Error executing the selected action.'))
         else:
             messages.error(request, _('Cannot execute the selected action.'))

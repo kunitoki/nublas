@@ -110,5 +110,7 @@ STATIC_URL = '/static/'
 # Nublas settings
 
 NUBLAS_SETTINGS = {
-    'LOGIN_URL': '/nublas/auth/login',
+    'LOGIN_URL': '/nublas/auth/login/',
+    'LOGIN_REDIRECT_URL': '/nublas/association/list/',
+    'INDEX_URL': '/nublas/association/list/',
 }

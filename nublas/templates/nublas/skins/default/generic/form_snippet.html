@@ -20,12 +20,12 @@
                 {% endif %}
                 {% for fieldline in fieldset %}
                     <div class="form-group">
-                    {% for field, is_hidden, field_size in fieldline %}
-                        {% if is_hidden %}
+                    {% for field, field_size in fieldline %}
+                        {% if field.is_hidden %}
                             {{ field }}
                         {% endif %}
                     {% endfor %}
-                    {% for field, is_hidden, field_size in fieldline %}
+                    {% for field, field_size in fieldline %}
                         {% if not field.is_hidden %}
                             {% if not field.field.is_readonly %}
                                 {% nublas_include "generic/field_edit.html" with first=forloop.first %}

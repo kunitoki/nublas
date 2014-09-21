@@ -32,7 +32,6 @@ def Custom403View(request):
                               RequestContext(request, { }))
 
 def Custom404View(request):
-    print "xxxxx"
     return render_to_response(get_skin_relative_path('404.html'),
                               RequestContext(request, { }))
 

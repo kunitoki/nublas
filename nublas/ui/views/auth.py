@@ -117,7 +117,7 @@ class LoginView(View):
                     messages.error(request, _('Invalid username or password.'))
             else:
                 # TODO - make this better
-                print(form.errors)
+                logger.debug(form.errors)
                 _update_login_retries(request.session)
                 messages.error(request, _('Invalid login data provided.'))
         else:

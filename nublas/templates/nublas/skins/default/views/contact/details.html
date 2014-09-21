@@ -29,7 +29,7 @@
         {% if adding %}
             <h1>{% trans "Adding new contact" %}</h1>
         {% else %}
-            <h1>{% trans "Contact details" %}: <small>{{ contact.first_name }} {{ contact.last_name }}</small></h1>
+            <h1>{{ contact.first_name }} {{ contact.last_name }} <small>{% trans "Contact details" %}</small></h1>
         {% endif %}
     </div>
 {% endblock %}
