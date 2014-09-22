@@ -1,0 +1,150 @@
+{% nublas_extends "generic/inline_view.html" %}
+{% load static %}
+{% load i18n %}
+{% load nublas_tags nublas_filters %}
+
+{% block javascript-after %}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+
+                //===== Fix Hidden Table =====//
+
+                $("#contactsHiddenTable tbody tr td").each(function(index) {
+                    var re = /(.*-)(\d+)(-.*)/;
+                    $(this).find("select, input, textarea, div").each(function(index) {
+                        $(this).removeAttr("value");
+                        var id = $(this).attr("id");
+                        if (id) {
+                            var m = id.match(re);
+                            if (m && m.length == 4)
+                                $(this).attr("id", m[1] + "X" + m[3]);
+                        }
+                        var name = $(this).attr("name");
+                        if (name) {
+                            var m = name.match(re);
+                            if (m && m.length == 4)
+                                $(this).attr("name", m[1] + "X" + m[3]);
+                        }
+                    });
+                });
+
+
+                //===== Add Button =====//
+
+                $("#contactsAddButton").click(function(evt) {
+                    evt.preventDefault();
+
+                    var lastTableRow = $("#contactsHiddenTable tbody tr:last-child").clone();
+                    lastTableRow.appendTo($("#contactsTable tbody"));
+
+                    $("#contactsTable tbody tr:last-child td").each(function(index) {
+                        var $this = $(this);
+                        var field = $this.find("select, input, textarea").each(function(index) {
+                            $(this).removeAttr("value");
+                        });
+
+                        var re = /(.*-)(X)(-.*)/;
+                        $this.find("select, input, textarea, div").each(function(index) {
+                            var count = $("#id_contacts-TOTAL_FORMS").val();
+                            var id = $(this).attr("id");
+                            if (id) {
+                                var m = id.match(re);
+                                if (m && m.length == 4)
+                                    $(this).attr("id", m[1] + parseInt(count) + m[3]);
+                            }
+                            var name = $(this).attr("name");
+                            if (name) {
+                                var m = name.match(re);
+                                if (m && m.length == 4)
+                                    $(this).attr("name", m[1] + parseInt(count) + m[3]);
+                            }
+                        });
+
+                        $this.find("select, input:checkbox, input:radio").uniform();
+                    });
+
+                    $("#id_contacts-TOTAL_FORMS").val(parseInt($("#id_contacts-TOTAL_FORMS").val()) + 1);
+
+                    // TODO - retrigger autocomplete
+                    //$("#contactsTable tbody tr:last-child td span.autocomplete_light_widget[data-bootstrap=user]").each(function() {
+                    //    $(this).autocompleteWidget();
+                    //});
+
+                    return false;
+                });
+
+            });
+        })(jQuery);
+    </script>
+{% endblock %}
+
+
+{% block styles-after %}
+    <!-- HACK - Hide datatables pagination -->
+    <style type="text/css">
+        table.display tr:last-child {border-bottom:0px solid transparent;}
+    </style>
+{% endblock %}
+
+
+{% block form-before %}
+    <table cellpadding="0" cellspacing="0" border="0" id="contactsHiddenTable" class="displayNone no-uniform">
+        <tbody>
+            <tr class="gradeA">
+                {% spaceless %}
+                    {% for form in contact_formset|slice:":1" %}
+                        {% for field in form %}
+                            {% if field.label|lower in form.display_fields %}
+                                <td>{{ field }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endspaceless %}
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+
+{% block form-before-submit %}
+    <div class="widget first">
+        <div class="head">
+            <h5 class="iUsers2">{% trans "Contacts" %}</h5>
+            <div class="num"><a href="#" id="contactsAddButton" class="blueNum">{% trans "Add" %}</a></div>
+        </div>
+
+        {{ contact_formset.management_form }}
+
+        <table cellpadding="0" cellspacing="0" border="0" id="contactsTable" class="display tableStatic">
+            <thead>
+            <tr>
+                {% spaceless %}
+                    {% for form in contact_formset|slice:":1" %}
+                        {% for field in form %}
+                            {% if field.label|lower in form.display_fields %}
+                                <td>{{ field.label|capfirst }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                {% endspaceless %}
+            </tr>
+            </thead>
+            <tbody>
+                {% spaceless %}
+                    {% for form in contact_formset %}
+                    <tr class="gradeA">
+                        {% for field in form %}
+                            {% if field.label|lower in form.display_fields %}
+                                <td>{{ field.errors }}{{ field }}</td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                {% endspaceless %}
+            </tbody>
+        </table>
+
+        <div class="fix"></div>
+    </div>
+{% endblock %}

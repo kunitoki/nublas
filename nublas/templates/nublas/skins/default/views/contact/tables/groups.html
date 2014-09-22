@@ -7,35 +7,31 @@
         <tr>
             <th>{% trans "Name" %}</th>
             <th>
-                {% if editing %}
-                    <div class="btn-group pull-right">
-                        <a href="{% url 'nublas:contact_group_add' contact.uuid %}" class="btn btn-primary btn-xs">
-                            <i class="fa fa-plus-circle fa-fw"></i> {% trans "Add" %}</a>
-                    </div>
-                {% endif %}
+                <div class="btn-group pull-right">
+                    <a href="{% url 'nublas:contact_group_add' contact.uuid %}" class="btn btn-primary btn-xs">
+                        <i class="fa fa-plus-circle fa-fw"></i> {% trans "Add" %}</a>
+                </div>
             </th>
         </tr>
         </thead>
         <tbody>
-            {% spaceless %}
-                {% for g in groups %}
-                <tr>
-                    <td>{{ g.name }}</td>
-                    <td class="center">
-                        {% if editing %}
-                        <div class="btn-group pull-right">
-                            <a href="{% url 'nublas:contact_group_edit' g.uuid %}" class="btn btn-primary btn-xs">
-                                <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
-                            <a href="{% url 'nublas:contact_group_delete' g.uuid %}" class="btn btn-danger btn-xs">
-                                <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a>
-                        </div>
-                        {% else %}
-                        &nbsp;
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            {% endspaceless %}
+            {% for g in groups %}
+            <tr>
+                <td>{{ g.name }}</td>
+                <td class="center">
+                    {% if editing %}
+                    <div class="btn-group pull-right">
+                        <a href="{% url 'nublas:contact_group_edit' g.uuid %}" class="btn btn-primary btn-xs">
+                            <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                        <a href="{% url 'nublas:contact_group_delete' g.uuid %}" class="btn btn-danger btn-xs">
+                            <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a>
+                    </div>
+                    {% else %}
+                    &nbsp;
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>

@@ -4,7 +4,9 @@ from django.views.generic.base import TemplateView, RedirectView
 from .conf import settings
 
 from .ui.skins import get_skin_relative_path
+
 from .ui.views.home import *
+from .ui.views.agenda import *
 from .ui.views.auth import *
 from .ui.views.association import *
 from .ui.views.contact import *
@@ -86,6 +88,7 @@ urlpatterns += patterns('',
     url(r'^contact/websites/(?P<object>[a-fA-F0-9]{32})/delete/$', ContactWebsiteDeleteView.as_view(), name='contact_website_delete'),
 
     # groups
+    url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/groups/$', ContactGroupView.as_view(), name='contact_groups'),
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/group/add/$', ContactGroupAddView.as_view(), name='contact_group_add'),
     url(r'^contact/group/(?P<object>[a-fA-F0-9]{32})/edit/$', ContactGroupEditView.as_view(), name='contact_group_edit'),
     url(r'^contact/group/(?P<object>[a-fA-F0-9]{32})/delete/$', ContactGroupDeleteView.as_view(), name='contact_group_delete'),
@@ -104,6 +107,24 @@ urlpatterns += patterns('',
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/relationship/add/$', ContactRelationshipAddView.as_view(), name='contact_relationship_add'),
     url(r'^contact/relationship/(?P<object>[a-fA-F0-9]{32})/edit/$', ContactRelationshipEditView.as_view(), name='contact_relationship_edit'),
     url(r'^contact/relationship/(?P<object>[a-fA-F0-9]{32})/delete/$', ContactRelationshipDeleteView.as_view(), name='contact_relationship_delete'),
+)
+
+
+#==============================================================================
+urlpatterns += patterns('',
+    # events from all associations (in dashboard)
+    url(r'^events/$', AgendaAllEventListJsonView.as_view(), name='agenda_allevents'),
+    url(r'^events/style.css$', AgendaAllEventListCssView.as_view(), name='agenda_allevents_style'),
+
+    # association events
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/events/$', AgendaEventListJsonView.as_view(), name='agenda_events'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/events/style.css$', AgendaEventListCssView.as_view(), name='agenda_events_style'),
+
+    # events manipulation
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/event/add/$', AgendaEventAddView.as_view(), name='agenda_event_add'),
+    url(r'^event/(?P<object>[a-fA-F0-9]{1,32})/edit/$', AgendaEventEditView.as_view(), name='agenda_event_edit'),
+    url(r'^event/(?P<object>[a-fA-F0-9]{1,32})/resize/$', AgendaEventResizeView.as_view(), name='agenda_event_resize'),
+    url(r'^event/(?P<object>[a-fA-F0-9]{1,32})/delete/$', AgendaEventDeleteView.as_view(), name='agenda_event_delete'),
 )
 
 

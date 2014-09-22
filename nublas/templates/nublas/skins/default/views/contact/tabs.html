@@ -1,0 +1,20 @@
+{% load i18n %}
+
+<li {% if activetab == 'details' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'details' %}{% url 'nublas:contact_details' contact.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Personal details" %}</a></li>
+
+{% if contact and not adding %}
+<li {% if activetab == 'groups' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'groups' %}{% url 'nublas:contact_groups' contact.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Groups" %}</a></li>
+<li {% if activetab == 'subscriptions' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'subscriptions' %}{% url 'nublas:contact_subscriptions' contact.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Subscriptions" %}</a></li>
+<li {% if activetab == 'partecipations' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'partecipations' %}{% url 'nublas:contact_partecipations' contact.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Partecipations" %}</a></li>
+<li {% if activetab == 'relationships' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'relationships' %}{% url 'nublas:contact_relationships' contact.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Relationships" %}</a></li>
+{% endif %}

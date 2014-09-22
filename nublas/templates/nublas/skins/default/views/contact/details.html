@@ -1,28 +1,6 @@
 {% nublas_extends "base_site.html" %}
 {% load i18n %}
 
-{% block styles-after %}
-{% endblock %}
-
-{% block javascript-after %}
-    <script type="text/javascript">
-        $(function() {
-            $(document).ready(function() {
-                $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                    $.cookie('contact-last-tab', $(this).attr('href'));
-                });
-                var lastTab = $.cookie('contact-last-tab');
-                if (lastTab) {
-                    $('ul.nav-tabs').children().removeClass('active');
-                    $('a[href='+ lastTab +']').parents('li:first').addClass('active');
-                    $('div.tab-content').children().removeClass('active');
-                    $(lastTab).addClass('active');
-                }
-            });
-        });
-    </script>
-{% endblock %}
-
 
 {% block content-title %}
     <div class="page-header">
@@ -37,52 +15,16 @@
 
 {% block content-inner %}
 
-    {% comment %}
-    {% if not adding %}
-        {% nublas_include "contact/tabs.html" %}
-    {% endif %}
-    {% endcomment %}
-
     <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
 
         <ul class="nav nav-tabs" role="tablist">
-            <li class="active"><a href="#personal-details" role="tab" data-toggle="tab">{% trans "Personal details" %}</a></li>
-            {% if contact %}
-            <li><a href="#groups" role="tab" data-toggle="tab">{% trans "Groups" %}</a></li>
-            {% endif %}
-            <li class="pull-right">
-                <div class="btn-group">
-                    {% if editing or adding %}
-                        <button class="btn btn-default btn-sm" type="submit">
-                            <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Contact' %}</button>
-                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <i class="caret"></i>
-                            <i class="sr-only">Toggle Dropdown</i>
-                        </button>
-                        <ul class="dropdown-menu pull-right" role="menu">
-                            <li><a href="#">{% trans "Save and add another" %}</a></li>
-                            {% if contact and not adding %}
-                            <li><a href="#">{% trans "Save as a copy" %}</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{% url 'nublas:contact_details' contact.uuid %}">
-                                <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{% url 'nublas:contact_delete' contact.uuid %}">
-                                <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a></li>
-                            {% endif %}
-                        </ul>
-                    {% else %}
-                        <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-sm">
-                            <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
-                    {% endif %}
-                </div>
-            </li>
+            {% nublas_include "views/contact/tabs.html" with activetab="details" %}
         </ul>
 
         <div class="tab-content">
 
             <!-- Personal details -->
-            <div class="tab-pane active" id="personal-details">
+            <div class="tab-pane active">
 
                 <!-- Main form -->
                 {% nublas_include "generic/form_snippet.html" with form=personal_form %}
@@ -131,12 +73,35 @@
                     {% nublas_include "generic/form_snippet.html" with form=custom_form %}
                 {% endif %}
 
-                <!-- Tags form -->
-                {% if tags_form %}
-                    {% if tags_form.has_tags or editing or adding %}
-                        {% nublas_include "generic/form_snippet.html" with form=tags_form %}
-                    {% endif %}
-                {% endif %}
+                <!-- Buttons -->
+                <div class="col-sm-12 text-center">
+                    <div class="btn-group">
+                        {% if editing or adding %}
+                            <button class="btn btn-default btn-sm" type="submit">
+                                <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Contact' %}</button>
+
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                                <i class="caret"></i>
+                                <i class="sr-only">Toggle Dropdown</i>
+                            </button>
+                            <ul class="dropdown-menu pull-right" role="menu">
+                                <li><a href="#">{% trans "Save and add another" %}</a></li>
+                                {% if contact and not adding %}
+                                <li><a href="#">{% trans "Save as a copy" %}</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{% url 'nublas:contact_details' contact.uuid %}">
+                                    <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a></li>
+                                <li class="divider"></li>
+                                <li><a href="{% url 'nublas:contact_delete' contact.uuid %}">
+                                    <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a></li>
+                                {% endif %}
+                            </ul>
+                        {% else %}
+                            <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-sm">
+                                <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                        {% endif %}
+                    </div>
+                </div>
 
             </div>
 

@@ -93,7 +93,7 @@
 
             <div class="row row-section">
                 <!-- Search -->
-                <div class="col-md-3">
+                <div class="col-sm-3">
                     <form action="." method="POST" role="form" class="searchForm">{% csrf_token %}
                         <input type="hidden" id="letter" name="letter" value="{{ letter }}" />
                         <input type="hidden" id="page" name="page" value="{{ contacts.number }}" />
@@ -107,7 +107,7 @@
                 </div>
 
                 <!-- Buttons -->
-                <div class="col-md-9 text-right">
+                <div class="col-sm-9 text-right">
                     <a class="btn btn-primary" href="{% url 'nublas:contact_add' association.uuid %}">
                         <i class="fa fa-plus-circle fa-fw"></i> {% trans "Add" %}</a>
                     <a class="btn btn-default selectClearButton" href="#">{% trans "Clear selection" %}</a>
@@ -130,7 +130,7 @@
 
             <!-- Letters -->
             <div class="row row-section">
-                <div class="col-md-12 text-center" id="contactList-nav">
+                <div class="col-sm-12 text-center" id="contactList-nav">
                     <div class="btn-group">
                         <a class="btn all btn-{% if letter == 'ALL' %}primary{% else %}default{% endif %}" href="#">ALL</a>
                         <a class="btn _   btn-{% if letter == '0-9' %}primary{% else %}default{% endif %}" href="#">0-9</a>
@@ -197,11 +197,11 @@
 
             <!-- Pagination -->
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-sm-6">
                     <h4>{% trans 'Contacts list ' %} - {{ contacts|length }}{% trans " of " %}{{ association.contacts.count }}</h4>
                 </div>
 
-                <div class="col-md-6 text-right">
+                <div class="col-sm-6 text-right">
                     <ul class="pagination">
                         <li{% if not contacts.has_previous %} class="disabled"{% endif %}><a href="#">&laquo;</a></li>
                         {% nublas_xrange 1 contacts.paginator.num_pages|add:1 1 as pages %}

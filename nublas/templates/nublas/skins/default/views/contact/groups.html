@@ -1,0 +1,36 @@
+{% nublas_extends "base_site.html" %}
+{% load i18n %}
+
+
+{% block content-title %}
+    <div class="page-header">
+        {% if adding %}
+            <h1>{% trans "Adding new group" %}</h1>
+        {% else %}
+            <h1>{{ contact.first_name }} {{ contact.last_name }} <small>{% trans "Contact groups" %}</small></h1>
+        {% endif %}
+    </div>
+{% endblock %}
+
+
+{% block content-inner %}
+
+    <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
+
+        <ul class="nav nav-tabs" role="tablist">
+            {% nublas_include "views/contact/tabs.html" with activetab="groups" %}
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- Groups -->
+            <div class="tab-pane active">
+                {% if contact %}
+                    {% nublas_include "views/contact/tables/groups.html" with groups=contact.groups.all %}
+                {% endif %}
+            </div>
+        </div>
+
+    </form>
+
+{% endblock %}

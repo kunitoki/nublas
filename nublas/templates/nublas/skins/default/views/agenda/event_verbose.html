@@ -1,0 +1,11 @@
+{% spaceless %}
+    <strong>{{ title }}</strong>
+    <p align="justify">
+        {% if details %}
+            {{ details|linebreaksbr }}
+            <br/>
+        {% endif %}
+        {% if contacts %}<br/>&nbsp;- {{ contacts }} contacts{% endif %}
+        {% if dogs %}<br/>&nbsp;- {{ dogs }} dogs{% endif %}
+    </p>
+{% endspaceless %}

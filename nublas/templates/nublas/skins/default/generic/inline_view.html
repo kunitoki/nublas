@@ -57,13 +57,6 @@
                     {% nublas_include "generic/form_snippet.html" with form=custom_form %}
                 {% endif %}
 
-                <!-- Tags form -->
-                {% if tags_form %}
-                    {% if tags_form.has_tags or editing or adding %}
-                        {% nublas_include "generic/form_snippet.html" with form=tags_form %}
-                    {% endif %}
-                {% endif %}
-
             </div>
         </div>
 

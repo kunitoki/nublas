@@ -1,0 +1,40 @@
+{% load static %}
+{% load i18n %}
+{% load nublas_tags %}
+
+{% if use_head %}
+<div class="head">
+    <h5 class="iAlarm">{% trans "Incoming events" %}</h5>
+    <div class="num"><a href="#" class="greenNum">{{ latest_events|length }}</a></div>
+</div>
+{% endif %}
+
+{% for event in latest_events %}
+    <div class="supTicket {% if forloop.first %}nobg{% endif %}">
+        <div class="issueType">
+            <span class="issueInfo"><a href="{% url 'agenda:event_edit' event.uuid %}" title="">{{ event.title }}</a></span>
+            <span class="issueNum"><a href="#" title="">{{ event.calendar }}</a></span>
+            <div class="fix"></div>
+        </div>
+        <div class="issueSummary">
+            <a href="mailto:{{ event.author.email }}" title="" class="floatleft">
+                <img src="{% static 'images/user.png' %}" alt=""></a>
+            <div class="ticketInfo">
+                <ul>
+                    <li>{% trans "Author" %}:</li>
+                    <li class="even"><a href="#" title="">{{ event.author.email }}</a></li>
+                    <li>{% trans "Start date" %}:</li>
+                    <li class="even"><strong class="green">{{ event.start_date }}</strong></li>
+                    <li>{% trans "End date" %}:</li>
+                    <li class="even"><strong class="green">{{ event.end_date }}</strong></li>
+                    {% if event.allday %}
+                        <li>{% trans "All day" %}:</li>
+                        <li class="even"><strong class="green">{{ event.allday }}</strong></li>
+                    {% endif %}
+                </ul>
+                <div class="fix"></div>
+            </div>
+            <div class="fix"></div>
+        </div>
+    </div>
+{% endfor %}

@@ -37,15 +37,16 @@ __all__ = [ "ContactListView", "ContactAddView", "ContactDetailsView",
             "ContactAddressDeleteView", "ContactAddressEditView",
             "ContactAutoCompleteView", "ContactEmailAddView",
             "ContactEmailDeleteView", "ContactEmailEditView",
-            "ContactFilesView", "ContactGroupAddView", "ContactGroupDeleteView",
-            "ContactGroupEditView", "ContactPartecipationView",
-            "ContactPhoneAddView", "ContactPhoneDeleteView",
-            "ContactPhoneEditView", "ContactRelationshipAddView",
-            "ContactRelationshipDeleteView", "ContactRelationshipEditView",
-            "ContactRelationshipView", "ContactSubscriptionAddView",
-            "ContactSubscriptionDeleteView", "ContactSubscriptionEditView",
-            "ContactSubscriptionView", "ContactWebsiteAddView",
-            "ContactWebsiteDeleteView", "ContactWebsiteEditView" ]
+            "ContactFilesView", "ContactGroupView", "ContactGroupAddView",
+            "ContactGroupDeleteView", "ContactGroupEditView",
+            "ContactPartecipationView", "ContactPhoneAddView",
+            "ContactPhoneDeleteView", "ContactPhoneEditView",
+            "ContactRelationshipAddView", "ContactRelationshipDeleteView",
+            "ContactRelationshipEditView", "ContactRelationshipView",
+            "ContactSubscriptionAddView", "ContactSubscriptionDeleteView",
+            "ContactSubscriptionEditView", "ContactSubscriptionView",
+            "ContactWebsiteAddView", "ContactWebsiteDeleteView",
+            "ContactWebsiteEditView" ]
 
 
 #==============================================================================
@@ -55,7 +56,6 @@ class GenericContactInlineView(View):
         self.contact_fieldname = 'contact'
         self.form = None
         self.custom_form = None
-        self.tags_form = None
         self.name = None
         self.title = None
         self.section_title = None
@@ -106,21 +106,16 @@ class GenericContactInlineAddView(GenericContactInlineView):
         a = c.association
 
         custom_form = None
-        tags_form = None
 
         if request.method == 'POST':
             o = self.cls(**{ self.contact_fieldname: c })
             inline_form = self.form(request.POST, instance=o, association=a, contact=c)
             if self.custom_form:
                 custom_form = self.custom_form(request.POST, instance=o, association=a)
-            if self.tags_form:
-                tags_form = self.tags_form(request.POST, instance=o)
             if self.check_is_valid(inline_form, custom_form, tags_form):
                 inline_form.save() # must be saved first
                 if custom_form:
                     custom_form.save()
-                if tags_form:
-                    tags_form.save()
                 # message the user and redirect to view
                 messages.add_message(request, messages.SUCCESS, self.success_text)
                 return HttpResponseRedirect(self.redirect_url(c.uuid))
@@ -131,13 +126,10 @@ class GenericContactInlineAddView(GenericContactInlineView):
             inline_form = self.form(association=a, contact=c)
             if self.custom_form:
                 custom_form = self.custom_form(association=a)
-            if self.tags_form:
-                tags_form = self.tags_form()
 
         return render_to_response(get_skin_relative_path('generic/inline_view.html'),
             RequestContext(request, { 'inline_form': inline_form,
                                       'custom_form': custom_form,
-                                      'tags_form': tags_form,
                                       'title': self.title,
                                       'object_name': self.object_name(c),
                                       'section_title': self.section_title,
@@ -168,18 +160,14 @@ class GenericContactInlineEditView(GenericContactInlineView):
         a = c.association
 
         custom_form = None
-        tags_form = None
 
         if request.method == 'POST':
             inline_form = self.form(request.POST, instance=o, association=a, contact=c)
             if self.custom_form:
                 custom_form = self.custom_form(request.POST, instance=o, association=a)
-            if self.tags_form:
-                tags_form = self.tags_form(request.POST, instance=o)
             if self.check_is_valid(inline_form, custom_form, tags_form):
                 inline_form.save() # must be saved first
                 if custom_form: custom_form.save()
-                if tags_form: tags_form.save()
                 # message the user and redirect to view
                 messages.add_message(request, messages.SUCCESS, self.success_text)
                 return HttpResponseRedirect(self.redirect_url(c.uuid))
@@ -190,13 +178,10 @@ class GenericContactInlineEditView(GenericContactInlineView):
             inline_form = self.form(instance=o, association=a, contact=c)
             if self.custom_form:
                 custom_form = self.custom_form(instance=o, association=a)
-            if self.tags_form:
-                tags_form = self.tags_form(instance=o)
 
         return render_to_response(get_skin_relative_path('generic/inline_view.html'),
             RequestContext(request, { 'inline_form': inline_form,
                                       'custom_form': custom_form,
-                                      'tags_form': tags_form,
                                       'title': self.title,
                                       'object_name': self.object_name(c),
                                       'section_title': self.section_title,
@@ -255,6 +240,7 @@ class ContactPersonalForm(BaseModelForm):
                     ('decease_date', 'is_deceased'),
                     ('do_not_contact', 'do_not_call', 'do_not_sms', 'do_not_mail'),
                     'notes',
+                    'tags',
                 )
             }),
         )
@@ -262,18 +248,12 @@ class ContactPersonalForm(BaseModelForm):
             'notes': forms.Textarea(attrs={'rows': 5}),
         }
         exclude = ('association',
-                   'groups',
-                   'tags',)
+                   'groups',)
 
 #class ContactCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
 #        model = Contact
 #        exclude = ('tags',)
-
-class ContactTagsForm(BaseModelTagsForm):
-    class Meta:
-        model = Contact
-        fields = ('tags',)
 
 
 #==============================================================================
@@ -309,13 +289,10 @@ class ContactDetailsView(View):
         personal_form.set_readonly(True)
         #custom_form = ContactCustomFieldsForm(instance=c, association=a)
         #custom_form.set_readonly(True)
-        tags_form = ContactTagsForm(instance=c)
-        tags_form.set_readonly(True)
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
                                       #'custom_form': custom_form,
-                                      'tags_form': tags_form,
                                       'association': a,
                                       'contact': c }))
 
@@ -334,12 +311,10 @@ class ContactEditView(View):
         if request.method == 'POST':
             personal_form = ContactPersonalForm(request.POST, instance=c, association=a)
             #custom_form = ContactCustomFieldsForm(request.POST, instance=c, association=a)
-            tags_form = ContactTagsForm(request.POST, instance=c)
-            if personal_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
+            if personal_form.is_valid(): # and custom_form.is_valid()
                 # save the forms
                 personal_form.save()
                 #custom_form.save()
-                tags_form.save()
                 # message the user and redirect to view
                 messages.add_message(request, messages.SUCCESS, _('Contact saved successfully.'))
                 return HttpResponseRedirect(reverse('nublas:contact_details', args=[c.uuid]))
@@ -349,12 +324,10 @@ class ContactEditView(View):
         else:
             personal_form = ContactPersonalForm(instance=c, association=a)
             #custom_form = ContactCustomFieldsForm(instance=c, association=a)
-            tags_form = ContactTagsForm(instance=c)
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
                                       #'custom_form': custom_form,
-                                      'tags_form': tags_form,
                                       'association': a,
                                       'contact': c,
                                       'editing': True }))
@@ -374,12 +347,10 @@ class ContactAddView(View):
             c = Contact(association=a)
             personal_form = ContactPersonalForm(request.POST, instance=c, association=a)
             #custom_form = ContactCustomFieldsForm(request.POST, instance=c, association=a)
-            tags_form = ContactTagsForm(request.POST, instance=c)
-            if personal_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
+            if personal_form.is_valid(): # and custom_form.is_valid()
                 # save the forms
                 personal_form.save()
                 #custom_form.save()
-                tags_form.save()
                 # message the user and redirect to view
                 messages.add_message(request, messages.SUCCESS, _('Contact created successfully.'))
                 return HttpResponseRedirect(reverse('nublas:contact_details', args=[c.uuid]))
@@ -389,12 +360,10 @@ class ContactAddView(View):
         else:
             personal_form = ContactPersonalForm(association=a)
             #custom_form = ContactCustomFieldsForm(association=a)
-            tags_form = ContactTagsForm()
 
         return render_to_response(get_skin_relative_path('views/contact/details.html'),
             RequestContext(request, { 'personal_form': personal_form,
                                       #'custom_form': custom_form,
-                                      #'tags_form': tags_form,
                                       'association': a,
                                       'editing': True,
                                       'adding': True }))
@@ -672,6 +641,20 @@ class ContactGroupForm(BaseModelForm):
                    'tags',)
 
 
+class ContactGroupView(View):
+    @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    def dispatch(self, request, *args, **kwargs):
+        contact = kwargs.get('contact')
+
+        c = get_object_or_404(Contact, _uuid=contact)
+        # TODO - check security
+        a = c.association
+
+        return render_to_response(get_skin_relative_path('views/contact/groups.html'),
+            RequestContext(request, { 'association': a,
+                                      'contact': c }))
+
+
 class ContactGroupAddView(GenericContactInlineAddView):
     def __init__(self):
         super(ContactGroupAddView, self).__init__()
@@ -717,20 +700,13 @@ class SubscriptionForm(BaseModelForm):
 
     class Meta:
         model = Subscription
-        exclude = ('contact',
-                   'tags',)
+        exclude = ('contact',)
 
 
 #class SubscriptionCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
 #        model = Subscription
 #        exclude = ('tags',)
-
-
-class SubscriptionTagsForm(BaseModelTagsForm):
-    class Meta:
-        model = Subscription
-        fields = ('tags',)
 
 
 class ContactSubscriptionView(View):
@@ -753,7 +729,6 @@ class ContactSubscriptionAddView(GenericContactInlineAddView):
         self.cls = Subscription
         self.form = SubscriptionForm
         #self.custom_form = SubscriptionCustomFieldsForm
-        self.tags_form = SubscriptionTagsForm
         self.title = _('Adding new subscription for ')
         self.section_title = _('Subscription data')
         self.section_icon = 'fa-book'
@@ -771,7 +746,6 @@ class ContactSubscriptionEditView(GenericContactInlineEditView):
         self.cls = Subscription
         self.form = SubscriptionForm
         #self.custom_form = SubscriptionCustomFieldsForm
-        self.tags_form = SubscriptionTagsForm
         self.title = _('Editing subscription for ')
         self.section_title = _('Subscription data')
         self.section_icon = 'fa-book'
@@ -804,7 +778,7 @@ class ContactPartecipationView(View):
         # TODO - check security
         a = c.association
 
-        return render_to_response(get_skin_relative_path('views/contact/partecipants.html'),
+        return render_to_response(get_skin_relative_path('views/contact/partecipations.html'),
             RequestContext(request, { 'association': a,
                                       'contact': c }))
 

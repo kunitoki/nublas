@@ -7,7 +7,6 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .tab-pane { padding-top: 15px; }
 .navbar-brand { margin-top: -6px; }
 .page-header { margin: 0px 0 20px; }
-/* .table { margin-bottom: 0px; } */
 
 /** Bootstrap plugins css fixes: Tagsinput */
 .bootstrap-tagsinput { width: 100%; }

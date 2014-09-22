@@ -1,0 +1,11 @@
+{% load i18n %}
+{% load get_bootstrap_alert_msg_css_name from nublas_tags %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% get_bootstrap_alert_msg_css_name message.tags as alert_tag %}
+        <div class="alert alert-{{ alert_tag }}">
+            <a class="close" data-dismiss="alert" href="#">×</a>
+                {{ message }}</div>
+    {% endfor %}
+{% endif %}

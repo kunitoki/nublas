@@ -1,0 +1,61 @@
+{% nublas_extends "base_site.html" %}
+{% load i18n %}
+{% load static %}
+
+
+{% block javascript-extra %}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+
+                //===== Delete row =====//
+
+                $(".deleteButton").click(function(e){
+                    e.preventDefault();
+                    jConfirm("{% trans 'Are you sure ?' %}", "{% trans 'You selected to delete the relationship' %}", $.proxy(function(ans) {
+                        if (ans) {
+                            $('<form>', {
+                                'action': $(this).attr('href'),
+                                'method': 'POST',
+                                'target': '_top'
+                            }).append($('<input>', {
+                                'type': 'hidden',
+                                'name': 'csrfmiddlewaretoken',
+                                'value': '{{ csrf_token }}'
+                            })).appendTo('body').submit();
+                        }
+                    }, $(this)));
+                });
+
+            });
+        })(jQuery);
+    </script>
+{% endblock %}
+
+
+{% block content-title %}
+    <div class="page-header">
+        <h1>{{ contact.first_name }} {{ contact.last_name }} <small>{% trans "Contact relationships" %}</small></h1>
+    </div>
+{% endblock %}
+
+
+{% block content-inner %}
+    <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
+
+        <ul class="nav nav-tabs" role="tablist">
+            {% nublas_include "views/contact/tabs.html" with activetab="relationships" %}
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- Relationships -->
+            <div class="tab-pane active">
+                {% if contact %}
+                    {% nublas_include "views/contact/tables/relationships.html" with groups=contact.relationships.all %}
+                {% endif %}
+            </div>
+        </div>
+
+    </form>
+{% endblock %}

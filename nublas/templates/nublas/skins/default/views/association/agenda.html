@@ -1,0 +1,212 @@
+{% nublas_extends "base_site.html" %}
+{% load static %}
+{% load i18n %}
+{% load nublas_tags %}
+
+
+{% block styles-after %}
+    <link rel="stylesheet" href="{% url 'nublas:agenda_events_style' association.uuid %}" type="text/css" media="screen" charset="utf-8">
+{% endblock %}
+
+
+{% block javascript-after %}
+    <script type="text/javascript" charset="utf-8">
+        (function($){
+            $(document).ready(function(){
+
+                //===== Calendar =====//
+
+                function changeViewDate(view, date) {
+                    $("#calendar").fullCalendar("gotoDate",
+                        date.getFullYear(), date.getMonth(), date.getDate());
+                    $("#calendar").fullCalendar("changeView", view);
+                }
+
+                function addEventSync(date, allDay) {
+                    var clickedHour = parseInt($.fullCalendar.formatDate(date, "H"));
+                    var start_date = allDay ?
+                        $.fullCalendar.formatDate(date, "yyyy-MM-dd 08:00") :
+                        $.fullCalendar.formatDate(date, "yyyy-MM-dd HH:00");
+
+                    var end_date = allDay ?
+                        $.fullCalendar.formatDate(date, "yyyy-MM-dd 19:00") :
+                        $.fullCalendar.formatDate(date, "yyyy-MM-dd " + (clickedHour + 1) + ":00");
+
+                    window.location.href = "{% url 'nublas:agenda_event_add' association.uuid %}?" +
+                        "start_date=" + start_date + "&end_date=" + end_date;
+                }
+
+                function updateEventsLatest() {
+                    // update the latest list data
+                    $.ajax({
+                        type: "GET",
+                        url: "{% url 'nublas:association_agenda_latest' association.uuid %}",
+                        dataType: "html",
+                        success: function(data, textStatus, jqXHR) {
+                            $(".latest_events").html(data);
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                             alert (xhr.status + "\n\n" + thrownError);
+                        }
+                    });
+                }
+
+                function updateEventAsync(event, dayDelta, minuteDelta) {
+                    var resizeUrl = "{% url 'nublas:agenda_event_resize' '0' %}";
+                    resizeUrl = resizeUrl.replace("/0/", "/" + event.id + "/");
+                    // resize the event
+                    $.ajax({
+                        type: "POST",
+                        url: resizeUrl,
+                        dataType: "json",
+                        data: {
+                            start_date: $.fullCalendar.formatDate(event.start, "yyyy-MM-dd HH:mm"),
+                            end_date: $.fullCalendar.formatDate(event.end, "yyyy-MM-dd HH:mm"),
+                            allday: event.allDay
+                        },
+                        success: function(data, textStatus, jqXHR) {
+                            if (! data.result)
+                                alert ("Problemi con la sincronizzazione");
+                            // update the latest list data
+                            updateEventsLatest();
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                             alert (xhr.status + "\n\n" + thrownError);
+                        }
+                    });
+                }
+
+                $("#calendar").fullCalendar({
+                    header: {
+                        left: "prev,next",
+                        center: "title",
+                        right: "month,agendaWeek,agendaDay"
+                    },
+                    editable: true,
+                    firstDay: 1,
+                    axisFormat: "H:mm",
+                    timeFormat: { agenda: "H:mm{ - H:mm}", "": "H:mm" },
+                    //defaultView: "agendaWeek",
+                    events: "{% url 'nublas:agenda_events' association.uuid %}",
+                    dayClick: function(date, allDay, jsEvent, view) {
+                        if (view.name == "month" ||
+                            ((view.name == "agendaWeek" || view.name == "basicWeek") && allDay))
+                        {
+                            changeViewDate('agendaDay', date);
+                        }
+                    },
+                    // TODO - must be implemented in fullcalendar js
+                    //dayDoubleClick: function(date, allDay, jsEvent, view) {
+                    //    addEventSync(date, allDay);
+                    //},
+                    eventClick: function(event) {
+                        var changeUrl = "{% url 'nublas:agenda_event_edit' '0' %}";
+                        window.location.href = changeUrl.replace("/0/", "/" + event.id + "/");
+                    },
+                    eventDrop: updateEventAsync,
+                    eventResize: updateEventAsync,
+                    eventRender: function(event, element) {
+                        if (event.verbose) {
+                            var view = $("#calendar").fullCalendar("getView");
+                            switch (view.name) {
+                                case "agendaDay":
+                                case "agendaWeek":
+                                    element.find(".fc-event-title").html(event.verbose);
+                                    break;
+                                case "month":
+                                case "basicWeek":
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                });
+
+            });
+        })(jQuery);
+    </script>
+{% endblock %}
+
+
+{% block content-title %}
+    <div class="page-header">
+        <h1>{{ association.name }} <small>{% trans "Agenda" %}</small></h1>
+    </div>
+{% endblock %}
+
+
+{% block content-inner %}
+    <ul class="nav nav-tabs" role="tablist">
+        {% nublas_include "views/association/tabs.html" with activetab="agenda" %}
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active">
+
+            <div class="row row-section">
+                <!-- Search -->
+                <div class="col-sm-3">
+                    <form action="." method="POST" role="form" class="searchForm">{% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="search" placeholder="{% trans 'Enter search text...' %}" value="{{ searchtext }}" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit">{% trans 'Search' %}</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Add buttons -->
+                <div class="col-sm-9 text-right">
+                    <a class="btn btn-primary" href="{% url 'nublas:agenda_event_add' association.uuid %}">
+                        <i class="fa fa-plus-circle fa-fw"></i> {% trans 'Add a new event' %}</a>
+                </div>
+            </div>
+
+            <div class="row row-section">
+                <!-- Calendar -->
+                <div class="col-sm-8">
+                    <div id="calendar"></div>
+                </div>
+
+                <!-- Search results -->
+                <div class="col-sm-4">
+                    {% if events|length > 0 %}
+                        <div class="head">
+                            <h5 class="iMagnify">{% trans "Search results" %}</h5>
+                            <div class="num"><a href="#" class="greenNum">{{ events|length }}</a></div>
+                        </div>
+
+                        {% nublas_include "views/association/includes/events.html" with latest_events=events use_head=0 %}
+
+                        {% if events|length > events.paginator.per_page %}
+                            <!-- Pagination -->
+                            <div class="supTicket nobg mt0">
+                                <div class="pagination first">
+                                    <ul class="pages">
+                                        <li class="prev{% if not events.has_previous %} hidden{% endif %}" ><a href="#">&lt;</a></li>
+
+                                        {% nublas_xrange 1 events.paginator.num_pages|add:1 1 as pages %}
+                                        {% for p in pages %}
+                                            <li><a href="#"{% if events.number == p %} class="active"{% endif %}>{{ p }}</a></li>
+                                        {% endfor %}
+
+                                        <li class="next {% if not events.has_next %}hidden{% endif %}"><a href="#">&gt;</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- Latest events -->
+                    {% if latest_events|length > 0 %}
+                        <div class="widget first latest_events">
+                            {% nublas_include "views/association/includes/events.html" with latest_events=latest_events use_head=1 %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

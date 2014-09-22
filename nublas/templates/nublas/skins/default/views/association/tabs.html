@@ -8,7 +8,7 @@
     <a href="{% if activetab != 'contacts' %}{% url 'nublas:association_contacts' association.uuid %}{% else %}#{% endif %}" role="tab">
         {% trans "Contacts" %}</a></li>
 <li {% if activetab == 'agenda' %}class="active"{% endif %}>
-    <a href="#agenda" role="tab">
+    <a href="{% if activetab != 'agenda' %}{% url 'nublas:association_agenda' association.uuid %}{% else %}#{% endif %}" role="tab">
         {% trans "Agenda" %}</a></li>
 <li {% if activetab == 'mailing' %}class="active"{% endif %}>
     <a href="#mailing" role="tab">

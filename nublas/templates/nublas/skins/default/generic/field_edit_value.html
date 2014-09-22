@@ -40,18 +40,72 @@
     {% else %}
         {{ field|attr:"data-role:tagsinput" }}
     {% endif %}
-{% elif field.field|classname == "datefield" %}
-    <div class="input-group date date-{{ field.auto_id }}">
-        <input type="text" id="{{ field.auto_id }}" name="{{ field.html_name }}" class="form-control" />
-        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+{% elif field.field|classname == "timefield" %}
+    <div class="input-group time time-{{ field.auto_id }}">
+        <input type="text" id="{{ field.auto_id }}" size="20"
+               name="{{ field.html_name }}" class="form-control" value="{{ field.value|default:'' }}" />
+        <span class="input-group-addon add-on"><i class="fa fa-time"></i></span>
     </div>
     <script type="text/javascript">
     $(function() {
         $(document).ready(function() {
-            $('.input-group.date.date-{{ field.auto_id }}').datepicker({
+            $('.input-group.time.time-{{ field.auto_id }}').datetimepicker({
                 language: "{{ LANGUAGE_CODE }}",
-                autoclose: true,
-                todayHighlight: true
+                format: "HH:mm",
+                pickDate: false,
+                use24hours: true,
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down"
+                }
+            });
+        });
+    });
+    </script>
+{% elif field.field|classname == "datefield" %}
+    <div class="input-group date date-{{ field.auto_id }}">
+        <input type="text" id="{{ field.auto_id }}" size="20"
+               name="{{ field.html_name }}" class="form-control" value="{{ field.value|default:'' }}" />
+        <span class="input-group-addon add-on"><i class="fa fa-calendar"></i></span>
+    </div>
+    <script type="text/javascript">
+    $(function() {
+        $(document).ready(function() {
+            $('.input-group.date.date-{{ field.auto_id }}').datetimepicker({
+                language: "{{ LANGUAGE_CODE }}",
+                format: "DD/MM/YYYY",
+                pickTime: false,
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down"
+                }
+            });
+        });
+    });
+    </script>
+{% elif field.field|classname == "datetimefield" %}
+    <div class="input-group input-append date datetime-{{ field.auto_id }}">
+        <input type="text" id="{{ field.auto_id }}" size="20"
+               name="{{ field.html_name }}" class="form-control" value="{{ field.value|default:'' }}" />
+        <span class="input-group-addon add-on"><i class="fa fa-calendar"></i></span>
+    </div>
+    <script type="text/javascript">
+    $(function() {
+        $(document).ready(function() {
+            $('.datetime-{{ field.auto_id }}').datetimepicker({
+                language: "{{ LANGUAGE_CODE }}",
+                format: "DD/MM/YYYY HH:mm",
+                use24hours: true,
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down"
+                }
             });
         });
     });

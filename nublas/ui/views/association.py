@@ -44,18 +44,12 @@ class AssociationDetailsForm(BaseModelForm):
     class Meta:
         model = Association
         exclude = ('owner',
-                   'collaborators',
-                   'tags')
+                   'collaborators',)
 
 #class AssociationCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
 #        model = Association
 #        exclude = ('tags',)
-
-class AssociationTagsForm(BaseModelTagsForm):
-    class Meta:
-        model = Association
-        fields = ('tags',)
 
 class AssociationContactActionForm(BaseForm):
     contact_action = forms.CharField(required=True)
@@ -111,14 +105,15 @@ class AssociationDetailsView(View):
         a = Association.get_object_or_404(association, request.user)
 
         details_form = AssociationDetailsForm(instance=a)
+        details_form.set_readonly(True)
         #custom_form = AssociationCustomFieldsForm(instance=a, association=a)
-        tags_form = AssociationTagsForm(instance=a)
+        #custom_form.set_readonly(True)
 
         return render_to_response(get_skin_relative_path('views/association/details.html'),
             RequestContext(request, { 'association': a,
                                       'details_form': details_form,
                                       #'custom_form': custom_form,
-                                      'tags_form': tags_form }))
+                                    }))
 
 
 #==============================================================================
@@ -133,12 +128,10 @@ class AssociationEditView(View):
         if request.method == 'POST':
             details_form = AssociationDetailsForm(request.POST, instance=a)
             #custom_form = AssociationCustomFieldsForm(request.POST, instance=a, association=a)
-            tags_form = AssociationTagsForm(request.POST, instance=a)
-            if details_form.is_valid() and tags_form.is_valid(): # and custom_form.is_valid()
+            if details_form.is_valid(): # and custom_form.is_valid()
                 # save the forms
                 details_form.save()
                 #custom_form.save()
-                tags_form.save()
                 # message the user and redirect to view
                 messages.success(request, _('Association saved successfully.'))
                 return HttpResponseRedirect(reverse('nublas:association_details', args=[a.uuid]))
@@ -146,18 +139,15 @@ class AssociationEditView(View):
                 # forms are invalid
                 logger.debug(details_form.errors)
                 #logger.debug(custom_form.errors)
-                logger.debug(tags_form.errors)
                 messages.error(request, _('Cannot save the association.'))
         else:
             details_form = AssociationDetailsForm(instance=a)
             #custom_form = AssociationCustomFieldsForm(instance=a, association=a)
-            tags_form = AssociationTagsForm(instance=a)
 
         return render_to_response(get_skin_relative_path('views/association/details.html'),
             RequestContext(request, { 'association': a,
                                       'details_form': details_form,
                                       #'custom_form': custom_form,
-                                      'tags_form': tags_form,
                                       'editing': True }))
 
 
