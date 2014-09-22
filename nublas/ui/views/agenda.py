@@ -25,7 +25,7 @@ from taggit.forms import TagField
 #from nublas.library.db.fields.autocomplete import AutoCompleteWidget
 
 from ..skins import get_skin_relative_path
-from ..forms import BaseForm, BaseModelForm, BaseModelTagsForm
+from ..forms import BaseForm, BaseModelForm
 #from ..forms import CustomFieldModelForm
 from ...conf import settings
 from ...models import Association, Contact, ContactAppointment, Event, Calendar

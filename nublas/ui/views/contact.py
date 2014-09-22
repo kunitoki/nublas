@@ -21,7 +21,7 @@ from django.views.generic.base import View
 #from ..generic.fileserve import GenericFileServeView
 
 from ..skins import get_skin_relative_path
-from ..forms import BaseForm, BaseModelForm, BaseModelTagsForm # , CustomFieldModelForm
+from ..forms import BaseForm, BaseModelForm # , CustomFieldModelForm
 from ..search import SearchForm, search_contacts
 from ...conf import settings
 from ...models import (Association, Contact, Group, ContactGroup,
@@ -439,8 +439,25 @@ class AddressForm(BaseModelForm):
 
     class Meta:
         model = Address
+        fieldsets = (
+            (None, {
+                'fields': (
+                    ('type', 'is_main'),
+                    'address',
+                    ('city', 'cap'),
+                    'country',
+                    'is_billing'
+                ),
+                'layout': (
+                    (5, 2),
+                    10,
+                    (4, 5),
+                    4,
+                    2
+                ),
+            }),
+        )
         exclude = ('contact',
-                   'location',
                    'tags',)
 
 

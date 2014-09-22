@@ -22,7 +22,7 @@ from django.views.generic.base import View
 #from ..generic.fileserve import GenericFileServeView
 
 from ..skins import get_skin_relative_path
-from ..forms import BaseForm, BaseModelForm, BaseModelTagsForm # , CustomFieldModelForm
+from ..forms import BaseForm, BaseModelForm # , CustomFieldModelForm
 from ..search import SearchForm, search_contacts, search_events
 from ...conf import settings
 from ...models import Association, Contact, Event

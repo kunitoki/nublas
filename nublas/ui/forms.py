@@ -1,4 +1,5 @@
 import re
+import itertools
 from django import forms
 from django.forms.models import ModelFormOptions
 from django.db.models import Q
@@ -25,36 +26,44 @@ ModelFormOptions.__init__ = _new_init
 
 #==============================================================================
 class Fieldline(object):
-    def __init__(self, form, field_or_fields):
+    def __init__(self, form, fieldline, layoutline):
         self.form = form  # A django.forms.Form instance
-        if not hasattr(field_or_fields, "__iter__") or isinstance(field_or_fields, six.text_type):
-            self.fields = [field_or_fields]
+        if not hasattr(fieldline, "__iter__") or isinstance(fieldline, six.text_type):
+            self.fields = [fieldline]
         else:
-            self.fields = field_or_fields
+            self.fields = fieldline
+        if not hasattr(layoutline, "__iter__") or isinstance(fieldline, six.integer_types):
+            self.layout = [layoutline]
+        else:
+            self.layout = layoutline
 
     def __iter__(self):
-        total_size = 12
-        first_label = 2
-        remaining_size = total_size - first_label
+        total_cols = 12
+        first_label_cols = 2
+        layoout_cols = total_cols - first_label_cols
         if len(self.fields) > 1:
-            remaining_size = remaining_size / len(self.fields) - 1
-        for index, field in enumerate(self.fields):
-            yield self.form[field], remaining_size
+            layoout_cols = int(layoout_cols / len(self.fields) - 1)
+
+        for field, layout in itertools.izip_longest(self.fields, self.layout):
+            yield self.form[field], layout if layout else layoout_cols
+
 
 
 class Fieldset(object):
-    def __init__(self, form, legend, fields, classes):
+    def __init__(self, form, legend, fields, layout, classes):
         self.form = form
         self.legend = legend
         self.fields = fields
+        self.layout = layout
         self.classes = classes
 
     def __iter__(self):
         # Similar to how a form can iterate through it's fields...
-        for field_or_fields in self.fields:
+        for fieldline, layoutline in itertools.izip_longest(self.fields, self.layout):
             yield Fieldline(
                 form=self.form,
-                field_or_fields=field_or_fields
+                fieldline=fieldline,
+                layoutline=layoutline
             )
 
 
@@ -79,6 +88,7 @@ class FieldsetForm(object):
                 form=self,
                 legend=legend,
                 fields=data.get('fields', tuple()),
+                layout=data.get('layout', tuple()),
                 classes=data.get('classes', '')
             )
 
@@ -110,7 +120,16 @@ class ReadonlyForm(object):
 
 
 #==============================================================================
-class BaseForm(ValidatingForm, FieldsetForm, ReadonlyForm, forms.Form):
+class TagsForm(object):
+    def has_tags(self):
+        for field in self:
+            if field.name == 'tags' and field.value() is not None:
+                return True if len(field.value()) > 0 else False
+        return False
+
+
+#==============================================================================
+class BaseForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, forms.Form):
     """
     Base forms for all unbounded forms in our pages.
     It provides a custom way to initialize widgets from a set of parameters
@@ -138,7 +157,7 @@ class BaseForm(ValidatingForm, FieldsetForm, ReadonlyForm, forms.Form):
 
 
 #==============================================================================
-class BaseModelForm(ValidatingForm, FieldsetForm, ReadonlyForm, forms.ModelForm):
+class BaseModelForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, forms.ModelForm):
     """
     Base forms for all bounded forms to models.
     It provides a custom way to initialize widgets from a set of parameters
@@ -163,22 +182,6 @@ class BaseModelForm(ValidatingForm, FieldsetForm, ReadonlyForm, forms.ModelForm)
     def full_clean(self):
         self._full_clean()
         super(BaseModelForm, self).full_clean()
-
-
-#==============================================================================
-class BaseModelTagsForm(BaseModelForm):
-    """
-    Base form for adding tags to our models
-    """
-    tags = TagField(required=False)
-
-    def has_tags(self):
-        t = []
-        for field in self:
-            if field.name == 'tags' and field.value() is not None:
-                t = field.value()
-                break
-        return True if len(t) > 0 else False
 
 
 #==============================================================================
