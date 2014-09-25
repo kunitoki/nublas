@@ -37,9 +37,26 @@
         {% if adding %}
             <h1>{% trans "Adding new association" %}</h1>
         {% else %}
-            <h1>{{ association.name }} <small>{% trans "Association details" %}</small></h1>
+            <h1>{{ association.name }}
+                <small>{% trans "Association details" %}
+                    {% if editing %}
+                        <a href="{% url 'nublas:association_details' association.uuid %}" class="btn btn-default btn-xs">
+                            <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a>
+                    {% else %}
+                        <a href="{% url 'nublas:association_edit' association.uuid %}" class="btn btn-primary btn-xs">
+                            <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                    {% endif %}
+                </small>
+            </h1>
         {% endif %}
     </div>
+{% endblock %}
+
+
+{% block content-breadcrumb-inner %}
+    <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
+    <li><a href="{% url 'nublas:association_list' %}">{% trans "Associations" %}</a></li>
+    <li class="active">{{ association.name|capfirst }}</li>
 {% endblock %}
 
 
@@ -49,40 +66,13 @@
 
         <ul class="nav nav-tabs" role="tablist">
             {% nublas_include "views/association/tabs.html" with activetab="details" %}
-
-            <li class="pull-right">
-                <div class="btn-group">
-                    {% if editing or adding %}
-                        <button class="btn btn-default btn-sm" type="submit">
-                            <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Association' %}</button>
-                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <i class="caret"></i>
-                            <i class="sr-only">Toggle Dropdown</i>
-                        </button>
-                        <ul class="dropdown-menu pull-right" role="menu">
-                            <li><a href="#">{% trans "Save and add another" %}</a></li>
-                            {% if association and not adding %}
-                            <li><a href="#">{% trans "Save as a copy" %}</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{% url 'nublas:association_details' association.uuid %}">
-                                <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a></li>
-                            <li class="divider"></li>
-                            <li><a href="{% url 'nublas:association_delete' association.uuid %}">
-                                <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a></li>
-                            {% endif %}
-                        </ul>
-                    {% else %}
-                        <a href="{% url 'nublas:association_edit' association.uuid %}" class="btn btn-primary btn-sm">
-                            <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
-                    {% endif %}
-                </div>
-            </li>
         </ul>
 
         <div class="tab-content">
 
             <!-- Association details -->
             <div class="tab-pane active">
+
                 <!-- Main form -->
                 {% nublas_include "generic/form_snippet.html" with form=details_form %}
 
@@ -90,6 +80,29 @@
                 {% if custom_form and custom_form.fields|length > 0 %}
                     {% nublas_include "generic/form_snippet.html" with form=custom_form %}
                 {% endif %}
+
+                <!-- Buttons -->
+                {% if editing or adding %}
+                <div class="form-group">
+                    <div class="col-sm-6 text-left">
+                        <button class="btn btn-primary btn-sm" type="submit">
+                            <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Association' %}</button>
+                        <a class="btn btn-default btn-sm" href="#">
+                            {% trans "Save and add another" %}</a>
+                        {% if association and not adding %}
+                        <a class="btn btn-default btn-sm" href="#">
+                            {% trans "Save as a copy" %}</a>
+                        {% endif %}
+                    </div>
+                    {% if association %}
+                    <div class="col-sm-6 text-right">
+                        <a class="btn btn-danger btn-sm" href="{% url 'nublas:association_delete' association.uuid %}">
+                            <i class="fa fa-close fa-fw"></i> {% trans "Delete" %}</a>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
             </div>
 
         </div>

@@ -11,13 +11,13 @@
         {% render_field field %}
     {% endif %}
     <script type="text/javascript">
-    $(function() {
+    (function($){
         $(document).ready(function() {
             $("#{{ field.auto_id }}").select2({
                 allowClear: true
             });
         });
-    });
+    })(jQuery);
     </script>
 {% elif field.field|classname == "modelmultiplechoicefield" %}
     {% if field.field.required %}
@@ -26,20 +26,30 @@
         {% render_field field %}
     {% endif %}
     <script type="text/javascript">
-    $(function() {
+    (function($){
         $(document).ready(function() {
             $("#{{ field.auto_id }}").select2({
                 allowClear: true
             });
         });
-    });
+    })(jQuery);
     </script>
 {% elif field.field|classname == "tagfield" %}
     {% if field.field.required %}
-        {{ field|attr:"data-role:tagsinput"|attr:"required:required" }}
+        {{ field|attr:"required:required" }}
     {% else %}
-        {{ field|attr:"data-role:tagsinput" }}
+        {{ field }}
     {% endif %}
+    <script type="text/javascript">
+    (function($){
+        $(document).ready(function() {
+            $("#{{ field.auto_id }}").tagsinput({
+                tagClass: 'label label-default',
+                trimValue: true
+            });
+        });
+    })(jQuery);
+    </script>
 {% elif field.field|classname == "timefield" %}
     <div class="input-group time time-{{ field.auto_id }}">
         <input type="text" id="{{ field.auto_id }}" size="20"
@@ -47,7 +57,7 @@
         <span class="input-group-addon add-on"><i class="fa fa-time"></i></span>
     </div>
     <script type="text/javascript">
-    $(function() {
+    (function($){
         $(document).ready(function() {
             $('.input-group.time.time-{{ field.auto_id }}').datetimepicker({
                 language: "{{ LANGUAGE_CODE }}",
@@ -62,7 +72,7 @@
                 }
             });
         });
-    });
+    })(jQuery);
     </script>
 {% elif field.field|classname == "datefield" %}
     <div class="input-group date date-{{ field.auto_id }}">
@@ -71,7 +81,7 @@
         <span class="input-group-addon add-on"><i class="fa fa-calendar"></i></span>
     </div>
     <script type="text/javascript">
-    $(function() {
+    (function($){
         $(document).ready(function() {
             $('.input-group.date.date-{{ field.auto_id }}').datetimepicker({
                 language: "{{ LANGUAGE_CODE }}",
@@ -85,7 +95,7 @@
                 }
             });
         });
-    });
+    })(jQuery);
     </script>
 {% elif field.field|classname == "datetimefield" %}
     <div class="input-group input-append date datetime-{{ field.auto_id }}">
@@ -94,7 +104,7 @@
         <span class="input-group-addon add-on"><i class="fa fa-calendar"></i></span>
     </div>
     <script type="text/javascript">
-    $(function() {
+    (function($){
         $(document).ready(function() {
             $('.datetime-{{ field.auto_id }}').datetimepicker({
                 language: "{{ LANGUAGE_CODE }}",
@@ -108,7 +118,7 @@
                 }
             });
         });
-    });
+    })(jQuery);
     </script>
 {% elif field.field|classname == "booleanfield" %}
     {{ field }} {{ field.label }}

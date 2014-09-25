@@ -13,16 +13,12 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from ...conf import settings
+from ...storages import private_storage
 from ..base import BaseModel
 from .utils import BaseModelLinkedToAssociation
 #from nublas.library.custom.models import build_custom_field_model, build_custom_value_model
-#from nublas.library.storages import private_storage, DIRECTORY_PLACEHOLDER
 
 __all__ = [ "Association", "Collaborator", "Group" ]
-
-
-#==============================================================================
-#PRIVATE_ROOT = getattr(settings, 'PRIVATE_ROOT', '') # TODO - check default
 
 
 #==============================================================================
@@ -54,27 +50,28 @@ class Association(BaseModel):
         verbose_name = _('association')
         verbose_name_plural = _('associations')
 
-    #def get_documents_root(self):
-    #    return "%s/" % os.path.join('associations', '%s' % self.uuid)
-    #
-    #def get_documents_path(self):
-    #    path = "%s/" % os.path.join(self.get_documents_root(), 'files')
-    #    p = os.path.join(path, DIRECTORY_PLACEHOLDER)
-    #    if not private_storage.exists(p):
-    #        private_storage.save(p, ContentFile(''))
-    #    return path
-    #
-    #def get_documents_disksize(self):
-    #    root = self.get_documents_root()
-    #    if private_storage.exists(root):
-    #        return private_storage.size(root)
-    #    else:
-    #        return 0
-    #
-    #def delete_documents_root(self):
-    #    root = self.get_documents_root()
-    #    if private_storage.exists(root):
-    #        private_storage.delete(root)
+    def get_documents_root(self):
+        return "%s/" % os.path.join('associations', '%s' % self.uuid)
+
+    def get_documents_path(self):
+        DIRECTORY_PLACEHOLDER = '.keepme'
+        path = "%s/" % os.path.join(self.get_documents_root(), 'files')
+        p = os.path.join(path, DIRECTORY_PLACEHOLDER)
+        if not private_storage.exists(p):
+            private_storage.save(p, ContentFile(''))
+        return path
+
+    def get_documents_disksize(self):
+        root = self.get_documents_root()
+        if private_storage.exists(root):
+            return private_storage.size(root)
+        else:
+            return 0
+
+    def delete_documents_root(self):
+        root = self.get_documents_root()
+        if private_storage.exists(root):
+            private_storage.delete(root)
 
     @staticmethod
     def get_object_or_404(uuid, user):

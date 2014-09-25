@@ -82,6 +82,13 @@
 {% endblock %}
 
 
+{% block content-breadcrumb-inner %}
+    <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
+    <li><a href="{% url 'nublas:association_list' %}">{% trans "Associations" %}</a></li>
+    <li class="active">{{ association.name|capfirst }}</li>
+{% endblock %}
+
+
 {% block content-inner %}
 
     <ul class="nav nav-tabs" role="tablist">
@@ -98,9 +105,9 @@
                         <input type="hidden" id="letter" name="letter" value="{{ letter }}" />
                         <input type="hidden" id="page" name="page" value="{{ contacts.number }}" />
                         <div class="input-group">
-                            <input type="text" class="form-control" name="search" value="{{ searchtext }}">
+                            <input type="text" class="form-control input-sm" name="search" placeholder="{% trans 'Enter search text...' %}" value="{{ searchtext }}">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="submit">{% trans 'Search' %}</button>
+                                <button class="btn btn-default btn-sm " type="submit">{% trans 'Search' %}</button>
                             </span>
                         </div>
                     </form>
@@ -108,21 +115,24 @@
 
                 <!-- Buttons -->
                 <div class="col-sm-9 text-right">
-                    <a class="btn btn-primary" href="{% url 'nublas:contact_add' association.uuid %}">
+                    <a class="btn btn-primary btn-sm" href="{% url 'nublas:contact_add' association.uuid %}">
                         <i class="fa fa-plus-circle fa-fw"></i> {% trans "Add" %}</a>
-                    <a class="btn btn-default selectClearButton" href="#">{% trans "Clear selection" %}</a>
-                    <a class="btn btn-default selectAllButton" href="#">{% trans "Select all" %}</a>
+                    <a class="btn btn-default btn-sm selectClearButton" href="#">{% trans "Clear selection" %}</a>
+                    <a class="btn btn-default btn-sm selectAllButton" href="#">{% trans "Select all" %}</a>
 
                     <div class="btn-group">
-                        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
                             {% trans "Actions on selection" %}
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">{% trans "Delete selected" %}</a></li>
-                            <li><a href="#">{% trans "Export selected" %}</a></li>
+                            <li><a href="#">
+                                <i class="fa fa-trash fa-fw"></i> {% trans "Delete selected" %}</a></li>
+                            <li><a href="#">
+                                <i class="fa fa-download fa-fw"></i> {% trans "Export selected" %}</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">{% trans "Create new event" %}</a></li>
+                            <li><a href="#">
+                                <i class="fa fa-calendar fa-fw"></i> {% trans "Create new event" %}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -132,35 +142,35 @@
             <div class="row row-section">
                 <div class="col-sm-12 text-center" id="contactList-nav">
                     <div class="btn-group">
-                        <a class="btn all btn-{% if letter == 'ALL' %}primary{% else %}default{% endif %}" href="#">ALL</a>
-                        <a class="btn _   btn-{% if letter == '0-9' %}primary{% else %}default{% endif %}" href="#">0-9</a>
-                        <a class="btn a   btn-{% if letter == 'A'   %}primary{% else %}default{% endif %}" href="#">A</a>
-                        <a class="btn b   btn-{% if letter == 'B'   %}primary{% else %}default{% endif %}" href="#">B</a>
-                        <a class="btn c   btn-{% if letter == 'C'   %}primary{% else %}default{% endif %}" href="#">C</a>
-                        <a class="btn d   btn-{% if letter == 'D'   %}primary{% else %}default{% endif %}" href="#">D</a>
-                        <a class="btn e   btn-{% if letter == 'E'   %}primary{% else %}default{% endif %}" href="#">E</a>
-                        <a class="btn f   btn-{% if letter == 'F'   %}primary{% else %}default{% endif %}" href="#">F</a>
-                        <a class="btn g   btn-{% if letter == 'G'   %}primary{% else %}default{% endif %}" href="#">G</a>
-                        <a class="btn h   btn-{% if letter == 'H'   %}primary{% else %}default{% endif %}" href="#">H</a>
-                        <a class="btn i   btn-{% if letter == 'I'   %}primary{% else %}default{% endif %}" href="#">I</a>
-                        <a class="btn j   btn-{% if letter == 'J'   %}primary{% else %}default{% endif %}" href="#">J</a>
-                        <a class="btn k   btn-{% if letter == 'K'   %}primary{% else %}default{% endif %}" href="#">K</a>
-                        <a class="btn l   btn-{% if letter == 'L'   %}primary{% else %}default{% endif %}" href="#">L</a>
-                        <a class="btn m   btn-{% if letter == 'M'   %}primary{% else %}default{% endif %}" href="#">M</a>
-                        <a class="btn n   btn-{% if letter == 'N'   %}primary{% else %}default{% endif %}" href="#">N</a>
-                        <a class="btn o   btn-{% if letter == 'O'   %}primary{% else %}default{% endif %}" href="#">O</a>
-                        <a class="btn p   btn-{% if letter == 'P'   %}primary{% else %}default{% endif %}" href="#">P</a>
-                        <a class="btn q   btn-{% if letter == 'Q'   %}primary{% else %}default{% endif %}" href="#">Q</a>
-                        <a class="btn r   btn-{% if letter == 'R'   %}primary{% else %}default{% endif %}" href="#">R</a>
-                        <a class="btn s   btn-{% if letter == 'S'   %}primary{% else %}default{% endif %}" href="#">S</a>
-                        <a class="btn t   btn-{% if letter == 'T'   %}primary{% else %}default{% endif %}" href="#">T</a>
-                        <a class="btn u   btn-{% if letter == 'U'   %}primary{% else %}default{% endif %}" href="#">U</a>
-                        <a class="btn v   btn-{% if letter == 'V'   %}primary{% else %}default{% endif %}" href="#">V</a>
-                        <a class="btn w   btn-{% if letter == 'W'   %}primary{% else %}default{% endif %}" href="#">W</a>
-                        <a class="btn x   btn-{% if letter == 'X'   %}primary{% else %}default{% endif %}" href="#">X</a>
-                        <a class="btn y   btn-{% if letter == 'Y'   %}primary{% else %}default{% endif %}" href="#">Y</a>
-                        <a class="btn z   btn-{% if letter == 'Z'   %}primary{% else %}default{% endif %}" href="#">Z</a>
-                        <a class="btn -   btn-{% if letter == '...' %}primary{% else %}default{% endif %}" href="#">...</a>
+                        <a class="* btn btn-sm btn-{% if letter == 'ALL' %}primary{% else %}default{% endif %}" href="#">ALL</a>
+                        <a class="_ btn btn-sm btn-{% if letter == '0-9' %}primary{% else %}default{% endif %}" href="#">0-9</a>
+                        <a class="a btn btn-sm btn-{% if letter == 'A'   %}primary{% else %}default{% endif %}" href="#">A</a>
+                        <a class="b btn btn-sm btn-{% if letter == 'B'   %}primary{% else %}default{% endif %}" href="#">B</a>
+                        <a class="c btn btn-sm btn-{% if letter == 'C'   %}primary{% else %}default{% endif %}" href="#">C</a>
+                        <a class="d btn btn-sm btn-{% if letter == 'D'   %}primary{% else %}default{% endif %}" href="#">D</a>
+                        <a class="e btn btn-sm btn-{% if letter == 'E'   %}primary{% else %}default{% endif %}" href="#">E</a>
+                        <a class="f btn btn-sm btn-{% if letter == 'F'   %}primary{% else %}default{% endif %}" href="#">F</a>
+                        <a class="g btn btn-sm btn-{% if letter == 'G'   %}primary{% else %}default{% endif %}" href="#">G</a>
+                        <a class="h btn btn-sm btn-{% if letter == 'H'   %}primary{% else %}default{% endif %}" href="#">H</a>
+                        <a class="i btn btn-sm btn-{% if letter == 'I'   %}primary{% else %}default{% endif %}" href="#">I</a>
+                        <a class="j btn btn-sm btn-{% if letter == 'J'   %}primary{% else %}default{% endif %}" href="#">J</a>
+                        <a class="k btn btn-sm btn-{% if letter == 'K'   %}primary{% else %}default{% endif %}" href="#">K</a>
+                        <a class="l btn btn-sm btn-{% if letter == 'L'   %}primary{% else %}default{% endif %}" href="#">L</a>
+                        <a class="m btn btn-sm btn-{% if letter == 'M'   %}primary{% else %}default{% endif %}" href="#">M</a>
+                        <a class="n btn btn-sm btn-{% if letter == 'N'   %}primary{% else %}default{% endif %}" href="#">N</a>
+                        <a class="o btn btn-sm btn-{% if letter == 'O'   %}primary{% else %}default{% endif %}" href="#">O</a>
+                        <a class="p btn btn-sm btn-{% if letter == 'P'   %}primary{% else %}default{% endif %}" href="#">P</a>
+                        <a class="q btn btn-sm btn-{% if letter == 'Q'   %}primary{% else %}default{% endif %}" href="#">Q</a>
+                        <a class="r btn btn-sm btn-{% if letter == 'R'   %}primary{% else %}default{% endif %}" href="#">R</a>
+                        <a class="s btn btn-sm btn-{% if letter == 'S'   %}primary{% else %}default{% endif %}" href="#">S</a>
+                        <a class="t btn btn-sm btn-{% if letter == 'T'   %}primary{% else %}default{% endif %}" href="#">T</a>
+                        <a class="u btn btn-sm btn-{% if letter == 'U'   %}primary{% else %}default{% endif %}" href="#">U</a>
+                        <a class="v btn btn-sm btn-{% if letter == 'V'   %}primary{% else %}default{% endif %}" href="#">V</a>
+                        <a class="w btn btn-sm btn-{% if letter == 'W'   %}primary{% else %}default{% endif %}" href="#">W</a>
+                        <a class="x btn btn-sm btn-{% if letter == 'X'   %}primary{% else %}default{% endif %}" href="#">X</a>
+                        <a class="y btn btn-sm btn-{% if letter == 'Y'   %}primary{% else %}default{% endif %}" href="#">Y</a>
+                        <a class="z btn btn-sm btn-{% if letter == 'Z'   %}primary{% else %}default{% endif %}" href="#">Z</a>
+                        <a class="- btn btn-sm btn-{% if letter == '...' %}primary{% else %}default{% endif %}" href="#">...</a>
                     </div>
                 </div>
             </div>
@@ -198,7 +208,7 @@
             <!-- Pagination -->
             <div class="row">
                 <div class="col-sm-6">
-                    <h4>{% trans 'Contacts list ' %} - {{ contacts|length }}{% trans " of " %}{{ association.contacts.count }}</h4>
+                    <h5>{% trans 'Contacts list ' %} - {{ contacts|length }}{% trans " of " %}{{ association.contacts.count }}</h5>
                 </div>
 
                 <div class="col-sm-6 text-right">

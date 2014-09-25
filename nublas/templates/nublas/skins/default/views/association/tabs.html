@@ -13,4 +13,7 @@
 <li {% if activetab == 'mailing' %}class="active"{% endif %}>
     <a href="#mailing" role="tab">
         {% trans "Mailing" %}</a></li>
+<li {% if activetab == 'files' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'files' %}{% url 'nublas:association_files' association.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Files" %}</a></li>
 {% endif %}

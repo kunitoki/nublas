@@ -4,73 +4,66 @@
 
 {% block javascript-after %}
     <script type="text/javascript">
-        $(document).ready(function(){
-            $('#associationList').listnav({
-               //initLetter: 'a',
-               includeAll: true,
-               includeOther: true,
-               flagDisabled: true,
-               noMatchText: '{% trans "Nothing matched your filter, please click another letter." %}'
-               //prefixes: ['the','a']
+        (function($){
+            $(document).ready(function(){
+
+                $('#associationList').listnav({
+                   //initLetter: 'a',
+                   includeAll: true,
+                   includeOther: true,
+                   flagDisabled: true,
+                   noMatchText: '{% trans "Nothing matched your filter, please click another letter." %}'
+                   //prefixes: ['the','a']
+                });
+
             });
-        });
+        })(jQuery);
     </script>
 {% endblock %}
 
 
 {% block content-title %}
-    <div class="title"><h5>{% trans "Association list" %}</h5></div>
+    <div class="page-header">
+        <h1>{% trans "Association list" %}</h1>
+    </div>
+{% endblock %}
+
+
+{% block content-breadcrumb-inner %}
+    <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
+    <li class="active">{% trans "Associations" %}</li>
 {% endblock %}
 
 
 {% block content-inner %}
-
-    <!-- Statistics -->
-    <!--
-    <div class="stats first">
-        <ul>
-            <li><a href="#" class="count grey" title="">52</a><span>new pending tasks</span></li>
-            <li><a href="#" class="count grey" title="">520</a><span>pending orders</span></li>
-            <li><a href="#" class="count grey" title="">14</a><span>new opened tickets</span></li>
-            <li class="last"><a href="#" class="count grey" title="">48</a><span>new user registrations</span></li>
-        </ul>
-        <div class="fix"></div>
-    </div>
-    -->
-
-    <!-- Search -->
-    <div class="searchWidget first">
-        <form action="." method="POST">{% csrf_token %}
-            <input type="text" name="search" placeholder="{% trans 'Enter search text...' %}" value="{{ form.data.search }}" />
-            <input type="submit" value="" />
-        </form>
-    </div>
-
-    <!-- Contact list -->
-    <div class="widget first">
-        <div class="head">
-            <h5 class="iUsers">Association list</h5>
-            <div class="num">
-                <a href="{% url 'nublas:association_add' %}" class="blueNum">Create new</a>
-            </div>
-        </div>
-        <div id="associationList-nav"></div>
-        <ul id="associationList" class="listNavTable">
-            {% spaceless %}
+    <div class="panel panel-default">
+        <table cellpadding="0" cellspacing="0" border="0" id="associationsTable" class="table table-striped table-condensed">
+            <thead>
+            <tr>
+                <th>{% trans "Name" %}</th>
+                <th>
+                    <div class="btn-group pull-right">
+                        <a href="{% url 'nublas:association_add' %}" class="btn btn-primary btn-xs">
+                            <i class="fa fa-plus-circle fa-fw"></i> {% trans "Add" %}</a>
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
                 {% for a in associations %}
-                <li><a href="{% url 'nublas:association_details' a.uuid %}">{{ a.name }}</a>
-                    {% comment %}<!--
-                    <ul class="listData">
-                        {% for e in c.emails.all %}<li><a href="mailto:{{ e.address }}" title="">{{ e.address }}</a></li>{% endfor %}
-                        {% for p in c.phones.all %}<li><span class="red">{{ p.number }}</span></li>{% endfor %}
-                        <li><span class="cNote">friend</span></li>
-                    </ul>
-                    -->{% endcomment %}
-                </li>
+                <tr>
+                    <td><a href="{% url 'nublas:association_details' a.uuid %}">{{ a.name }}</a></td>
+                    <td class="center">
+                        <div class="btn-group pull-right">
+                            <a href="{% url 'nublas:association_edit' a.uuid %}" class="btn btn-primary btn-xs">
+                                <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                            <a href="{% url 'nublas:association_delete' a.uuid %}" class="btn btn-danger btn-xs">
+                                <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a>
+                        </div>
+                    </td>
+                </tr>
                 {% endfor %}
-            {% endspaceless %}
-        </ul>
-        <div class="fix"></div>
+            </tbody>
+        </table>
     </div>
-
 {% endblock %}

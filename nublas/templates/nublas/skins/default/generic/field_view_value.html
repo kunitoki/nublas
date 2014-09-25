@@ -9,13 +9,15 @@
     </p>
 {% elif field.field|classname == "modelchoicefield" %}
     <p class="form-control-static">
-        {% for choice in field.field.choices %}
-            {% ifequal field.value choice.0 %}
-                {{ choice.1 }}
-            {% endifequal %}
-        {% empty %}
+        {% if field.value %}
+            {% for choice in field.field.choices %}
+                {% ifequal field.value choice.0 %}{{ choice.1 }}{% endifequal %}
+            {% empty %}
+                -
+            {% endfor %}
+        {% else %}
             -
-        {% endfor %}
+        {% endif %}
     </p>
 {% elif field.field|classname == "urlfield" %}
     <p class="form-control-static">
@@ -28,7 +30,7 @@
 {% elif field.field|classname == "tagfield" %}
     <div class="bootstrap-tagsinput readonly">
         {% for tag in field.value %}
-            <span class="tag label label-info">{{ tag.tag.name }}</span>
+            <span class="tag label label-default">{{ tag.tag.name }}</span>
         {% empty %}
             -
         {% endfor %}

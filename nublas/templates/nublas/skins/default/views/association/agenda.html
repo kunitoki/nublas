@@ -17,8 +17,7 @@
                 //===== Calendar =====//
 
                 function changeViewDate(view, date) {
-                    $("#calendar").fullCalendar("gotoDate",
-                        date.getFullYear(), date.getMonth(), date.getDate());
+                    $("#calendar").fullCalendar("gotoDate", date);
                     $("#calendar").fullCalendar("changeView", view);
                 }
 
@@ -88,9 +87,10 @@
                     timeFormat: { agenda: "H:mm{ - H:mm}", "": "H:mm" },
                     //defaultView: "agendaWeek",
                     events: "{% url 'nublas:agenda_events' association.uuid %}",
-                    dayClick: function(date, allDay, jsEvent, view) {
+                    dayClick: function(date, jsEvent, view) {
                         if (view.name == "month" ||
-                            ((view.name == "agendaWeek" || view.name == "basicWeek") && allDay))
+                            view.name == "agendaWeek" ||
+                            view.name == "basicWeek")
                         {
                             changeViewDate('agendaDay', date);
                         }
@@ -135,6 +135,13 @@
 {% endblock %}
 
 
+{% block content-breadcrumb-inner %}
+    <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
+    <li><a href="{% url 'nublas:association_list' %}">{% trans "Associations" %}</a></li>
+    <li class="active">{{ association.name|capfirst }}</li>
+{% endblock %}
+
+
 {% block content-inner %}
     <ul class="nav nav-tabs" role="tablist">
         {% nublas_include "views/association/tabs.html" with activetab="agenda" %}
@@ -148,9 +155,9 @@
                 <div class="col-sm-3">
                     <form action="." method="POST" role="form" class="searchForm">{% csrf_token %}
                         <div class="input-group">
-                            <input type="text" class="form-control" name="search" placeholder="{% trans 'Enter search text...' %}" value="{{ searchtext }}" />
+                            <input type="text" class="form-control input-sm" name="search" placeholder="{% trans 'Enter search text...' %}" value="{{ searchtext }}" />
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="submit">{% trans 'Search' %}</button>
+                                <button class="btn btn-default btn-sm" type="submit">{% trans 'Search' %}</button>
                             </span>
                         </div>
                     </form>
@@ -158,7 +165,7 @@
 
                 <!-- Add buttons -->
                 <div class="col-sm-9 text-right">
-                    <a class="btn btn-primary" href="{% url 'nublas:agenda_event_add' association.uuid %}">
+                    <a class="btn btn-primary btn-sm" href="{% url 'nublas:agenda_event_add' association.uuid %}">
                         <i class="fa fa-plus-circle fa-fw"></i> {% trans 'Add a new event' %}</a>
                 </div>
             </div>

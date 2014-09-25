@@ -117,7 +117,7 @@ class AgendaAllEventListJsonView(View):
                 # TODO - what about permissions ?
             });
 
-        response = HttpResponse(json.dumps(events), mimetype='application/json')
+        response = HttpResponse(json.dumps(events), content_type='application/json')
         response['Pragma'] = 'no-cache'
         return response
 
@@ -136,7 +136,7 @@ class AgendaAllEventListCssView(View):
                     background-color:%(colour)s; border-color:%(colour)s; color:white;
                 }''' % {'name': cal.unique_identifier(), 'colour': cal.colour})
 
-        response = HttpResponse('\n'.join(rendered), mimetype='text/css')
+        response = HttpResponse('\n'.join(rendered), content_type='text/css')
         response['Pragma'] = 'no-cache'
         return response
 
@@ -184,7 +184,7 @@ class AgendaEventListJsonView(View):
                 # TODO - what about permissions ?
             });
 
-        response = HttpResponse(json.dumps(events), mimetype='application/json')
+        response = HttpResponse(json.dumps(events), content_type='application/json')
         response['Pragma'] = 'no-cache'
         return response
 
@@ -205,7 +205,7 @@ class AgendaEventListCssView(View):
                     background-color:%(colour)s; border-color:%(colour)s; color:white;
                 }''' % {'name': cal.unique_identifier(), 'colour': cal.colour})
 
-        response = HttpResponse('\n'.join(rendered), mimetype='text/css')
+        response = HttpResponse('\n'.join(rendered), content_type='text/css')
         response['Pragma'] = 'no-cache'
         return response
 

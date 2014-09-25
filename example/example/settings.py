@@ -113,4 +113,10 @@ NUBLAS_SETTINGS = {
     'LOGIN_URL': '/nublas/auth/login/',
     'LOGIN_REDIRECT_URL': '/nublas/association/list/',
     'INDEX_URL': '/nublas/association/list/',
+
+    'PRIVATE_ROOT': os.path.join(BASE_DIR, 'private'),
+
+    'FRONTEND_SKIN_OPTIONS': {
+        'is_fluid': False
+    }
 }

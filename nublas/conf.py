@@ -13,6 +13,13 @@ if 'test' in sys.argv:
 # Helper class for lazy settings
 class LazySettingsDict(object):
 
+    """ Return the properties """
+    def get_property(self, name, default):
+        return self.settings.get(name, default)
+
+    def get_property_fallback(self, name, default):
+        return self.settings.get(name, getattr(django_settings, name, default))
+
     @settings_property
     def settings(self):
         return getattr(django_settings, 'NUBLAS_SETTINGS', {})
@@ -37,57 +44,113 @@ class LazySettingsDict(object):
 
 
     """ nublas settings variables """
+
+    # Features enablement
     @settings_property
     def ENABLE_MULTILANGUAGE(self):
-        return self.settings.get('ENABLE_MULTILANGUAGE', True)
+        return self.get_property('ENABLE_MULTILANGUAGE', True)
 
     @settings_property
     def ENABLE_USER_LOGIN(self):
-        return self.settings.get('ENABLE_USER_LOGIN', True)
+        return self.get_property('ENABLE_USER_LOGIN', True)
 
     @settings_property
     def ENABLE_USER_REGISTRATION(self):
-        return self.settings.get('ENABLE_USER_REGISTRATION', False)
+        return self.get_property('ENABLE_USER_REGISTRATION', False)
 
     @settings_property
     def ENABLE_ADMIN(self):
-        return self.settings.get('ENABLE_ADMIN', True)
+        return self.get_property('ENABLE_ADMIN', True)
 
+
+    # Filesystem and storages
+    @settings_property
+    def MEDIA_FILE_STORAGE(self):
+        return self.get_property('MEDIA_FILE_STORAGE', 'nublas.storages.filesystem.MediaStorage')
+
+    @settings_property
+    def MEDIA_ROOT(self):
+        return self.get_property_fallback('MEDIA_ROOT', None)
+
+    @settings_property
+    def MEDIA_URL(self):
+        return self.get_property_fallback('MEDIA_URL', '/media/')
+
+    @settings_property
+    def STATIC_FILE_STORAGE(self):
+        return self.get_property('STATIC_FILE_STORAGE', 'nublas.storages.filesystem.StaticStorage')
+
+    @settings_property
+    def STATIC_ROOT(self):
+        return self.get_property_fallback('STATIC_ROOT', None)
+
+    @settings_property
+    def STATIC_URL(self):
+        return self.get_property_fallback('STATIC_URL', '/static/')
+
+    @settings_property
+    def PRIVATE_FILE_STORAGE(self):
+        return self.get_property('PRIVATE_FILE_STORAGE', 'nublas.storages.filesystem.PrivateStorage')
+
+    @settings_property
+    def PRIVATE_ROOT(self):
+        return self.get_property('PRIVATE_ROOT', None)
+
+
+    # Skinning
     @settings_property
     def FRONTEND_SKIN(self):
-        return self.settings.get('FRONTEND_SKIN', 'default')
+        return self.get_property('FRONTEND_SKIN', 'default')
 
     @settings_property
+    def FRONTEND_SKIN_OPTIONS(self):
+        return dict({
+            'is_fluid':            False,
+            'company_name':        'Your Company',
+            'company_url':         '#',
+            'company_tos_url':     '#',
+            'company_privacy_url': '#',
+        }, **self.settings.get('FRONTEND_SKIN_OPTIONS', {}))
+
+
+    # Urls definitions
+    @settings_property
     def INDEX_URL(self):
-        return self.settings.get('INDEX_URL', '/')
+        return self.get_property('INDEX_URL', '/')
 
     @settings_property
     def LOGIN_URL(self):
-        return self.settings.get('LOGIN_URL', django_settings.LOGIN_URL)
+        return self.get_property_fallback('LOGIN_URL', '/auth/login/')
 
     @settings_property
     def LOGOUT_URL(self):
-        return self.settings.get('LOGOUT_URL', django_settings.LOGOUT_URL)
+        return self.get_property_fallback('LOGOUT_URL', '/auth/logout/')
 
     @settings_property
     def LOGIN_REDIRECT_URL(self):
-        return self.settings.get('LOGIN_REDIRECT_URL', django_settings.LOGIN_REDIRECT_URL)
+        return self.get_property_fallback('LOGIN_REDIRECT_URL', '/')
 
+
+    # Login/Logout
     @settings_property
     def AUTH_PASSWORD_MIN_LENGTH(self):
-        return self.settings.get('AUTH_PASSWORD_MIN_LENGTH', 8)
+        return self.get_property('AUTH_PASSWORD_MIN_LENGTH', 8)
 
+
+    # Model classes
     @settings_property
     def BASE_MODEL_CLASS(self):
-        return self.settings.get('BASE_MODEL_CLASS', 'django.db.models.Model')
+        return self.get_property('BASE_MODEL_CLASS', 'django.db.models.Model')
 
     @settings_property
     def BASE_MANAGER_CLASS(self):
-        return self.settings.get('BASE_MANAGER_CLASS', 'django.db.models.Manager')
+        return self.get_property('BASE_MANAGER_CLASS', 'django.db.models.Manager')
 
+
+    # Api keys
     @settings_property
     def GOOGLE_API_KEY(self):
-        return self.settings.get('GOOGLE_API_KEY', '')
+        return self.get_property('GOOGLE_API_KEY', '')
 
 
     """ Unused """

@@ -34,8 +34,8 @@ urlpatterns += patterns('',
     url(r'^association/(?P<association>[a-fA-F0-9]{32})/contacts/action/$', AssociationContactListActionView.as_view(), name='association_contacts_action'),
 
     # association file handling
-    #url(r'^association/(?P<association>[a-fA-F0-9]{32})/files/$', AssociationFilesView.as_view(), name='association_files'),
-    #url(r'^association/(?P<association>[a-fA-F0-9]{32})/fileserve/$', AssociationFileServeView.as_view(), name='association_fileserve'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/files/$', AssociationFilesView.as_view(), name='association_files'),
+    url(r'^association/(?P<association>[a-fA-F0-9]{32})/fileserve/$', AssociationFileServeView.as_view(), name='association_fileserve'),
 
     # association agenda handling
     url(r'^association/(?P<association>[a-fA-F0-9]{32})/agenda/$', AssociationAgendaView.as_view(), name='association_agenda'),

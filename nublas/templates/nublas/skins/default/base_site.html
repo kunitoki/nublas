@@ -1,53 +1,81 @@
 {% nublas_extends 'base.html' %}
+{% load i18n %}
+
 
 {% block navbar %}
     <div class="navbar navbar-inverse navbar-static-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#"><img src="{% nublas_static 'img/logo_micro.png' %}" /></a>
+        <div class="container{% if settings.FRONTEND_SKIN_OPTIONS.is_fluid %}-fluid{% endif %}">
+
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{% url 'nublas:home' %}"><img src="{% nublas_static 'img/logo_micro.png' %}" /></a>
+            </div>
+
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="{% url 'nublas:home' %}">
+                        <i class="fa fa-home fa-fw"></i> Home</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'nublas:association_list' %}">
+                            <i class="fa fa-users fa-fw"></i> {% trans "Associations" %}</a></li>
+                    {% else %}
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    {% endif %}
+                </ul>
+
+                {% if user.is_authenticated %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "My Nublas" %} <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{% url 'nublas:auth_profile' %}">
+                                <i class="fa fa-user fa-fw"></i> {% trans "My profile" %}</a></li>
+                            <li class="divider"></li>
+                            <!--<li class="dropdown-header">Nav header</li>-->
+                            <li><a href="{% url 'nublas:auth_logout' %}">
+                                <i class="fa fa-sign-out fa-fw"></i> {% trans "Logout" %}</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">{% trans "Help" %}</a></li>
+                </ul>
+                {% endif %}
+            </div>
+
         </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#"><i class="fa fa-home fa-fw"></i> Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-          </ul>
-          <!--
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="../navbar/">Default</a></li>
-            <li class="active"><a href="./">Static top</a></li>
-            <li><a href="../navbar-fixed-top/">Fixed top</a></li>
-          </ul>
-          -->
-        </div><!--/.nav-collapse -->
-      </div>
     </div>
 {% endblock %}
 
+
 {% block content-breadcrumb %}
-    <!--
     <ol class="breadcrumb">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Library</a></li>
-        <li class="active">Data</li>
+        {% block content-breadcrumb-inner %}
+            <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
+            <li class="active">Data</li>
+        {% endblock %}
     </ol>
-    -->
+{% endblock %}
+
+
+{% block footer %}
+    <div class="container text-center">
+        <hr />
+        <div class="row">
+            <div class="col-sm-12">
+                <ul class="nav nav-pills nav-justified">
+                    <li><a href="{{ settings.FRONTEND_SKIN_OPTIONS.company_url }}">© 2014 {{ settings.FRONTEND_SKIN_OPTIONS.company_name }}.</a></li>
+                    <li><a href="{{ settings.FRONTEND_SKIN_OPTIONS.company_tos_url }}">{% trans "Terms of Service" %}</a></li>
+                    <li><a href="{{ settings.FRONTEND_SKIN_OPTIONS.company_privacy_url }}">{% trans "Privacy" %}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">&nbsp;</div>
+        </div>
+    </div>
 {% endblock %}

@@ -67,9 +67,11 @@
 
     {% block navbar %}{% endblock %}
 
+    {% block sidebar-left %}{% endblock %}
+
     {% block content %}
-        <div class="container-fluid">
-            {% block content-title %}{% endblock %}
+        <div class="container{% if settings.FRONTEND_SKIN_OPTIONS.is_fluid %}-fluid{% endif %}">
+            {% block content-top %}{% endblock %}
 
             {% block content-breadcrumb %}{% endblock %}
 
@@ -77,9 +79,17 @@
                 {% nublas_include "messages.html" %}
             {% endblock %}
 
+            {% block content-title %}{% endblock %}
+
+            {% block content-actions %}{% endblock %}
+
             {% block content-inner %}{% endblock %}
+
+            {% block content-bottom %}{% endblock %}
         </div>
     {% endblock %}
+
+    {% block sidebar-right %}{% endblock %}
 
     {% block footer %}{% endblock %}
 {% endblock %}

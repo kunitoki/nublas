@@ -386,7 +386,7 @@ class ContactDeleteView(View):
         else:
             messages.add_message(request, messages.ERROR, _('Cannot delete the contact.'))
 
-        return HttpResponseRedirect(reverse('nublas:association_contact_list', args=[a.uuid]))
+        return HttpResponseRedirect(reverse('nublas:association_contacts', args=[a.uuid]))
 
 
 #==============================================================================

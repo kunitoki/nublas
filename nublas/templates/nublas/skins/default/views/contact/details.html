@@ -7,9 +7,28 @@
         {% if adding %}
             <h1>{% trans "Adding new contact" %}</h1>
         {% else %}
-            <h1>{{ contact.first_name }} {{ contact.last_name }} <small>{% trans "Contact details" %}</small></h1>
+            <h1>{{ contact.first_name }} {{ contact.last_name }}
+                <small>{% trans "Contact details" %}
+                    {% if editing %}
+                        <a href="{% url 'nublas:contact_details' contact.uuid %}" class="btn btn-default btn-xs">
+                            <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a>
+                    {% else %}
+                        <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-xs">
+                            <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                    {% endif %}
+                </small>
+            </h1>
         {% endif %}
     </div>
+{% endblock %}
+
+
+{% block content-breadcrumb-inner %}
+    <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
+    <li><a href="{% url 'nublas:association_list' %}">{% trans "Associations" %}</a></li>
+    <li><a href="{% url 'nublas:association_details' contact.association.uuid %}">{{ contact.association.name|capfirst }}</a></li>
+    <li><a href="{% url 'nublas:association_contacts' contact.association.uuid %}">{% trans "Contacts" %}</a></li>
+    <li class="active">{{ contact.first_name }} {{ contact.last_name }}</li>
 {% endblock %}
 
 
@@ -74,34 +93,26 @@
                 {% endif %}
 
                 <!-- Buttons -->
-                <div class="col-sm-12 text-center">
-                    <div class="btn-group">
-                        {% if editing or adding %}
-                            <button class="btn btn-default btn-sm" type="submit">
-                                <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Contact' %}</button>
-
-                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                                <i class="caret"></i>
-                                <i class="sr-only">Toggle Dropdown</i>
-                            </button>
-                            <ul class="dropdown-menu pull-right" role="menu">
-                                <li><a href="#">{% trans "Save and add another" %}</a></li>
-                                {% if contact and not adding %}
-                                <li><a href="#">{% trans "Save as a copy" %}</a></li>
-                                <li class="divider"></li>
-                                <li><a href="{% url 'nublas:contact_details' contact.uuid %}">
-                                    <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a></li>
-                                <li class="divider"></li>
-                                <li><a href="{% url 'nublas:contact_delete' contact.uuid %}">
-                                    <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a></li>
-                                {% endif %}
-                            </ul>
-                        {% else %}
-                            <a href="{% url 'nublas:contact_edit' contact.uuid %}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                {% if editing or adding %}
+                <div class="form-group">
+                    <div class="col-sm-6 text-left">
+                        <button class="btn btn-primary btn-sm" type="submit">
+                            <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Contact' %}</button>
+                        <a class="btn btn-default btn-sm" href="#">
+                            {% trans "Save and add another" %}</a>
+                        {% if contact and not adding %}
+                        <a class="btn btn-default btn-sm" href="#">
+                            {% trans "Save as a copy" %}</a>
                         {% endif %}
                     </div>
+                    {% if contact %}
+                    <div class="col-sm-6 text-right">
+                        <a class="btn btn-danger btn-sm" href="{% url 'nublas:contact_delete' contact.uuid %}">
+                            <i class="fa fa-close fa-fw"></i> {% trans "Delete" %}</a>
+                    </div>
+                    {% endif %}
                 </div>
+                {% endif %}
 
             </div>
 

@@ -1,4 +1,4 @@
-{% nublas_extends "base_site.html" %}
+{% nublas_extends "views/contact/details.html" %}
 {% load i18n %}
 {% load static %}
 
@@ -12,7 +12,7 @@
 
                 $(".deleteButton").click(function(e){
                     e.preventDefault();
-                    jConfirm("{% trans 'Are you sure ?' %}", "{% trans 'You selected to delete the partecipations' %}", $.proxy(function(ans) {
+                    jConfirm("{% trans 'Are you sure ?' %}", "{% trans 'You selected to delete the partecipation' %}", $.proxy(function(ans) {
                         if (ans) {
                             $('<form>', {
                                 'action': $(this).attr('href'),

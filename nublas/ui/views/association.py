@@ -1,5 +1,6 @@
 import re
 import csv
+import os
 import string
 from django import forms
 from django.db import transaction
@@ -11,7 +12,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 from django.utils.translation import ugettext_lazy as _
@@ -35,8 +36,8 @@ __all__ = [ "AssociationAddView", "AssociationAgendaLatestView",
             "AssociationAgendaView", "AssociationContactListActionView",
             "AssociationContactListView", "AssociationDeleteView",
             "AssociationDetailsView", "AssociationEditView",
-            "AssociationFilesView", "AssociationListView",
-            "AssociationSettingsView" ]
+            "AssociationFilesView", "AssociationFileServeView",
+            "AssociationListView", "AssociationSettingsView" ]
 
 
 #==============================================================================
@@ -311,27 +312,54 @@ class AssociationFilesView(View):
 
 
 #==============================================================================
-#class AssociationFileServeView(GenericFileServeView):
-#    def get_opts(self, request, **kwargs):
-#        association = kwargs.get('association')
-#
-#        a = Association.get_object_or_404(association, request.user)
-#
-#        # get root
-#        root_path = a.get_documents_path()
-#
-#        # available space
-#        freespace = request.user.constraint_value('max_diskspace') - a.get_documents_disksize()
-#        max_size = min(freespace, settings.FILE_UPLOAD_MAX_MEMORY_SIZE) / (1024 * 1024)
-#
-#        # return connector options
-#        return {
-#            'root': root_path,
-#            'uploadMaxSize': max_size,
-#            'diskspaceMaxSize': max_size,
-#        }
-#
-#
+class AssociationFileServeView(View): #(GenericFileServeView):
+    @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    def dispatch(self, request, *args, **kwargs):
+    #def get_opts(self, request, **kwargs):
+        association = kwargs.get('association')
+
+        a = Association.get_object_or_404(association, request.user)
+
+        # get root
+        root_path = a.get_documents_path()
+
+        # available space
+        #freespace = request.user.constraint_value('max_diskspace') - a.get_documents_disksize()
+        #max_size = min(freespace, settings.FILE_UPLOAD_MAX_MEMORY_SIZE) / (1024 * 1024)
+
+        data = { 'files': [], 'status': False }
+
+        if request.method == 'GET':
+            if 'path' in request.GET:
+                path = request.GET.get('path')
+                fullpath = '%s/%s%s' % (settings.PRIVATE_ROOT, root_path, path)
+                #print(fullpath)
+
+                for (dirpath, dirnames, filenames) in os.walk(fullpath):
+                    data['files'].append({
+                        'folder': True,
+                        'name': '...',
+                        'link': os.path.split(path)[0],
+                    })
+                    for fs in dirnames:
+                        if not fs.startswith('.'):
+                            data['files'].append({
+                                'folder': True,
+                                'name': fs,
+                                'link': os.path.join(path, fs),
+                            })
+                    for fs in filenames:
+                        if not fs.startswith('.'):
+                            data['files'].append({
+                                'folder': False,
+                                'name': fs,
+                                'link': os.path.join(path, fs),
+                            })
+                    data['status'] = True
+                    break
+
+        return JsonResponse(data)
+
 # #==============================================================================
 # class AssociationCustomFieldForm(BaseModelForm):
 #     def __init__(self, *args, **kwargs):
