@@ -1,0 +1,21 @@
+[
+  { "pk": null, "model": "nublas.group", "fields": { "association": {{ object }}, "name": "Persona" } },
+  { "pk": null, "model": "nublas.group", "fields": { "association": {{ object }}, "name": "Organizzazione" } },
+  { "pk": null, "model": "nublas.contacttype", "fields": { "association": {{ object }}, "name": "Individuo" } },
+  { "pk": null, "model": "nublas.relationshiptype", "fields": { "association": {{ object }}, "name": "Figlio", "reverse": "Genitore", "from_slug": "figlio di", "to_slug": "genitore di" } },
+  { "pk": null, "model": "nublas.addresstype", "fields": { "association": {{ object }}, "name": "Casa" } },
+  { "pk": null, "model": "nublas.addresstype", "fields": { "association": {{ object }}, "name": "Lavoro" } },
+  { "pk": null, "model": "nublas.emailtype", "fields": { "association": {{ object }}, "name": "Principale" } },
+  { "pk": null, "model": "nublas.websitetype", "fields": { "association": {{ object }}, "name": "Principale" } },
+  { "pk": null, "model": "nublas.phonetype", "fields": { "association": {{ object }}, "name": "Principale" } },
+  { "pk": null, "model": "nublas.phonekind", "fields": { "association": {{ object }}, "name": "Telefono" } },
+  { "pk": null, "model": "nublas.phonekind", "fields": { "association": {{ object }}, "name": "Cellulare" } },
+  { "pk": null, "model": "nublas.phonekind", "fields": { "association": {{ object }}, "name": "Fax" } },
+  { "pk": null, "model": "nublas.prefixtype", "fields": { "association": {{ object }}, "name": "Sig." } },
+  { "pk": null, "model": "nublas.prefixtype", "fields": { "association": {{ object }}, "name": "Sig.ra" } },
+  { "pk": null, "model": "nublas.suffixtype", "fields": { "association": {{ object }}, "name": "Jr." } },
+  { "pk": null, "model": "nublas.gendertype", "fields": { "association": {{ object }}, "name": "Uomo" } },
+  { "pk": null, "model": "nublas.gendertype", "fields": { "association": {{ object }}, "name": "Donna" } },
+  { "pk": null, "model": "nublas.subscriptiontype", "fields": { "association": {{ object }}, "name": "Yearly subscription" } },
+  { "pk": null, "model": "nublas.calendar", "fields": { "association": {{ object }}, "name": "Default calendar", "is_public": true, "is_enabled": true, "colour": "#ff9900" } }
+]

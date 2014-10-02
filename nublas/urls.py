@@ -107,6 +107,12 @@ urlpatterns += patterns('',
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/relationship/add/$', ContactRelationshipAddView.as_view(), name='contact_relationship_add'),
     url(r'^contact/relationship/(?P<object>[a-fA-F0-9]{32})/edit/$', ContactRelationshipEditView.as_view(), name='contact_relationship_edit'),
     url(r'^contact/relationship/(?P<object>[a-fA-F0-9]{32})/delete/$', ContactRelationshipDeleteView.as_view(), name='contact_relationship_delete'),
+
+    # reverse relationships
+    url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/relationships/rev/$', ContactReverseRelationshipView.as_view(), name='contact_reverse_relationships'),
+    url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/relationship/rev/add/$', ContactReverseRelationshipAddView.as_view(), name='contact_reverse_relationship_add'),
+    url(r'^contact/relationship/(?P<object>[a-fA-F0-9]{32})/rev/edit/$', ContactReverseRelationshipEditView.as_view(), name='contact_reverse_relationship_edit'),
+    url(r'^contact/relationship/(?P<object>[a-fA-F0-9]{32})/rev/delete/$', ContactReverseRelationshipDeleteView.as_view(), name='contact_reverse_relationship_delete'),
 )
 
 

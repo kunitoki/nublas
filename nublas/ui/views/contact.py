@@ -7,7 +7,7 @@ from django.db.models import Q
 #from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -25,9 +25,10 @@ from ..forms import BaseForm, BaseModelForm # , CustomFieldModelForm
 from ..search import SearchForm, search_contacts
 from ...conf import settings
 from ...models import (Association, Contact, Group, ContactGroup,
-    Address, Phone, Email, Website, Subscription, Relationship,
+    Address, Phone, Email, Website, Subscription, Relationship, ReverseRelationship,
     PrefixType, SuffixType, ContactType, GenderType, AddressType, PhoneType,
-    PhoneKind, EmailType, WebsiteType, SubscriptionType, RelationshipType)
+    PhoneKind, EmailType, WebsiteType, SubscriptionType, RelationshipType,
+    ReverseRelationshipType)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -43,6 +44,8 @@ __all__ = [ "ContactListView", "ContactAddView", "ContactDetailsView",
             "ContactPhoneDeleteView", "ContactPhoneEditView",
             "ContactRelationshipAddView", "ContactRelationshipDeleteView",
             "ContactRelationshipEditView", "ContactRelationshipView",
+            "ContactReverseRelationshipAddView", "ContactReverseRelationshipDeleteView",
+            "ContactReverseRelationshipEditView", "ContactReverseRelationshipView",
             "ContactSubscriptionAddView", "ContactSubscriptionDeleteView",
             "ContactSubscriptionEditView", "ContactSubscriptionView",
             "ContactWebsiteAddView", "ContactWebsiteDeleteView",
@@ -112,7 +115,7 @@ class GenericContactInlineAddView(GenericContactInlineView):
             inline_form = self.form(request.POST, instance=o, association=a, contact=c)
             if self.custom_form:
                 custom_form = self.custom_form(request.POST, instance=o, association=a)
-            if self.check_is_valid(inline_form, custom_form, tags_form):
+            if self.check_is_valid(inline_form, custom_form):
                 inline_form.save() # must be saved first
                 if custom_form:
                     custom_form.save()
@@ -165,7 +168,7 @@ class GenericContactInlineEditView(GenericContactInlineView):
             inline_form = self.form(request.POST, instance=o, association=a, contact=c)
             if self.custom_form:
                 custom_form = self.custom_form(request.POST, instance=o, association=a)
-            if self.check_is_valid(inline_form, custom_form, tags_form):
+            if self.check_is_valid(inline_form, custom_form):
                 inline_form.save() # must be saved first
                 if custom_form: custom_form.save()
                 # message the user and redirect to view
@@ -259,6 +262,7 @@ class ContactPersonalForm(BaseModelForm):
 #==============================================================================
 class ContactListView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    #@method_decorator(permission_required('association.view_contacts', login_url=settings.LOGIN_URL))
     def dispatch(self, request, *args, **kwargs):
         association = kwargs.get('association')
 
@@ -278,6 +282,7 @@ class ContactListView(View):
 #==============================================================================
 class ContactDetailsView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    #@method_decorator(permission_required('contact.view', login_url=settings.LOGIN_URL))
     def dispatch(self, request, *args, **kwargs):
         contact = kwargs.get('contact')
 
@@ -300,6 +305,7 @@ class ContactDetailsView(View):
 #==============================================================================
 class ContactEditView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    #@method_decorator(permission_required('contact.change', login_url=settings.LOGIN_URL))
     @method_decorator(transaction.atomic)
     def dispatch(self, request, *args, **kwargs):
         contact = kwargs.get('contact')
@@ -336,6 +342,7 @@ class ContactEditView(View):
 #==============================================================================
 class ContactAddView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    #@method_decorator(permission_required('contact.add', login_url=settings.LOGIN_URL))
     @method_decorator(transaction.atomic)
     def dispatch(self, request, *args, **kwargs):
         association = kwargs.get('association')
@@ -372,6 +379,7 @@ class ContactAddView(View):
 #==============================================================================
 class ContactDeleteView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    #@method_decorator(permission_required('contact.delete', login_url=settings.LOGIN_URL))
     @method_decorator(transaction.atomic)
     def dispatch(self, request, *args, **kwargs):
         contact = kwargs.get('contact')
@@ -392,6 +400,7 @@ class ContactDeleteView(View):
 #==============================================================================
 class ContactFilesView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    #@method_decorator(permission_required('contact.view_files', login_url=settings.LOGIN_URL))
     def dispatch(self, request, *args, **kwargs):
         contact = kwargs.get('contact')
 
@@ -871,6 +880,84 @@ class ContactRelationshipDeleteView(GenericContactInlineDeleteView):
         super(ContactRelationshipDeleteView, self).__init__()
         self.cls = Relationship
         self.contact_fieldname = 'from_contact'
+        self.success_text = _('Relationship deleted successfully.')
+        self.error_text = _('Cannot delete the relationship.')
+
+    def redirect_url(self, *args):
+        return reverse('nublas:contact_relationships', args=args)
+
+
+#==============================================================================
+class ReverseRelationshipForm(BaseModelForm):
+    def __init__(self, *args, **kwargs):
+        a = kwargs.pop('association')
+        c = kwargs.pop('contact')
+        super(ReverseRelationshipForm, self).__init__(*args, **kwargs)
+        if a:
+            self.fields['type'].queryset = ReverseRelationshipType.objects.filter(association=a)
+            self.fields['from_contact'].queryset = Contact.objects.filter(association=a)
+            if c:
+                self.fields['from_contact'].queryset = self.fields['from_contact'].queryset.exclude(pk=c.pk)
+
+    class Meta:
+        model = Relationship
+        exclude = ('to_contact',
+                   'tags',)
+
+
+class ContactReverseRelationshipView(View):
+    @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    def dispatch(self, request, *args, **kwargs):
+        contact = kwargs.get('contact')
+
+        c = get_object_or_404(Contact, _uuid=contact)
+        # TODO - check security
+        a = c.association
+
+        return render_to_response(get_skin_relative_path('views/contact/relationships.html'),
+            RequestContext(request, { 'association': a,
+                                      'contact': c }))
+
+
+class ContactReverseRelationshipAddView(GenericContactInlineAddView):
+    def __init__(self):
+        super(ContactReverseRelationshipAddView, self).__init__()
+        self.cls = ReverseRelationship
+        self.form = ReverseRelationshipForm
+        self.contact_fieldname = 'to_contact'
+        self.title = _('Adding new relationship for ')
+        self.section_title = _('Relationship data')
+        self.section_icon = 'fa-child'
+        self.submit_text = _('Create new relationship')
+        self.success_text = _('Relationship created successfully.')
+        self.error_text = _('Cannot save the relationship.')
+
+    def redirect_url(self, *args):
+        return reverse('nublas:contact_relationships', args=args)
+
+
+class ContactReverseRelationshipEditView(GenericContactInlineEditView):
+    def __init__(self):
+        super(ContactReverseRelationshipEditView, self).__init__()
+        self.cls = ReverseRelationship
+        self.form = ReverseRelationshipForm
+        self.contact_fieldname = 'to_contact'
+        self.title = _('Editing relationship for ')
+        self.section_title = _('Relationship data')
+        self.section_icon = 'fa-child'
+        self.submit_text = _('Save relationship')
+        self.success_text = _('Relationship modified successfully.')
+        self.error_text = _('Cannot save the relationship.')
+
+    def redirect_url(self, *args):
+        return reverse('nublas:contact_relationships', args=args)
+
+
+class ContactReverseRelationshipDeleteView(GenericContactInlineDeleteView):
+    def __init__(self):
+        super(ContactReverseRelationshipDeleteView, self).__init__()
+        self.cls = ReverseRelationship
+        self.contact_fieldname = 'to_contact'
         self.success_text = _('Relationship deleted successfully.')
         self.error_text = _('Cannot delete the relationship.')
 

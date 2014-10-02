@@ -38,7 +38,6 @@ class Address(BaseModel):
     UNIQUE_BOOLEAN = [ ('is_main', ['contact']) ]
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('address')
         verbose_name_plural = _('addresses')
 
@@ -78,7 +77,6 @@ class Phone(BaseModel):
     UNIQUE_BOOLEAN = [ ('is_main', ['contact']) ]
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('phone')
         verbose_name_plural = _('phones')
 
@@ -100,7 +98,6 @@ class Email(BaseModel):
     UNIQUE_BOOLEAN = [ ('is_main', ['contact']) ]
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('email')
         verbose_name_plural = _('emails')
 
@@ -119,7 +116,6 @@ class Website(BaseModel):
     type = models.ForeignKey('nublas.WebsiteType', verbose_name=_('website type'))
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('website')
         verbose_name_plural = _('websites')
 
@@ -138,7 +134,6 @@ class Relationship(BaseModel):
     to_contact = models.ForeignKey('nublas.Contact', related_name='to_contact', verbose_name=_('to contact'))
 
     class Meta:
-        app_label = 'nublas'
         unique_together = ('from_contact', 'to_contact', 'type', '_trashed')
         verbose_name = _('relationship')
         verbose_name_plural = _('relationships')
@@ -166,7 +161,6 @@ class ReverseRelationship(Relationship):
     """
     class Meta:
         proxy = True
-        app_label = 'nublas'
         verbose_name = _('reverse relationship')
         verbose_name_plural = _('reverse relationships')
 
@@ -183,7 +177,6 @@ class ContactGroup(BaseModel): # TODO - simple through model... check this ?
     group = models.ForeignKey('nublas.Group')
 
     class Meta:
-        app_label = 'nublas'
         unique_together = ('contact', 'group', '_trashed')
         verbose_name = _('contact group')
         verbose_name_plural = _('contact groups')
@@ -231,7 +224,6 @@ class Contact(BaseModelLinkedToAssociation('contacts')):
     # TODO - add photo of contact (enable gravatars?)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('contact')
         verbose_name_plural = _('contacts')
 
@@ -308,7 +300,6 @@ class Contact(BaseModelLinkedToAssociation('contacts')):
 #    transaction = models.CharField(_('transaction'), max_length=200, blank=True, null=True)
 #
 #    class Meta:
-#        app_label = 'backend'
 #        verbose_name = _('contribution')
 #        verbose_name_plural = _('contributions')
 #
@@ -353,7 +344,6 @@ class Subscription(BaseModel):
     #contribution = models.ForeignKey(Contribution, related_name='contribution', verbose_name=_('contribution'), blank=True, null=True)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('subscription')
         verbose_name_plural = _('subscriptions')
 

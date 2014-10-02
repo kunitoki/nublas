@@ -10,63 +10,77 @@
 
                 //===== Contact list actions =====//
 
-                $(".selectAllButton").click(function(e){
+                $(".nublas-select-all-btn").click(function(e){
                     e.preventDefault();
-                    $("#contactList input[type='checkbox']").attr('checked','checked');
-                    //$.uniform.update();
+                    $(".nublas-contact-list input[type='checkbox']").prop('checked', 'checked');
                 });
 
-                $(".selectClearButton").click(function(e){
+                $(".nublas-select-clear-btn").click(function(e){
                     e.preventDefault();
-                    $("#contactList input[type='checkbox']").removeAttr('checked');
-                    //$.uniform.update();
+                    $(".nublas-contact-list input[type='checkbox']").removeAttr('checked');
                 });
 
-                $(".applyButton").click(function(e){
+                $(".nublas-delete-selected-btn").click(function(e){
                     e.preventDefault();
-                    var action = $(".actionForm select option:selected").val();
-                    if (action)
-                    {
-                        var text = $(".actionForm select option:selected").text();
-                        jConfirm("{% trans 'Are you sure you wish to ' %}" + text + "?", "{% trans 'Confirm action' %}", function(val) {
-                            if (val) {
-                                $(".actionForm").submit();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you wish to delete selected ?' %}",
+                        function(result) {
+                            if (result) {
+                                $(".nublas-contacts-action").val("delete");
+                                $(".nublas-main-form").submit();
                             }
                         });
-                    }
+                });
+
+                $(".nublas-export-selected-btn").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you wish to export selected ?' %}",
+                        function(result) {
+                            if (result) {
+                                $(".nublas-contacts-action").val("export");
+                                $(".nublas-main-form").submit();
+                            }
+                        }
+                    );
+                });
+
+                $(".nublas-create-event-btn").click(function(e){
+                    e.preventDefault();
                 });
 
 
                 //===== Letters navigation =====//
 
-                $("#contactList-nav a").click(function(e){
+                $(".nublas-contact-list-nav a").click(function(e){
                     e.preventDefault();
-                    $("#letter").val($(this).text());
-                    $(".searchForm").submit();
+                    $(".nublas-letter").val($(this).text());
+                    $(".nublas-search-form").submit();
                 });
 
 
                 //===== Pagination navigation =====//
-                {% if contacts.has_previous %}
-                $(".pagination .pages li.prev a").click(function(e){
-                    e.preventDefault();
-                    $("#page").val({{ contacts.previous_page_number }});
-                    $(".searchForm").submit();
-                });
-                {% endif %}
 
-                {% if contacts.has_next %}
-                $(".pagination .pages li.next a").click(function(e){
+                $(".nublas-pagination li.prev a").click(function(e){
                     e.preventDefault();
-                    $("#page").val({{ contacts.next_page_number }});
-                    $(".searchForm").submit();
+                    {% if contacts.has_previous %}
+                        $(".nublas-page").val({{ contacts.previous_page_number }});
+                        $(".nublas-search-form").submit();
+                    {% endif %}
                 });
-                {% endif %}
 
-                $(".pagination .pages li:not(.prev):not(.next) a").click(function(e){
+                $(".nublas-pagination li.next a").click(function(e){
                     e.preventDefault();
-                    $("#page").val($(this).text());
-                    $(".searchForm").submit();
+                    {% if contacts.has_next %}
+                        $(".nublas-page").val({{ contacts.next_page_number }});
+                        $(".nublas-search-form").submit();
+                    {% endif %}
+                });
+
+                $(".nublas-pagination li:not(.prev):not(.next) a").click(function(e){
+                    e.preventDefault();
+                    $(".nublas-page").val($(this).text());
+                    $(".nublas-search-form").submit();
                 });
 
             });
@@ -101,9 +115,9 @@
             <div class="row row-section">
                 <!-- Search -->
                 <div class="col-sm-3">
-                    <form action="." method="POST" role="form" class="searchForm">{% csrf_token %}
-                        <input type="hidden" id="letter" name="letter" value="{{ letter }}" />
-                        <input type="hidden" id="page" name="page" value="{{ contacts.number }}" />
+                    <form action="." method="POST" role="form" class="nublas-search-form">{% csrf_token %}
+                        <input type="hidden" class="nublas-letter" name="letter" value="{{ letter }}" />
+                        <input type="hidden" class="nublas-page" name="page" value="{{ contacts.number }}" />
                         <div class="input-group">
                             <input type="text" class="form-control input-sm" name="search" placeholder="{% trans 'Enter search text...' %}" value="{{ searchtext }}">
                             <span class="input-group-btn">
@@ -117,8 +131,8 @@
                 <div class="col-sm-9 text-right">
                     <a class="btn btn-primary btn-sm" href="{% url 'nublas:contact_add' association.uuid %}">
                         <i class="fa fa-plus-circle fa-fw"></i> {% trans "Add" %}</a>
-                    <a class="btn btn-default btn-sm selectClearButton" href="#">{% trans "Clear selection" %}</a>
-                    <a class="btn btn-default btn-sm selectAllButton" href="#">{% trans "Select all" %}</a>
+                    <a class="btn btn-default btn-sm nublas-select-clear-btn" href="#">{% trans "Clear selection" %}</a>
+                    <a class="btn btn-default btn-sm nublas-select-all-btn" href="#">{% trans "Select all" %}</a>
 
                     <div class="btn-group">
                         <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
@@ -126,12 +140,12 @@
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            <li><a href="#">
+                            <li><a class="nublas-delete-selected-btn" href="#">
                                 <i class="fa fa-trash fa-fw"></i> {% trans "Delete selected" %}</a></li>
-                            <li><a href="#">
+                            <li><a class="nublas-export-selected-btn" href="#">
                                 <i class="fa fa-download fa-fw"></i> {% trans "Export selected" %}</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">
+                            <li><a class="nublas-create-event-btn" href="#">
                                 <i class="fa fa-calendar fa-fw"></i> {% trans "Create new event" %}</a></li>
                         </ul>
                     </div>
@@ -140,7 +154,7 @@
 
             <!-- Letters -->
             <div class="row row-section">
-                <div class="col-sm-12 text-center" id="contactList-nav">
+                <div class="col-sm-12 text-center nublas-contact-list-nav">
                     <div class="btn-group">
                         <a class="* btn btn-sm btn-{% if letter == 'ALL' %}primary{% else %}default{% endif %}" href="#">ALL</a>
                         <a class="_ btn btn-sm btn-{% if letter == '0-9' %}primary{% else %}default{% endif %}" href="#">0-9</a>
@@ -176,8 +190,9 @@
             </div>
 
             <!-- Table with form -->
-            <div class="panel panel-default" id="contactList">
-                <form action="{% url 'nublas:association_contacts_action' association.uuid %}" method="POST" role="form" class="mainForm">{% csrf_token %}
+            <div class="panel panel-default nublas-contact-list">
+                <form action="{% url 'nublas:association_contacts_action' association.uuid %}" method="POST" role="form" class="nublas-main-form">{% csrf_token %}
+                    <input type="hidden" class="nublas-contacts-action" name="contact_action" value="" />
                     <table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-condensed">
                         <thead>
                         <tr>
@@ -212,8 +227,8 @@
                 </div>
 
                 <div class="col-sm-6 text-right">
-                    <ul class="pagination">
-                        <li{% if not contacts.has_previous %} class="disabled"{% endif %}><a href="#">&laquo;</a></li>
+                    <ul class="pagination nublas-pagination">
+                        <li class="prev {% if not contacts.has_previous %}disabled{% endif %}"><a href="#">&laquo;</a></li>
                         {% nublas_xrange 1 contacts.paginator.num_pages|add:1 1 as pages %}
                         {% for p in pages %}
                             {% if contacts.number == p %}
@@ -222,7 +237,7 @@
                                 <li><a href="#">{{ p }}</a></li>
                             {% endif %}
                         {% endfor %}
-                        <li{% if not contacts.has_next %} class="disabled"{% endif %}><a href="#">&raquo;</a></li>
+                        <li class="next {% if not contacts.has_next %}disabled{% endif %}"><a href="#">&raquo;</a></li>
                     </ul>
                 </div>
             </div>

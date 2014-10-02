@@ -2,6 +2,75 @@
 {% load i18n %}
 
 
+{% block javascript-extra %}
+    <script type="text/javascript">
+        (function($){
+            $(document).ready(function(){
+
+                //===== Delete rows =====//
+
+                var postForm = function(elem) {
+                    $('<form>', {
+                        'action': $(elem).attr('href'),
+                        'method': 'POST',
+                        'target': '_top'
+                    }).append($('<input>', {
+                        'type': 'hidden',
+                        'name': 'csrfmiddlewaretoken',
+                        'value': '{{ csrf_token }}'
+                    })).appendTo('body').submit();
+                };
+
+                $(".nublas-contact-address-table .nublas-delete-button").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the address ?' %}",
+                        $.proxy(function(result) {
+                            if (result)
+                                postForm(this);
+                        }, $(this));
+                    );
+                });
+
+                $(".nublas-contact-email-table .nublas-delete-button").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the email ?' %}",
+                        $.proxy(function(result) {
+                            if (result)
+                                postForm(this);
+                        }, $(this));
+                    );
+                });
+
+                $(".nublas-contact-phone-table .nublas-delete-button").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the phone number ?' %}",
+                        $.proxy(function(result) {
+                            if (result)
+                                postForm(this);
+                        }, $(this));
+                    );
+                });
+
+                $(".nublas-contact-website-table .nublas-delete-button").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the website ?' %}",
+                        $.proxy(function(result) {
+                            if (result)
+                                postForm(this);
+                        }, $(this));
+                    );
+                });
+
+            });
+        })(jQuery);
+    </script>
+{% endblock %}
+
+
 {% block content-title %}
     <div class="page-header">
         {% if adding %}
@@ -26,9 +95,13 @@
 {% block content-breadcrumb-inner %}
     <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
     <li><a href="{% url 'nublas:association_list' %}">{% trans "Associations" %}</a></li>
-    <li><a href="{% url 'nublas:association_details' contact.association.uuid %}">{{ contact.association.name|capfirst }}</a></li>
-    <li><a href="{% url 'nublas:association_contacts' contact.association.uuid %}">{% trans "Contacts" %}</a></li>
-    <li class="active">{{ contact.first_name }} {{ contact.last_name }}</li>
+    {% if editing and not adding %}
+        <li><a href="{% url 'nublas:association_details' contact.association.uuid %}">{{ contact.association.name|capfirst }}</a></li>
+        <li><a href="{% url 'nublas:association_contacts' contact.association.uuid %}">{% trans "Contacts" %}</a></li>
+        <li class="active">{{ contact.first_name }} {{ contact.last_name }}</li>
+    {% else %}
+        <li class="active">{% trans "Add contact" %}</li>
+    {% endif %}
 {% endblock %}
 
 
@@ -95,22 +168,25 @@
                 <!-- Buttons -->
                 {% if editing or adding %}
                 <div class="form-group">
-                    <div class="col-sm-6 text-left">
-                        <button class="btn btn-primary btn-sm" type="submit">
-                            <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Contact' %}</button>
-                        <a class="btn btn-default btn-sm" href="#">
-                            {% trans "Save and add another" %}</a>
-                        {% if contact and not adding %}
-                        <a class="btn btn-default btn-sm" href="#">
-                            {% trans "Save as a copy" %}</a>
+                    <div class="col-sm-12">
+                        <div class="pull-left">
+                            <button class="btn btn-primary btn-sm" type="submit">
+                                <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Contact' %}</button>
+                            <a class="btn btn-default btn-sm" href="#">
+                                {% trans "Save and add another" %}</a>
+                            {% if not adding %}
+                            <a class="btn btn-default btn-sm" href="#">
+                                {% trans "Save as a copy" %}</a>
+                            {% endif %}
+                        </div>
+
+                        {% if editing and not adding %}
+                        <div class="pull-right">
+                            <a class="btn btn-danger btn-sm" href="{% url 'nublas:contact_delete' contact.uuid %}">
+                                <i class="fa fa-close fa-fw"></i> {% trans "Delete" %}</a>
+                        </div>
                         {% endif %}
                     </div>
-                    {% if contact %}
-                    <div class="col-sm-6 text-right">
-                        <a class="btn btn-danger btn-sm" href="{% url 'nublas:contact_delete' contact.uuid %}">
-                            <i class="fa fa-close fa-fw"></i> {% trans "Delete" %}</a>
-                    </div>
-                    {% endif %}
                 </div>
                 {% endif %}
 

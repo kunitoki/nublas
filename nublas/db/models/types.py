@@ -21,7 +21,6 @@ class Country(BaseModelLinkedToAssociation('countries')):
     is_enabled = models.BooleanField(_('enabled'), default=True)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('country')
         verbose_name_plural = _('countries')
         ordering = [ 'name' ]
@@ -39,7 +38,6 @@ class AddressType(BaseModelLinkedToAssociation('address_types')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('address type')
         verbose_name_plural = _('address types')
         ordering = [ 'name' ]
@@ -57,7 +55,6 @@ class PhoneType(BaseModelLinkedToAssociation('phone_types')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('phone type')
         verbose_name_plural = _('phone types')
         ordering = [ 'name' ]
@@ -73,7 +70,6 @@ class PhoneKind(BaseModelLinkedToAssociation('phone_kinds')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('phone kind')
         verbose_name_plural = _('phone kinds')
         ordering = [ 'name' ]
@@ -91,7 +87,6 @@ class EmailType(BaseModelLinkedToAssociation('email_types')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('email type')
         verbose_name_plural = _('email types')
         ordering = [ 'name' ]
@@ -109,7 +104,6 @@ class WebsiteType(BaseModelLinkedToAssociation('website_types')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('website type')
         verbose_name_plural = _('website types')
         ordering = [ 'name' ]
@@ -134,7 +128,6 @@ class RelationshipType(BaseModelLinkedToAssociation('relationship_types')):
         help_text=_("When a mutual relationship exists, i.e. 'friends'"))
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('relationship type')
         verbose_name_plural = _('relationship types')
         ordering = [ 'name' ]
@@ -149,7 +142,6 @@ class ReverseRelationshipType(RelationshipType):
     """
     class Meta:
         proxy = True
-        app_label = 'nublas'
         verbose_name = _('relationship type')
         verbose_name_plural = _('relationship types')
         ordering = [ 'name' ]
@@ -170,7 +162,6 @@ class ContactType(BaseModelLinkedToAssociation('contact_types')):
                                     related_name='child_type', verbose_name=_('parent'))
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('contact type')
         verbose_name_plural = _('contact types')
         ordering = [ 'name' ]
@@ -188,7 +179,6 @@ class PrefixType(BaseModelLinkedToAssociation('prefix_types')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('prefix type')
         verbose_name_plural = _('prefix types')
         ordering = [ 'name' ]
@@ -206,7 +196,6 @@ class SuffixType(BaseModelLinkedToAssociation('suffix_types')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('suffix type')
         verbose_name_plural = _('suffix types')
         ordering = [ 'name' ]
@@ -224,7 +213,6 @@ class GenderType(BaseModelLinkedToAssociation('gender_types')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('gender type')
         verbose_name_plural = _('gender types')
         ordering = [ 'name' ]
@@ -289,7 +277,6 @@ class SubscriptionType(BaseModelLinkedToAssociation('subscription_types')):
     # TODO - mailing templates ?
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('subscription type')
         verbose_name_plural = _('subscription types')
         ordering = [ 'name' ]

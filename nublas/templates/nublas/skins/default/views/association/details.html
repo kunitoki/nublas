@@ -7,9 +7,7 @@
         (function($){
             $(document).ready(function(){
 
-                //===== Delete inlines tables =====//
-
-                $(".deleteButton").click(function(e){
+                $(".nublas-delete-btn").click(function(e){
                     e.preventDefault();
                     jConfirm("{% trans 'Are you sure ?' %}", "{% trans 'You selected to delete the association' %}", $.proxy(function(ans) {
                         if (ans) {
@@ -84,22 +82,25 @@
                 <!-- Buttons -->
                 {% if editing or adding %}
                 <div class="form-group">
-                    <div class="col-sm-6 text-left">
-                        <button class="btn btn-primary btn-sm" type="submit">
-                            <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Association' %}</button>
-                        <a class="btn btn-default btn-sm" href="#">
-                            {% trans "Save and add another" %}</a>
-                        {% if association and not adding %}
-                        <a class="btn btn-default btn-sm" href="#">
-                            {% trans "Save as a copy" %}</a>
+                    <div class="col-sm-12">
+                        <div class="pull-left">
+                            <button class="btn btn-primary btn-sm" type="submit">
+                                <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save Association' %}</button>
+                            <a class="btn btn-default btn-sm" href="#">
+                                {% trans "Save and add another" %}</a>
+                            {% if not adding %}
+                            <a class="btn btn-default btn-sm" href="#">
+                                {% trans "Save as a copy" %}</a>
+                            {% endif %}
+                        </div>
+
+                        {% if editing and not adding %}
+                        <div class="pull-right">
+                            <a class="btn btn-danger btn-sm nublas-delete-btn" href="{% url 'nublas:association_delete' association.uuid %}">
+                                <i class="fa fa-close fa-fw"></i> {% trans "Delete" %}</a>
+                        </div>
                         {% endif %}
                     </div>
-                    {% if association %}
-                    <div class="col-sm-6 text-right">
-                        <a class="btn btn-danger btn-sm" href="{% url 'nublas:association_delete' association.uuid %}">
-                            <i class="fa fa-close fa-fw"></i> {% trans "Delete" %}</a>
-                    </div>
-                    {% endif %}
                 </div>
                 {% endif %}
 

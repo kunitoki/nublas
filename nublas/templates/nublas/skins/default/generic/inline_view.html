@@ -14,34 +14,6 @@
         <ul class="nav nav-tabs" role="tablist">
             <li class="active"><a href="#inline-edit" role="tab" data-toggle="tab">
                 {% if section_icon %}<i class="fa {{ section_icon }} fa-fw"></i> {% endif %}{{ section_title }}</a></li>
-            <li class="pull-right">
-                <div class="btn-group">
-                    {% if back_url %}
-                    <a href="{{ back_url }}" class="btn btn-default btn-sm">
-                        <i class="fa fa-arrow-circle-left fa-fw"></i> {{ back_text }}</a>
-                    {% endif %}
-                    <button class="btn btn-default btn-sm" type="submit">
-                        <i class="fa fa-floppy-o fa-fw"></i> {{ submit_text }}</button>
-                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-                        <i class="caret"></i>
-                        <i class="sr-only">Toggle Dropdown</i>
-                    </button>
-                    <ul class="dropdown-menu pull-right" role="menu">
-                        <li><a href="#">{% trans "Save and add another" %}</a></li>
-                        {% if not contact and not adding %}
-                        <li><a href="#">{% trans "Save as a copy" %}</a></li>
-                        {% comment %}
-                        <li class="divider"></li>
-                        <li><a href="{% url 'nublas:contact_details' contact.uuid %}">
-                            <i class="fa fa-eye fa-fw"></i> {% trans "View" %}</a></li>
-                        <li class="divider"></li>
-                        <li><a href="{% url 'nublas:contact_delete' contact.uuid %}">
-                            <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a></li>
-                        {% endcomment %}
-                        {% endif %}
-                    </ul>
-                </div>
-            </li>
         </ul>
 
         <div class="tab-content">
@@ -59,6 +31,36 @@
 
             </div>
         </div>
+
+        <!-- Buttons -->
+        {% if editing or adding %}
+        <div class="form-group">
+            <div class="col-sm-6 text-left">
+                {% comment %}
+                {% if back_url %}
+                <a href="{{ back_url }}" class="btn btn-default btn-sm">
+                    <i class="fa fa-arrow-circle-left fa-fw"></i> {{ back_text }}</a>
+                {% endif %}
+                {% endcomment %}
+
+                <button class="btn btn-primary btn-sm" type="submit">
+                    <i class="fa fa-floppy-o fa-fw"></i> {{ submit_text }}</button>
+                <a class="btn btn-default btn-sm" href="#">
+                    {% trans "Save and add another" %}</a>
+                {% if not adding %}
+                <a class="btn btn-default btn-sm" href="#">
+                    {% trans "Save as a copy" %}</a>
+                {% endif %}
+            </div>
+
+            {% if editing and not adding %}
+            <div class="col-sm-6 text-right">
+                <a class="btn btn-danger btn-sm" href="{{ delete_url }}">
+                    <i class="fa fa-close fa-fw"></i> {% trans "Delete" %}</a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
 
     </form>
 {% endblock %}

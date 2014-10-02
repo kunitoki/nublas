@@ -49,6 +49,9 @@ class Association(BaseModel):
         app_label = 'nublas'
         verbose_name = _('association')
         verbose_name_plural = _('associations')
+        permissions = (
+            ('view_contacts', _("Can view contacts")),
+        )
 
     def get_documents_root(self):
         return "%s/" % os.path.join('associations', '%s' % self.uuid)
@@ -82,26 +85,29 @@ class Association(BaseModel):
     def __str__(self):
         return self.name
 
+
 # Signal for populate base types in empty association
-#@receiver(signals.post_save, sender=Association, dispatch_uid="populate_empty_association")
-#def populate_empty_association(sender, instance, created, **kwargs):
-#    if created:
-#        with transaction.commit_on_success():
-#            # TODO - fill taking into account the user preferred language
-#            data = render_to_string('nublas/core/association/fixtures/new_association.it.json', { 'object': instance.pk })
-#            for obj in serializers.deserialize("json", data, ensure_ascii=False):
-#                obj.save()
-#            instance.get_documents_path()
-#    # TODO - what to do when the instance is trashed only ? move to thrash too
-#    #else:
-#    #    if instance.trashed:
-#    #        remove_path(instance.get_documents_root())
+@receiver(signals.post_save, sender=Association, dispatch_uid="populate_empty_association")
+def populate_empty_association(sender, instance, created, **kwargs):
+    if created:
+        with transaction.atomic():
+            # TODO - fill taking into account the user preferred language
+            lang = 'it'
+            data = render_to_string('nublas/fixtures/new_association.%s.json' % lang,
+                                    { 'object': instance.pk })
+            for obj in serializers.deserialize("json", data, ensure_ascii=False):
+                obj.save()
+            instance.get_documents_path()
+    # TODO - what to do when the instance is trashed only ? move to thrash too
+    #else:
+    #    if instance.trashed:
+    #        remove_path(instance.get_documents_root())
 
 
 # Signal for delete file structure
-#@receiver(signals.post_delete, sender=Association, dispatch_uid="delete_association_files")
-#def delete_association_files(sender, instance, **kwargs):
-#    instance.delete_documents_root()
+@receiver(signals.post_delete, sender=Association, dispatch_uid="delete_association_files")
+def delete_association_files(sender, instance, **kwargs):
+    instance.delete_documents_root()
 
 
 #==============================================================================
@@ -113,7 +119,6 @@ class Collaborator(BaseModelLinkedToAssociation()):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('user'))
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('collaborator')
         verbose_name_plural = _('collaborators')
 
@@ -127,7 +132,6 @@ class Group(BaseModelLinkedToAssociation('groups')):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _('group')
         verbose_name_plural = _('groups')
 

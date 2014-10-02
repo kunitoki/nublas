@@ -268,7 +268,7 @@ class AssociationContactListActionView(View):
                     elif contact_action == "export":
                         # export selected contacts as csv
                         field_names = set([field.name for field in Contact._meta.fields])
-                        response = HttpResponse(mimetype='text/csv')
+                        response = HttpResponse(content_type='text/csv')
                         response['Content-Disposition'] = 'attachment; filename=%s.csv' % unicode(Contact._meta).replace('.', '_')
                         writer = csv.writer(response)
                         writer.writerow([unicode(field).encode('utf-8') for field in field_names])

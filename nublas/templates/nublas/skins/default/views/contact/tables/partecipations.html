@@ -2,7 +2,7 @@
 {% load static %}
 
 <div class="panel panel-default table-responsive">
-    <table cellpadding="0" cellspacing="0" border="0" id="partecipationsTable" class="table table-striped table-condensed">
+    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped nublas-contact-partecipation-table">
         <thead>
         <tr>
             <th>{% trans "Id" %}</th>
@@ -25,14 +25,14 @@
                 <tr>
                     <td>{{ e.pk }}</td>
                     <td>{{ e.title }}</td>
-                    <td>{{ e.calendar }}</div></td>
+                    <td>{{ e.calendar }}</td>
                     <td>{{ e.start_date }}<div style="display:none">{{ e.start_date|date:'U' }}</div></td>
                     <td>{{ e.end_date }}<div style="display:none">{{ e.end_date|date:'U' }}</div></td>
                     <td class="center"><img src="{% if e.allday %}{% static 'images/forms/checked.png' %}{% else %}{% static 'images/forms/unchecked.png' %}{% endif %}" /></td>
                     <td class="center">
                         {% comment %}
                         <div class="button">
-                            <a href="{% url 'nublas:agenda_partecipation_delete' e.uuid %}" class="redNum deleteButton">{% trans "Delete" %}</a>
+                            <a href="{% url 'nublas:agenda_partecipation_delete' e.uuid %}" class="nublas-delete-button">{% trans "Delete" %}</a>
                         </div>
                         {% endcomment %}
                         <div class="button">

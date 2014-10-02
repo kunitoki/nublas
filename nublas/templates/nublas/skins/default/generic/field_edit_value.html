@@ -53,8 +53,8 @@
 {% elif field.field|classname == "timefield" %}
     <div class="input-group time time-{{ field.auto_id }}">
         <input type="text" id="{{ field.auto_id }}" size="20"
-               name="{{ field.html_name }}" class="form-control" value="{{ field.value|default:'' }}" />
-        <span class="input-group-addon add-on"><i class="fa fa-time"></i></span>
+               name="{{ field.html_name }}" class="form-control" value="{{ field.value|date:'H:i'|default:'' }}" />
+        <span class="input-group-addon add-on btn"><i class="fa fa-time"></i></span>
     </div>
     <script type="text/javascript">
     (function($){
@@ -77,15 +77,15 @@
 {% elif field.field|classname == "datefield" %}
     <div class="input-group date date-{{ field.auto_id }}">
         <input type="text" id="{{ field.auto_id }}" size="20"
-               name="{{ field.html_name }}" class="form-control" value="{{ field.value|default:'' }}" />
-        <span class="input-group-addon add-on"><i class="fa fa-calendar"></i></span>
+               name="{{ field.html_name }}" class="form-control" value="{{ field.value|date:'Y-m-d'|default:'' }}" />
+        <span class="input-group-addon add-on btn"><i class="fa fa-calendar"></i></span>
     </div>
     <script type="text/javascript">
     (function($){
         $(document).ready(function() {
             $('.input-group.date.date-{{ field.auto_id }}').datetimepicker({
                 language: "{{ LANGUAGE_CODE }}",
-                format: "DD/MM/YYYY",
+                format: "YYYY-MM-DD",
                 pickTime: false,
                 icons: {
                     time: "fa fa-clock-o",
@@ -100,15 +100,15 @@
 {% elif field.field|classname == "datetimefield" %}
     <div class="input-group input-append date datetime-{{ field.auto_id }}">
         <input type="text" id="{{ field.auto_id }}" size="20"
-               name="{{ field.html_name }}" class="form-control" value="{{ field.value|default:'' }}" />
-        <span class="input-group-addon add-on"><i class="fa fa-calendar"></i></span>
+               name="{{ field.html_name }}" class="form-control" value="{{ field.value|date:'Y-m-d H:i'|default:'' }}" />
+        <span class="input-group-addon add-on btn"><i class="fa fa-calendar"></i></span>
     </div>
     <script type="text/javascript">
     (function($){
         $(document).ready(function() {
             $('.datetime-{{ field.auto_id }}').datetimepicker({
                 language: "{{ LANGUAGE_CODE }}",
-                format: "DD/MM/YYYY HH:mm",
+                format: "YYYY-MM-DD HH:mm",
                 use24hours: true,
                 icons: {
                     time: "fa fa-clock-o",

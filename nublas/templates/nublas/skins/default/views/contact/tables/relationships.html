@@ -2,7 +2,7 @@
 {% load static %}
 
 <div class="panel panel-default table-responsive">
-    <table cellpadding="0" cellspacing="0" border="0" id="relationshipsTable" class="table table-striped table-condensed">
+    <table cellpadding="0" cellspacing="0" border="0" class="table table-striped nublas-contact-relationship-table">
         <thead>
         <tr>
             <th>{% trans "Id" %}</th>
@@ -22,27 +22,27 @@
                 <td>{{ s.pk }}</td>
                 <td>{{ s.type.from_slug }}</td>
                 <td><a href="{% url 'nublas:contact_details' s.to_contact.uuid %}">{{ s.to_contact }}</a></td>
-                <td class="center">
-                    <div class="button">
-                        <a href="{% url 'nublas:contact_relationship_delete' s.uuid %}" class="redNum deleteButton">{% trans "Delete" %}</a>
-                    </div>
-                    <div class="button">
-                        <a href="{% url 'nublas:contact_relationship_edit' s.uuid %}" class="blueNum">{% trans "Edit" %}</a>
+                <td class="text-center">
+                    <div class="btn-group pull-right">
+                        <a href="{% url 'nublas:contact_relationship_edit' s.uuid %}" class="btn btn-primary btn-xs">
+                            <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                        <a href="{% url 'nublas:contact_relationship_delete' s.uuid %}" class="btn btn-danger btn-xs nublas-delete-button">
+                            <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a>
                     </div>
                 </td>
             </tr>
             {% endfor %}
             {% for s in contact.to_contact.all %}
-            <tr class="gradeA">
+            <tr>
                 <td>{{ s.pk }}</td>
                 <td>{{ s.type.to_slug }}</td>
                 <td><a href="{% url 'nublas:contact_details' s.from_contact.uuid %}">{{ s.from_contact }}</a></td>
-                <td class="center">
-                    <div class="button">
-                        <a href="{% url 'nublas:contact_relationship_delete' s.uuid %}" class="redNum deleteButton">{% trans "Delete" %}</a>
-                    </div>
-                    <div class="button">
-                        <a href="{% url 'nublas:contact_relationship_edit' s.uuid %}" class="blueNum">{% trans "Edit" %}</a>
+                <td class="text-center">
+                    <div class="btn-group pull-right">
+                        <a href="{% url 'nublas:contact_reverse_relationship_edit' s.uuid %}" class="btn btn-primary btn-xs">
+                            <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
+                        <a href="{% url 'nublas:contact_relationship_delete' s.uuid %}" class="btn btn-danger btn-xs nublas-delete-button">
+                            <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a>
                     </div>
                 </td>
             </tr>

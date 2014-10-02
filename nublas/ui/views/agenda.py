@@ -456,7 +456,7 @@ class AgendaEventResizeView(View):
             errors['500'] = _('Event does not exists !')
 
         response_string = json.dumps({ 'result': updateOk, 'errors': errors });
-        response = HttpResponse(response_string, mimetype='application/json')
+        response = HttpResponse(response_string, content_type='application/json')
         return response
 
 

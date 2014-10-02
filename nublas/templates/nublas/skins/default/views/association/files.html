@@ -13,68 +13,72 @@
                 /**
                  * add a message to the message box. context and type can be omitted.
                  */
-                function add_msg(msg, context, type) {
-                  context = typeof context !== 'undefined' ? context : 'Info';
-                  type = typeof type !== 'undefined' ? type : 'alert-info';
+                function add_msg(msg, context, type)
+                {
+                    context = typeof context !== 'undefined' ? context : 'Info';
+                    type = typeof type !== 'undefined' ? type : 'alert-info';
 
-                  $('div#msgbox').prepend(
-                    $('<div />').addClass('alert').addClass(type).append(
-                      '<a class="close" data-dismiss="alert">&times;</a>',
-                      '<strong>' + context + ':</strong> ' + msg
-                    )
-                  );
+                    $('div#msgbox').prepend(
+                        $('<div />').addClass('alert').addClass(type).append(
+                            '<a class="close" data-dismiss="alert">&times;</a>',
+                            '<strong>' + context + ':</strong> ' + msg
+                        );
+                    );
                 }
 
                 // -------------------------------------------------- BROWSE
                 /**
                  * set breadcrumb according to PATH.
                  */
-                function set_breadcrumb() {
-                  // clear
-                  if (PATH)
-                      $('ol#files-breadcrumb').html('<li><a href="{% url 'nublas:association_fileserve' association.uuid %}?path=">..</a></li>');
-                  else
-                      $('ol#files-breadcrumb').html();
+                function set_breadcrumb()
+                {
+                    // clear
+                    if (PATH)
+                        $('ol#files-breadcrumb').html('<li><a href="{% url 'nublas:association_fileserve' association.uuid %}?path=">..</a></li>');
+                    else
+                        $('ol#files-breadcrumb').html();
 
-                  // add parts
-                  var parts = PATH.split('/');
-                  var html = '';
-                  var link = '';
-                  for (var i = 0; i < parts.length; i++) {
-                    if (i != parts.length - 1) {
-                      link += i == 0 ? parts[i] : '/' + parts[i];
-                      html += '<li><a href="{% url 'nublas:association_fileserve' association.uuid %}?path=' + link + '">' + parts[i] + '</a></li>';
-                    } else {
-                      html += '<li class="active">' + parts[i] + '</li>';
+                    // add parts
+                    var parts = PATH.split('/');
+                    var html = '';
+                    var link = '';
+                    for (var i = 0; i < parts.length; i++)
+                    {
+                        if (i != parts.length - 1) {
+                            link += i == 0 ? parts[i] : '/' + parts[i];
+                            html += '<li><a href="{% url 'nublas:association_fileserve' association.uuid %}?path=' + link + '">' + parts[i] + '</a></li>';
+                        } else {
+                            html += '<li class="active">' + parts[i] + '</li>';
+                        }
                     }
-                  }
-                  $('ol#files-breadcrumb').append(html);
+                    $('ol#files-breadcrumb').append(html);
 
-                  // register click event
-                  $('ol#files-breadcrumb a').click(function (e) {
-                    e.preventDefault();
-                    browse($(e.target).attr('href'));
-                  });
+                    // register click event
+                    $('ol#files-breadcrumb a').click(function (e) {
+                        e.preventDefault();
+                        browse($(e.target).attr('href'));
+                    });
                 }
 
                 /**
                  * do the ajax request for the new path.
                  */
-                function browse(path) {
-                  $.ajax({
-                    url: "{% url 'nublas:association_fileserve' association.uuid %}?path=" + path,
-                    cache: false,
-                    dataType: 'json',
-                    success: function (result) {
-                      if (result.status)
-                        show_content(path, result.files);
-                      else
-                        add_msg(result.msg, 'PHP', 'alert-danger');
-                    },
-                    error: function (jqXHR, status) {
-                      add_msg(status, 'AJAX', 'alert-danger');
-                    }
-                  });
+                function browse(path)
+                {
+                    $.ajax({
+                        url: "{% url 'nublas:association_fileserve' association.uuid %}?path=" + path,
+                        cache: false,
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.status)
+                                show_content(path, result.files);
+                            else
+                                add_msg(result.msg, 'PHP', 'alert-danger');
+                        },
+                        error: function (jqXHR, status) {
+                            add_msg(status, 'AJAX', 'alert-danger');
+                        }
+                    });
                 }
 
                 /**
@@ -382,7 +386,7 @@
                                 <input type="text" class="form-control" id="move-dst" />
                             </div>
                             <div class="modal-footer">
-                                <a class="submit btn btn-primary" data-dismiss="modal"><i class="fa fa-ok fa-fw"></i> Ok</a>
+                                <a class="submit btn btn-primary" data-dismiss="modal"><i class="fa fa-thumbs-up fa-fw"></i> Ok</a>
                                 <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-remove fa-fw"></i> Cancel</a>
                             </div>
                         </div>
@@ -402,7 +406,7 @@
                                 <p class="help-block">Only empty directories can be removed.</p>
                             </div>
                             <div class="modal-footer">
-                                <a class="submit btn btn-danger" data-dismiss="modal"><i class="fa fa-ok fa-fw"></i> Ok</a>
+                                <a class="submit btn btn-danger" data-dismiss="modal"><i class="fa fa-thumbs-up fa-fw"></i> Ok</a>
                                 <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-remove fa-fw"></i> Cancel</a>
                             </div>
                         </div>
@@ -425,7 +429,7 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <a class="submit btn btn-primary" data-dismiss="modal"><i class="fa fa-ok fa-fw"></i> Ok</a>
+                                <a class="submit btn btn-primary" data-dismiss="modal"><i class="fa fa-thumbs-up fa-fw"></i> Ok</a>
                                 <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-remove fa-fw"></i> Cancel</a>
                             </div>
                         </div>

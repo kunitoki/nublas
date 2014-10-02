@@ -17,8 +17,8 @@
                 //===== Calendar =====//
 
                 function changeViewDate(view, date) {
-                    $("#calendar").fullCalendar("gotoDate", date);
-                    $("#calendar").fullCalendar("changeView", view);
+                    $(".nublas-calendar").fullCalendar("gotoDate", date);
+                    $(".nublas-calendar").fullCalendar("changeView", view);
                 }
 
                 function addEventSync(date, allDay) {
@@ -75,7 +75,7 @@
                     });
                 }
 
-                $("#calendar").fullCalendar({
+                $(".nublas-calendar").fullCalendar({
                     header: {
                         left: "prev,next",
                         center: "title",
@@ -107,7 +107,7 @@
                     eventResize: updateEventAsync,
                     eventRender: function(event, element) {
                         if (event.verbose) {
-                            var view = $("#calendar").fullCalendar("getView");
+                            var view = $(".nublas-calendar").fullCalendar("getView");
                             switch (view.name) {
                                 case "agendaDay":
                                 case "agendaWeek":
@@ -121,6 +121,13 @@
                         }
                     }
                 });
+
+                // restyle buttons
+                $('.fc-toolbar').find('.fc-button-group').addClass('btn-group');
+                $('.fc-toolbar').find('.fc-button').removeClass('fc-state-default');
+                $('.fc-toolbar').find('.fc-button').addClass('btn btn-primary');
+                $('.fc-toolbar').find('.fc-prev-button').html($('<span />').attr('class', 'glyphicon glyphicon-chevron-left'));
+                $('.fc-toolbar').find('.fc-next-button').html($('<span />').attr('class', 'glyphicon glyphicon-chevron-right'));
 
             });
         })(jQuery);
@@ -153,7 +160,7 @@
             <div class="row row-section">
                 <!-- Search -->
                 <div class="col-sm-3">
-                    <form action="." method="POST" role="form" class="searchForm">{% csrf_token %}
+                    <form action="." method="POST" role="form" class="nublas-search-form">{% csrf_token %}
                         <div class="input-group">
                             <input type="text" class="form-control input-sm" name="search" placeholder="{% trans 'Enter search text...' %}" value="{{ searchtext }}" />
                             <span class="input-group-btn">
@@ -171,26 +178,21 @@
             </div>
 
             <div class="row row-section">
-                <!-- Calendar -->
-                <div class="col-sm-8">
-                    <div id="calendar"></div>
-                </div>
-
                 <!-- Search results -->
                 <div class="col-sm-4">
                     {% if events|length > 0 %}
                         <div class="head">
-                            <h5 class="iMagnify">{% trans "Search results" %}</h5>
-                            <div class="num"><a href="#" class="greenNum">{{ events|length }}</a></div>
+                            <h5>{% trans "Search results" %}</h5>
+                            <div class="badge"><a href="#">{{ events|length }}</a></div>
                         </div>
 
                         {% nublas_include "views/association/includes/events.html" with latest_events=events use_head=0 %}
 
                         {% if events|length > events.paginator.per_page %}
                             <!-- Pagination -->
-                            <div class="supTicket nobg mt0">
-                                <div class="pagination first">
-                                    <ul class="pages">
+                            <div class="">
+                                <div class="">
+                                    <ul class="nublas-pagination pagination">
                                         <li class="prev{% if not events.has_previous %} hidden{% endif %}" ><a href="#">&lt;</a></li>
 
                                         {% nublas_xrange 1 events.paginator.num_pages|add:1 1 as pages %}
@@ -212,8 +214,13 @@
                         </div>
                     {% endif %}
                 </div>
-            </div>
 
+                <!-- Calendar -->
+                <div class="col-sm-8">
+                    <div class="nublas-calendar"></div>
+                </div>
+
+            </div>
         </div>
     </div>
 {% endblock %}

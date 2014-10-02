@@ -26,7 +26,6 @@ class Calendar(BaseModelLinkedToAssociation('calendars')):
     #colored_list.short_description = _('Colour')
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _("calendar")
         verbose_name_plural = _("calendars")
 
@@ -59,7 +58,6 @@ class Event(BaseModel):
     # TODO - payed boolean
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _("event")
         verbose_name_plural = _("events")
 
@@ -83,7 +81,6 @@ class ContactAppointment(BaseModel):
     attended = models.BooleanField(_('attended'), default=True)
 
     class Meta:
-        app_label = 'nublas'
         verbose_name = _("contact appointment")
         verbose_name_plural = _("contact appointments")
 

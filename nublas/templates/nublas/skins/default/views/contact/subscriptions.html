@@ -10,21 +10,24 @@
 
                 //===== Delete row =====//
 
-                $(".deleteButton").click(function(e){
+                $(".nublas-contact-subscription-table .nublas-delete-button").click(function(e){
                     e.preventDefault();
-                    jConfirm("{% trans 'Are you sure ?' %}", "{% trans 'You selected to delete the subscription' %}", $.proxy(function(ans) {
-                        if (ans) {
-                            $('<form>', {
-                                'action': $(this).attr('href'),
-                                'method': 'POST',
-                                'target': '_top'
-                            }).append($('<input>', {
-                                'type': 'hidden',
-                                'name': 'csrfmiddlewaretoken',
-                                'value': '{{ csrf_token }}'
-                            })).appendTo('body').submit();
-                        }
-                    }, $(this)));
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the subscription ?' %}",
+                        $.proxy(function(result) {
+                            if (result) {
+                                $('<form>', {
+                                    'action': $(this).attr('href'),
+                                    'method': 'POST',
+                                    'target': '_top'
+                                }).append($('<input>', {
+                                    'type': 'hidden',
+                                    'name': 'csrfmiddlewaretoken',
+                                    'value': '{{ csrf_token }}'
+                                })).appendTo('body').submit();
+                            }
+                        }, $(this));
+                    );
                 });
 
             });
