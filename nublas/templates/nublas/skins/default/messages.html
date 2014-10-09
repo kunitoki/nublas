@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load get_bootstrap_alert_msg_css_name from nublas_tags %}
 
+<div class="messages">
 {% if messages %}
     {% for message in messages %}
         {% get_bootstrap_alert_msg_css_name message.tags as alert_tag %}
@@ -9,3 +10,4 @@
                 {{ message }}</div>
     {% endfor %}
 {% endif %}
+</div>

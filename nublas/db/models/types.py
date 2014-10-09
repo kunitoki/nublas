@@ -11,6 +11,10 @@ __all__ = [ "Country", "AddressType", "PhoneType", "PhoneKind", "EmailType",
 
 
 #==============================================================================
+class CountryQuerySet(models.QuerySet):
+    def all(self):
+        return self.filter(is_enabled=True)
+
 @python_2_unicode_compatible
 class Country(BaseModelLinkedToAssociation('countries')):
     """
@@ -19,6 +23,9 @@ class Country(BaseModelLinkedToAssociation('countries')):
     name = models.CharField(_('name'), max_length=100)
     iso3166 = models.CharField(_('iso3166'), max_length=2)
     is_enabled = models.BooleanField(_('enabled'), default=True)
+
+    objects = CountryQuerySet.as_manager()
+    all = models.Manager()
 
     class Meta:
         verbose_name = _('country')

@@ -1,25 +1,93 @@
-/** Global page font */
-body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-  font-family: "Roboto", Helvetica, Arial, sans-serif!important;
+/** Global font face */
+
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Oxygen Light'), local('Oxygen-Light'), url(../fonts/oxygen/-1odZCVpKpOs9pNLq607fhJtnKITppOI_IvcXXDNrsc.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Oxygen Light'), local('Oxygen-Light'), url(../fonts/oxygen/AwBqWF2kjhlybWamaKMPcRJtnKITppOI_IvcXXDNrsc.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Oxygen'), local('Oxygen-Regular'), url(../fonts/oxygen/IIPDrwV5KNJo5-LaFlLy2fesZW2xOQ-xsNqO47m55DA.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Oxygen'), local('Oxygen-Regular'), url(../fonts/oxygen/JBQT4XXxNjmEkBx5N6608vesZW2xOQ-xsNqO47m55DA.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Oxygen Bold'), local('Oxygen-Bold'), url(../fonts/oxygen/fSUtikcZd7PHZK0t2hzTeRJtnKITppOI_IvcXXDNrsc.woff2) format('woff2');
+  unicode-range: U+0100-024F, U+1E00-1EFF, U+20A0-20AB, U+20AD-20CF, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Oxygen Bold'), local('Oxygen-Bold'), url(../fonts/oxygen/yVHpdQrmTj9Kax1tmFSx2hJtnKITppOI_IvcXXDNrsc.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
 
+
+/** Global page font */
+
+body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: "Oxygen", Helvetica, Arial, sans-serif!important;
+}
+
+
 /** Bootstrap fixes */
+
 .tab-pane { padding-top: 15px; }
 .navbar-brand { margin-top: -6px; }
 .page-header { margin: 0px 0 20px; }
 .page-header small a.btn { margin-bottom: 5px; }
 
+
 /** Bootstrap plugins css fixes: Tagsinput */
-.bootstrap-tagsinput { width: 100%; }
-.bootstrap-tagsinput.readonly { border: 0px solid transparent; box-shadow: none; cursor: default; }
-.bootstrap-tagsinput .label { font-size: 100%; font-weight: 400; }
+
+.bootstrap-tagsinput {
+  width: 100%;
+}
+.bootstrap-tagsinput.readonly {
+  border: 0px solid transparent;
+  box-shadow: none;
+  cursor: default;
+  padding: 0px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  margin-bottom: 0;
+}
+.bootstrap-tagsinput .label {
+  font-size: 100%;
+  font-weight: 400;
+}
+
 
 /** 403 404 500 pages */
+
 .error-template { padding: 40px 15px; text-align: center; }
 .error-actions { margin-top:15px; margin-bottom:15px; }
 .error-actions .btn { margin-right:10px; }
 
+
 /** Form fixes */
+
 .form-group .control-label.required:after {
   content: "*";
   color: red;
@@ -29,12 +97,16 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   cursor: default;
 }
 
+
 /** Global to all pages */
+
 .row-section {
   margin-bottom: 15px;
 }
 
+
 /** Login page */
+
 .form-signin {
   max-width: 330px;
   padding: 15px;
@@ -84,14 +156,14 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
   display: block;
 }
 .profile-img {
-  /*width: 96px;
-  height: 96px;*/
   max-width: 250px;
   margin: 0 auto 10px;
   display: block;
-  /*-moz-border-radius: 50%;
+  /*
+  -moz-border-radius: 50%;
   -webkit-border-radius: 50%;
-  border-radius: 50%;*/
+  border-radius: 50%;
+  */
 }
 .need-help {
   margin-top: 10px;
@@ -99,4 +171,23 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .new-account {
   display: block;
   margin-top: 10px;
+}
+
+
+/** Fullcalendar fixes */
+
+.fc-state-hover {
+	color: #333333;
+	background-color: #3071a9;
+	text-decoration: none;
+	box-shadow: none;
+}
+
+.fc-state-down,
+.fc-state-active {
+	color: white;
+	background-color: #3071a9;
+	background-image: none;
+	text-decoration: none;
+	box-shadow: none;
 }

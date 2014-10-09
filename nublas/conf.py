@@ -153,6 +153,12 @@ class LazySettingsDict(object):
         return self.get_property('GOOGLE_API_KEY', '')
 
 
+    # Constants
+    @settings_property
+    def STORAGE_DIRECTORY_PLACEHOLDER(self):
+        return '.keepme'
+
+
     """ Unused """
     @settings_property
     def CUSTOM_FIELD_TYPES(self):

@@ -2,18 +2,15 @@ import os
 import urllib
 import datetime
 from django.db import models
-from django.db.models import get_model
+from django.db.models.loading import get_model
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
-#from django.core.files.base import ContentFile
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-#from nublas.library.storages import private_storage, DIRECTORY_PLACEHOLDER
-
 from ...conf import settings
-from ..base import BaseModel
 from ..fields import location
-from .utils import BaseModelLinkedToAssociation
+from ..base import BaseModel
+from .utils import BaseModelLinkedToAssociation, BaseModelFileRepositoryMixin
 
 __all__ = [ "Address", "Phone", "Email", "Website", "Relationship",
             "ReverseRelationship", "ContactGroup", "Contact", "Subscription" ]
@@ -172,7 +169,7 @@ class ReverseRelationship(Relationship):
 
 #==============================================================================
 @python_2_unicode_compatible
-class ContactGroup(BaseModel): # TODO - simple through model... check this ?
+class ContactGroup(BaseModel):
     contact = models.ForeignKey('nublas.Contact')
     group = models.ForeignKey('nublas.Group')
 
@@ -197,7 +194,7 @@ class ContactGroup(BaseModel): # TODO - simple through model... check this ?
 
 #==============================================================================
 @python_2_unicode_compatible
-class Contact(BaseModelLinkedToAssociation('contacts')):
+class Contact(BaseModelLinkedToAssociation('contacts'), BaseModelFileRepositoryMixin):
     """
         The basic association contact.
     """
@@ -257,21 +254,8 @@ class Contact(BaseModelLinkedToAssociation('contacts')):
             return ', '.join(sorted([o.group.name for o in objects]))
         return None
 
-    #def get_documents_root(self):
-    #    return "%s/" % os.path.join(self.association.get_documents_root(), 'contacts', '%s' % self.uuid)
-
-    #def get_documents_path(self):
-    #    path = "%s/" % os.path.join(self.get_documents_root(), 'files')
-    #    p = os.path.join(path, DIRECTORY_PLACEHOLDER)
-    #    if not private_storage.exists(p):
-    #        private_storage.save(p, ContentFile(''))
-    #    return path
-
-    #def get_documents_disksize(self):
-    #    return self.association.get_documents_disksize()
-
-    #def get_private_storage(self):
-    #    return self.association.get_private_storage()
+    def repository_root(self):
+        return "%s/" % os.path.join(self.association.repository_root(), 'contacts', '%s' % self.uuid)
 
     def __str__(self):
         return "%s %s" % (self.last_name, self.first_name)

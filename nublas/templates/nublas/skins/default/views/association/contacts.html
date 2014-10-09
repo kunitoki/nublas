@@ -99,7 +99,8 @@
 {% block content-breadcrumb-inner %}
     <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
     <li><a href="{% url 'nublas:association_list' %}">{% trans "Associations" %}</a></li>
-    <li class="active">{{ association.name|capfirst }}</li>
+    <li><a href="{% url 'nublas:association_details' association.uuid %}">{{ association.name|capfirst }}</a></li>
+    <li class="active">{% trans "Contacts" %}</li>
 {% endblock %}
 
 

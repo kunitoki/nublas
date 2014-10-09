@@ -1,7 +1,6 @@
 {% nublas_extends 'base.html' %}
 {% load i18n %}
 
-
 {% block navbar %}
     <div class="navbar navbar-inverse navbar-static-top" role="navigation">
         <div class="container{% if settings.FRONTEND_SKIN_OPTIONS.is_fluid %}-fluid{% endif %}">
@@ -63,12 +62,12 @@
 
 
 {% block footer %}
-    <div class="container text-center">
+    <div class="container">
         <hr />
         <div class="row">
             <div class="col-sm-12">
                 <ul class="nav nav-pills nav-justified">
-                    <li><a href="{{ settings.FRONTEND_SKIN_OPTIONS.company_url }}">© 2014 {{ settings.FRONTEND_SKIN_OPTIONS.company_name }}.</a></li>
+                    <li><a href="{{ settings.FRONTEND_SKIN_OPTIONS.company_url }}">© {% now 'Y' %} {{ settings.FRONTEND_SKIN_OPTIONS.company_name }}.</a></li>
                     <li><a href="{{ settings.FRONTEND_SKIN_OPTIONS.company_tos_url }}">{% trans "Terms of Service" %}</a></li>
                     <li><a href="{{ settings.FRONTEND_SKIN_OPTIONS.company_privacy_url }}">{% trans "Privacy" %}</a></li>
                 </ul>

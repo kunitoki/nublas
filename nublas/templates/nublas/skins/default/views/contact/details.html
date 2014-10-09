@@ -95,7 +95,7 @@
 {% block content-breadcrumb-inner %}
     <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
     <li><a href="{% url 'nublas:association_list' %}">{% trans "Associations" %}</a></li>
-    {% if editing and not adding %}
+    {% if not adding %}
         <li><a href="{% url 'nublas:association_details' contact.association.uuid %}">{{ contact.association.name|capfirst }}</a></li>
         <li><a href="{% url 'nublas:association_contacts' contact.association.uuid %}">{% trans "Contacts" %}</a></li>
         <li class="active">{{ contact.first_name }} {{ contact.last_name }}</li>
