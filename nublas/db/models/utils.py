@@ -47,37 +47,30 @@ class BaseModelFileRepositoryMixin(object):
         return path
 
     def repository_listdir(self, path):
-        path = os.path.join(self.repository_path(), path)
-        if private_storage.exists(path):
-            return private_storage.listdir(path)
+        subpath = os.path.join(self.repository_path(), path)
+        if private_storage.exists(subpath):
+            return private_storage.listdir(subpath)
         return None, None
 
     def repository_open_file(self, path, mode='rb'):
-        path = os.path.join(self.repository_path(), path)
-        if private_storage.exists(path):
-            return private_storage.open(path, mode)
+        subpath = os.path.join(self.repository_path(), path)
+        if private_storage.exists(subpath):
+            return private_storage.open(subpath, mode)
         return None
 
     def repository_write_file(self, path, f):
-        path = os.path.join(self.repository_path(), path)
-        #path = private_storage.get_valid_name(path)
-        if private_storage.exists(path):
-            private_storage.delete(path)
-        private_storage.save(path, f)
+        subpath = os.path.join(self.repository_path(), path)
+        #subpath = private_storage.get_valid_name(subpath)
+        if private_storage.exists(subpath):
+            private_storage.delete(subpath)
+        private_storage.save(subpath, f)
         return True
 
     def repository_create_file(self, path):
-        path = os.path.join(self.repository_path(), path)
-        #path = private_storage.get_valid_name(path)
-        if not private_storage.exists(path):
-            private_storage.save(path, ContentFile(''))
-            return True
-        return False
-
-    def repository_delete_file(self, path):
-        path = os.path.join(self.repository_path(), path)
-        if private_storage.exists(path):
-            private_storage.delete(path)
+        subpath = os.path.join(self.repository_path(), path)
+        #subpath = private_storage.get_valid_name(subpath)
+        if not private_storage.exists(subpath):
+            private_storage.save(subpath, ContentFile(''))
             return True
         return False
 
@@ -93,31 +86,18 @@ class BaseModelFileRepositoryMixin(object):
         return False
 
     def repository_create_folder(self, path):
-        path = os.path.join(self.repository_path(), path, settings.STORAGE_DIRECTORY_PLACEHOLDER)
-        if not private_storage.exists(path):
-            private_storage.save(path, ContentFile(''))
-            return True
-        return False
-
-    def repository_delete_folder(self, path):
-        path = os.path.join(self.repository_path(), path)
-        if private_storage.exists(path):
-            dirs, files = private_storage.listdir(path)
-            for f in files:
-                private_storage.delete(f)
-            for d in dirs:
-                self.repository_delete_folder(d)
-            private_storage.delete(path)
+        subpath = os.path.join(self.repository_path(), path, settings.STORAGE_DIRECTORY_PLACEHOLDER)
+        if not private_storage.exists(subpath):
+            private_storage.save(subpath, ContentFile(''))
             return True
         return False
 
     def repository_delete_path(self, path):
-        if private_storage.exists(os.path.join(self.repository_path(),
-                                               path,
-                                               settings.STORAGE_DIRECTORY_PLACEHOLDER)):
-            return self.repository_delete_folder(path)
-        else:
-            return self.repository_delete_file(path)
+        subpath = os.path.join(self.repository_path(), path)
+        if private_storage.exists(subpath):
+            private_storage.delete(subpath)
+            return True
+        return False
 
     def repository_disk_size(self):
         path = self.repository_root()

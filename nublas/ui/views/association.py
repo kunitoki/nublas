@@ -22,8 +22,6 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views.generic.base import View
 
-#from ..generic.fileserve import GenericFileServeView
-
 from ..files import GenericFileServeView
 from ..skins import get_skin_relative_path
 from ..forms import BaseForm, BaseModelForm # , CustomFieldModelForm

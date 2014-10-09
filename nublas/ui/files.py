@@ -1,7 +1,5 @@
 import os
 import mimetypes
-from django import forms
-from django.core.files.base import ContentFile
 from django.http import HttpResponse, JsonResponse
 from django.views.generic.base import View
 from django.utils.translation import ugettext as _
@@ -12,6 +10,25 @@ from ..storages import private_storage
 import logging
 logger = logging.getLogger(__name__)
 
+
+#==============================================================================
+def mimetype_to_fontawesome(mimetype):
+    if mimetype is not None:
+        if mimetype.startswith('text/'):
+            return 'fa fa-file-text-o'
+        elif mimetype.startswith('image/'):
+            return 'fa fa-file-image-o'
+        elif mimetype.startswith('video/'):
+            return 'fa fa-file-video-o'
+        elif mimetype.startswith('audio/'):
+            return 'fa fa-file-audio-o'
+        elif mimetype.endswith('excel'):
+            return 'fa fa-file-excel-o'
+        elif mimetype.endswith('word'):
+            return 'fa fa-file-word-o'
+        elif mimetype == 'application/pdf':
+            return 'fa fa-file-pdf-o'
+    return 'fa fa-file-o'
 
 #==============================================================================
 class GenericFileServeView(View):
@@ -25,28 +42,41 @@ class GenericFileServeView(View):
         if 'path' in request.GET:
             path = request.GET.get('path')
             dirnames, filenames = file_object.repository_listdir(path)
-            if dirnames is not None and filenames is not None:
-                if path != '':
+            if path != '':
+                data['files'].append({
+                    'folder': True,
+                    'name': '..',
+                    'link': os.path.split(path)[0],
+                    'icon': 'fa fa-folder-o',
+                    'editable': False,
+                    'movable': False,
+                    'removable': False,
+                })
+            for fs in dirnames:
+                if not fs.startswith('.'):
+                    subpath = os.path.join(path, fs)
                     data['files'].append({
                         'folder': True,
-                        'name': '..',
-                        'link': os.path.split(path)[0],
+                        'name': fs,
+                        'link': subpath,
+                        'icon': 'fa fa-folder-o',
+                        'editable': False,
+                        'movable': True,
+                        'removable': True,
                     })
-                for fs in dirnames:
-                    if not fs.startswith('.'):
-                        data['files'].append({
-                            'folder': True,
-                            'name': fs,
-                            'link': os.path.join(path, fs),
-                        })
-                for fs in filenames:
-                    if not fs.startswith('.'):
-                        data['files'].append({
-                            'folder': False,
-                            'name': fs,
-                            'link': os.path.join(path, fs),
-                        })
-                data['status'] = True
+            for fs in filenames:
+                if not fs.startswith('.'):
+                    mimetype, encoding = mimetypes.guess_type(fs)
+                    data['files'].append({
+                        'folder': False,
+                        'name': fs,
+                        'link': os.path.join(path, fs),
+                        'icon': 'fa %s' % mimetype_to_fontawesome(mimetype),
+                        'editable': True if mimetype and mimetype.startswith('text/') else False,
+                        'movable': True,
+                        'removable': True,
+                    })
+            data['status'] = True
 
         elif 'new' in request.GET:
             src = request.POST.get('src')
@@ -67,8 +97,10 @@ class GenericFileServeView(View):
         elif 'move' in request.GET:
             src = request.POST.get('src')
             dst = request.POST.get('dst')
-            pathsrc = os.path.join(request.POST.get('path'), src)
-            pathdst = os.path.join(request.POST.get('path'), dst)
+            #pathsrc = os.path.join(request.POST.get('path'), src)
+            #pathdst = os.path.join(request.POST.get('path'), dst)
+            pathsrc = src
+            pathdst = dst
             data['status'] = file_object.repository_move_file(pathsrc, pathdst)
             if data["status"]:
                 data['msg'] = _("File <strong>%(filename)s</strong> moved successfully !") % { 'filename': src }

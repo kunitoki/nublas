@@ -18,10 +18,10 @@ from django.utils.decorators import method_decorator
 from django.views.generic.base import View
 
 #from nublas.library.db.fields.autocomplete import AutoCompleteWidget
-#from ..generic.fileserve import GenericFileServeView
 
+from ..files import GenericFileServeView
 from ..skins import get_skin_relative_path
-from ..forms import BaseForm, BaseModelForm # , CustomFieldModelForm
+from ..forms import BaseForm, BaseModelForm #, CustomFieldModelForm
 from ..search import SearchForm, search_contacts
 from ...conf import settings
 from ...models import (Association, Contact, Group, ContactGroup,
@@ -38,8 +38,8 @@ __all__ = [ "ContactListView", "ContactAddView", "ContactDetailsView",
             "ContactAddressDeleteView", "ContactAddressEditView",
             "ContactAutoCompleteView", "ContactEmailAddView",
             "ContactEmailDeleteView", "ContactEmailEditView",
-            "ContactFilesView", "ContactGroupView", "ContactGroupAddView",
-            "ContactGroupDeleteView", "ContactGroupEditView",
+            "ContactFilesView", "ContactFileServeView", "ContactGroupView",
+            "ContactGroupAddView", "ContactGroupDeleteView", "ContactGroupEditView",
             "ContactPartecipationView", "ContactPhoneAddView",
             "ContactPhoneDeleteView", "ContactPhoneEditView",
             "ContactRelationshipAddView", "ContactRelationshipDeleteView",
@@ -408,33 +408,20 @@ class ContactFilesView(View):
         # TODO - check security
         a = c.association
 
-        return render_to_response('base/contact/files.html',
+        return render_to_response(get_skin_relative_path('views/contact/files.html'),
             RequestContext(request, { 'association': a,
                                       'contact': c }))
 
 
 #==============================================================================
-#class ContactFileServeView(GenericFileServeView):
-#    def get_opts(self, request, **kwargs):
-#        contact = kwargs.get('contact')
-#
-#        c = get_object_or_404(Contact, _uuid=contact)
-#        # TODO - check security
-#        a = c.association
-#
-#        # get root
-#        root_path = c.get_documents_path()
-#
-#        # available space
-#        freespace = request.user.constraint_value('max_diskspace') - a.get_documents_disksize()
-#        max_size = min(freespace, settings.FILE_UPLOAD_MAX_MEMORY_SIZE) / (1024 * 1024)
-#
-#        # return connector options
-#        return {
-#            'root': root_path,
-#            'uploadMaxSize': max_size,
-#            'diskspaceMaxSize': max_size,
-#        }
+class ContactFileServeView(GenericFileServeView):
+    @method_decorator(login_required(login_url=settings.LOGIN_URL))
+    def dispatch(self, request, *args, **kwargs):
+        contact = kwargs.get('contact')
+
+        c = get_object_or_404(Contact, _uuid=contact)
+
+        return self.handle_request(request, c)
 
 
 #==============================================================================

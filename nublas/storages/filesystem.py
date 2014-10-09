@@ -1,10 +1,36 @@
+import os
+import errno
+import shutil
+
 from django.core.files.storage import FileSystemStorage
 
 from ..conf import settings
 
 
 #==============================================================================
-class MediaStorage(FileSystemStorage):
+class FilesystemStorageDirectoryAware(FileSystemStorage):
+
+    def delete(self, name):
+        assert name, "The name argument is not allowed to be empty."
+        name = self.path(name)
+        # If it's a directory, remove the entire tree.
+        # If the file exists, delete it from the filesystem.
+        # Note that there is a race between os.path.exists and os.remove:
+        # if os.remove fails with ENOENT, the file was removed
+        # concurrently, and we can continue normally.
+        if os.path.exists(name):
+            if os.path.isdir(name):
+                shutil.rmtree(name)
+            else:
+                try:
+                    os.remove(name)
+                except OSError as e:
+                    if e.errno != errno.ENOENT:
+                        raise
+
+
+#==============================================================================
+class MediaStorage(FilesystemStorageDirectoryAware):
     """
     Storage for uploaded media files.
     The folder is defined in settings.MEDIA_ROOT
@@ -16,7 +42,7 @@ class MediaStorage(FileSystemStorage):
 
 
 #==============================================================================
-class StaticStorage(FileSystemStorage):
+class StaticStorage(FilesystemStorageDirectoryAware):
     """
     Storage for static files.
     The folder is defined in settings.STATIC_ROOT
@@ -28,7 +54,7 @@ class StaticStorage(FileSystemStorage):
 
 
 #==============================================================================
-class PrivateStorage(FileSystemStorage):
+class PrivateStorage(FilesystemStorageDirectoryAware):
     """
     Storage for private files.
     The folder is defined in settings.PRIVATE_ROOT

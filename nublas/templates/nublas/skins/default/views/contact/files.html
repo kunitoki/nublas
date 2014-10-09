@@ -1,0 +1,37 @@
+{% nublas_extends "base_site.html" %}
+{% load i18n %}
+
+{% block javascript-after %}
+    {% nublas_include "views/files/script.html" %}
+{% endblock %}
+
+
+{% block content-title %}
+    <div class="page-header">
+        <h1>{{ contact.first_name }} {{ contact.last_name }} <small>{% trans "Contact files" %}</small></h1>
+    </div>
+{% endblock %}
+
+
+{% block content-breadcrumb-inner %}
+    <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
+    <li><a href="{% url 'nublas:association_list' %}">{% trans "Associations" %}</a></li>
+    <li><a href="{% url 'nublas:association_details' contact.association.uuid %}">{{ contact.association.name|capfirst }}</a></li>
+    <li><a href="{% url 'nublas:association_contacts' contact.association.uuid %}">{% trans "Contacts" %}</a></li>
+    <li><a href="{% url 'nublas:contact_details' contact.uuid %}">{{ contact.first_name }} {{ contact.last_name }}</a></li>
+    <li class="active">{% trans "Files" %}</li>
+{% endblock %}
+
+
+{% block content-inner %}
+    <ul class="nav nav-tabs" role="tablist">
+        {% nublas_include "views/contact/tabs.html" with activetab="files" %}
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane active">
+            <input type="hidden" id="fileserve-url" value="{% url 'nublas:contact_fileserve' contact.uuid %}" />
+            {% nublas_include "views/files/content.html" %}
+        </div>
+    </div>
+{% endblock %}

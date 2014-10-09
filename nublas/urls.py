@@ -65,7 +65,7 @@ urlpatterns += patterns('',
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/edit/$', ContactEditView.as_view(), name='contact_edit'),
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/delete/$', ContactDeleteView.as_view(), name='contact_delete'),
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/files/$', ContactFilesView.as_view(), name='contact_files'),
-    #url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/fileserve/$', ContactFileServeView.as_view(), name='contact_fileserve'),
+    url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/fileserve/$', ContactFileServeView.as_view(), name='contact_fileserve'),
 
     # addresses
     url(r'^contact/(?P<contact>[a-fA-F0-9]{32})/address/add/$', ContactAddressAddView.as_view(), name='contact_address_add'),

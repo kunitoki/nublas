@@ -17,4 +17,7 @@
 <li {% if activetab == 'relationships' %}class="active"{% endif %}>
     <a href="{% if activetab != 'relationships' %}{% url 'nublas:contact_relationships' contact.uuid %}{% else %}#{% endif %}" role="tab">
         {% trans "Relationships" %}</a></li>
+<li {% if activetab == 'files' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'files' %}{% url 'nublas:contact_files' contact.uuid %}{% else %}#{% endif %}" role="tab">
+        {% trans "Files" %}</a></li>
 {% endif %}

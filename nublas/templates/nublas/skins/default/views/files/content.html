@@ -1,0 +1,141 @@
+{% load i18n %}
+
+<!-- tools -->
+<div id="nublas-file-tools" class="well-sm">
+    <a class="btn btn-default" id="upload-button">
+        <i class="fa fa-upload fa-fw"></i> {% trans "Upload" %}</a>
+    <a class="btn btn-default" id="new-file-button">
+        <i class="fa fa-file fa-fw"></i> {% trans "New File" %}</a>
+    <a class="btn btn-default" id="new-folder-button">
+        <i class="fa fa-folder fa-fw"></i> {% trans "New folder" %}</a>
+    <a class="btn btn-default" id="refresh-button">
+        <i class="fa fa-refresh fa-fw"></i> {% trans "Refresh" %}</a>
+</div>
+
+<!-- breadcrumb -->
+<ol id="nublas-files-breadcrumb" class="breadcrumb"></ol>
+
+<!-- file view -->
+<table id="nublas-file-manager" class="table table-hover table-condensed"></table>
+
+<!-- editor -->
+<div id="nublas-file-editor" style="display: none;">
+    <div class="row">
+        <div class="col-sm-2">
+            <a class="btn btn-default" id="editor-close-button">
+                <i class="fa fa-remove fa-fw"></i> {% trans "Close" %}</a>
+        </div>
+        <div class="col-sm-10">
+            <input type="text" name="target" id="editor-target" class="form-control" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <textarea class="form-control" rows="10"></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- footnote -->
+<ul class="list-inline">
+    <li><i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</li>
+    <li><i class="fa fa-arrow-right fa-fw"></i> {% trans "Move / Rename" %}</li>
+    <li><i class="fa fa-remove fa-fw"></i> {% trans "Remove" %}</li>
+</ul>
+
+<!-- progress bar -->
+<div id="nublas-progress" class="progress progress-striped active hide">
+    <div class="bar"></div>
+</div>
+
+<!-- new modal -->
+<div id="new" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>{% trans "New" %}</h3>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="new-type" />
+                <label for="new-path">{% trans "Entry new file / folder name" %}</label>
+                <input type="text" class="form-control" id="new-path" />
+            </div>
+            <div class="modal-footer">
+                <a class="submit btn btn-primary" data-dismiss="modal">
+                    <i class="fa fa-plus-circle fa-fw"></i> {% trans "Create new" %}</a>
+                <a class="btn btn-default" data-dismiss="modal">
+                    <i class="fa fa-remove fa-fw"></i> {% trans "Cancel" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- move modal -->
+<div id="move" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>{% trans "Move / Rename" %}</h3>
+            </div>
+            <div class="modal-body">
+                <label for="move-src">{% trans "From" %}</label>
+                <input type="text" class="form-control" id="move-src" />
+                <label for="move-dst">{% trans "To" %}</label>
+                <input type="text" class="form-control" id="move-dst" />
+            </div>
+            <div class="modal-footer">
+                <a class="submit btn btn-primary" data-dismiss="modal">
+                    <i class="fa fa-thumbs-up fa-fw"></i> {% trans "Ok" %}</a>
+                <a class="btn btn-default" data-dismiss="modal">
+                    <i class="fa fa-remove fa-fw"></i> {% trans "Cancel" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- remove modal -->
+<div id="remove" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>{% trans "Remove" %}</h3>
+            </div>
+            <div class="modal-body">
+                <label for="remove-path">{% trans "Remove this file / folder" %}</label>
+                <input type="text" class="form-control" id="remove-path" disabled />
+                <p class="help-block">{% trans "Only empty directories can be removed." %}</p>
+            </div>
+            <div class="modal-footer">
+                <a class="submit btn btn-danger" data-dismiss="modal">
+                    <i class="fa fa-thumbs-up fa-fw"></i> {% trans "Ok" %}</a>
+                <a class="btn btn-default" data-dismiss="modal">
+                    <i class="fa fa-remove fa-fw"></i> {% trans "Cancel" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- upload modal -->
+<div id="upload" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>{% trans "Upload" %}</h3>
+            </div>
+            <div class="modal-body">
+                <form method="post" enctype="multipart/form-data" role="form">{% csrf_token %}
+                    <input type="hidden" name="type" value="upload" />
+                    <input type="hidden" name="path" id="upload-path" />
+                    <input type="file" name="files[]" multiple />
+                    <p class="help-block">{% trans "You can select multiple files." %}</p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="submit btn btn-primary" data-dismiss="modal">
+                    <i class="fa fa-thumbs-up fa-fw"></i> {% trans "Ok" %}</a>
+                <a class="btn btn-default" data-dismiss="modal">
+                    <i class="fa fa-remove fa-fw"></i> {% trans "Cancel" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
