@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
 #from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.utils.decorators import method_decorator
 from django.views.generic.base import View
 
@@ -55,6 +55,7 @@ __all__ = [ "ContactListView", "ContactAddView", "ContactDetailsView",
 #==============================================================================
 class GenericContactInlineView(View):
     def __init__(self):
+        super(GenericContactInlineView, self).__init__()
         self.cls = None
         self.contact_fieldname = 'contact'
         self.form = None
@@ -67,23 +68,21 @@ class GenericContactInlineView(View):
         self.submit_text = None
         self.success_text = None
         self.error_text = None
-        super(GenericContactInlineView, self).__init__()
 
     def message_errors(self, request, form_instance, error_text):
         errors = form_instance.errors.get('__all__', [])
         if len(errors) > 0:
             for e in errors:
+                print e
                 messages.add_message(request, messages.ERROR, e)
         else:
             messages.add_message(request, messages.ERROR, error_text)
 
     def check_is_valid(self, *args):
-        all_passed = True
         for f in args:
             if f and not f.is_valid():
-                all_passed = False
-                break
-        return all_passed
+                return False
+        return True
 
     def redirect_url(self, *args):
         return None
@@ -680,6 +679,8 @@ class ContactGroupAddView(GenericContactInlineAddView):
         self.success_text = _('Group assigned successfully.')
         self.error_text = _('Cannot assign the group.')
 
+    def redirect_url(self, *args):
+        return reverse('nublas:contact_groups', args=args)
 
 class ContactGroupEditView(GenericContactInlineEditView):
     def __init__(self):
@@ -693,6 +694,8 @@ class ContactGroupEditView(GenericContactInlineEditView):
         self.success_text = _('Group assignment modified successfully.')
         self.error_text = _('Cannot save the group assignment.')
 
+    def redirect_url(self, *args):
+        return reverse('nublas:contact_groups', args=args)
 
 class ContactGroupDeleteView(GenericContactInlineDeleteView):
     def __init__(self):
@@ -700,6 +703,9 @@ class ContactGroupDeleteView(GenericContactInlineDeleteView):
         self.cls = ContactGroup
         self.success_text = _('Group unassigned successfully.')
         self.error_text = _('Cannot unassign the group.')
+
+    def redirect_url(self, *args):
+        return reverse('nublas:contact_groups', args=args)
 
 
 #==============================================================================

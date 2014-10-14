@@ -174,20 +174,37 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 
+/** Select2 fixes */
+.select2-drop.has-errors {
+  border-left: 1px solid #a94442;
+  border-right: 1px solid #a94442;
+}
+.select2-drop.select2-drop-active:not(.select2-drop-above).has-errors {
+  border-bottom: 1px solid #a94442;
+}
+.select2-drop.select2-drop-active.select2-drop-above.has-errors {
+  border-top: 1px solid #a94442;
+}
+.select2-drop.has-errors .select2-results .select2-highlighted {
+  background-color: #a94442;
+}
+
+
+
 /** Fullcalendar fixes */
 
 .fc-state-hover {
-	color: #333333;
-	background-color: #3071a9;
-	text-decoration: none;
-	box-shadow: none;
+  color: #333333;
+  background-color: #3071a9;
+  text-decoration: none;
+  box-shadow: none;
 }
 
 .fc-state-down,
 .fc-state-active {
-	color: white;
-	background-color: #3071a9;
-	background-image: none;
-	text-decoration: none;
-	box-shadow: none;
+  color: white;
+  background-color: #3071a9;
+  background-image: none;
+  text-decoration: none;
+  box-shadow: none;
 }

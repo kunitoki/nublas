@@ -1,7 +1,7 @@
 import os
 from django.db import models
 from django.core.files.base import ContentFile
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from ...conf import settings
 from ...storages import private_storage

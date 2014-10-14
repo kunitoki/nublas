@@ -16,6 +16,7 @@
             $("#{{ field.auto_id }}").select2({
                 allowClear: true,
                 width: '100%'
+                {% if field.errors %}, dropdownCssClass: 'has-errors'{% endif %}
             });
         });
     })(jQuery);
@@ -32,6 +33,7 @@
             $("#{{ field.auto_id }}").select2({
                 allowClear: true,
                 width: '100%'
+                {% if field.errors %}, dropdownCssClass: 'has-errors'{% endif %}
             });
         });
     })(jQuery);

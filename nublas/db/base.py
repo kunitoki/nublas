@@ -1,12 +1,12 @@
 import uuid
 from django.db import models
-from django.forms.models import model_to_dict
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.utils import timezone
 
 from ..conf import settings
 from ..utils import import_class
 from .managers import NonTrashManager, TrashManager
+from .mixins import UniqueBooleanModelMixin, UtilityModelMixin
 from .fields import uniqueid as uuidfields
 from .fields import date as datefields
 
@@ -16,54 +16,7 @@ __all__ = [ "BaseModel" ]
 
 
 #==============================================================================
-class BaseModelUtilMixin(object):
-    def get_model(self):
-        """ Returns the model meta """
-        return self._meta
-
-    def get_name(self):
-        """ Returns the singular name of the model """
-        return "%s" % self._meta.name
-
-    def get_verbose_name(self):
-        """ Returns the singular verbose name of the model """
-        return "%s" % self._meta.verbose_name
-
-    def get_fields(self):
-        """ Get all fields and their display strings """
-        return [(f, self.get_field_display(f)) for f in self._meta.fields]
-
-    def get_field_display(self, field):
-        """
-        Override function to obtain field values to be used in display lists
-
-        :param field: field instance to display
-        :return: string display of field
-        """
-        return field.value_to_string(self)
-
-    def get_field_by_name(self, field_name):
-        """
-        Return a field object by name
-
-        :param field_name: field name
-        :return: field instance
-        """
-        return self._meta.get_field_by_name(field_name)
-
-    def to_dict(self, fields=None, exclude=None):
-        """
-        Return the model instance as a dictionary
-
-        :param fields: which fields to use
-        :param exclude: which fields to exclude
-        :return: dict()
-        """
-        return model_to_dict(self, fields=fields, exclude=exclude)
-
-
-#==============================================================================
-class BaseModel(BaseModelUtilMixin, import_class(settings.BASE_MODEL_CLASS)):
+class BaseModel(UtilityModelMixin, UniqueBooleanModelMixin, import_class(settings.BASE_MODEL_CLASS)):
     """
     Model that uses a uuid identifier as the primary key
 
@@ -122,40 +75,6 @@ class BaseModel(BaseModelUtilMixin, import_class(settings.BASE_MODEL_CLASS)):
 
     def delete_permanently(self):
         super(BaseModel, self).delete()
-
-    def _unique_boolean_pre_save(self):
-        unique_boolean = getattr(self, 'UNIQUE_BOOLEAN', [])
-        for field in unique_boolean:
-            # build filter
-            filter_kwargs = { field[0]: True }
-            for arg in field[1]:
-                if getattr(self, arg):
-                    filter_kwargs[arg] = getattr(self, arg)
-            print(filter_kwargs)
-            # main logic
-            if getattr(self, field[0]):
-                print("Setting true")
-                tmp = self.__class__.objects.filter(**filter_kwargs).exclude(pk=self.pk)
-                for t in tmp:
-                    setattr(t, field[0], False)
-                    t.save()
-            else:
-                if self.__class__.objects.filter(**filter_kwargs).count() == 0:
-                    setattr(self, field[0], True)
-
-    def _unique_boolean_pre_delete(self):
-        unique_boolean = getattr(self, 'UNIQUE_BOOLEAN', [])
-        for field in unique_boolean:
-            # build filter
-            filter_kwargs = { field[0]: True }
-            for arg in field[1]:
-                if getattr(self, arg):
-                    filter_kwargs[arg] = getattr(self, arg)
-            # main logic
-            tmp = self.__class__.objects.filter(**filter_kwargs)
-            if len(tmp) > 0:
-                setattr(tmp[0], field[0], True)
-                tmp[0].save()
 
     class Meta:
         abstract = True

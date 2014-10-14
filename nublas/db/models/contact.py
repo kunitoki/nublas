@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models.loading import get_model
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from ...conf import settings
 from ..fields import location
@@ -144,7 +144,7 @@ class Relationship(BaseModel):
         if not self._state.adding and self.pk is not None:
             qs = qs.exclude(pk=self.pk)
         if qs.exists():
-            raise ValidationError({ NON_FIELD_ERRORS: (_('This relationship already exists'),) })
+            raise ValidationError({ NON_FIELD_ERRORS: [_('This relationship already exists')] })
 
     def __str__(self):
         return "%s %s %s" % (self.type.from_slug,
@@ -186,7 +186,7 @@ class ContactGroup(BaseModel):
         if not self._state.adding and self.pk is not None:
             qs = qs.exclude(pk=self.pk)
         if qs.exists():
-            raise ValidationError({ NON_FIELD_ERRORS: (_('The contact is already part of this group'),) })
+            raise ValidationError({ 'group': [_('The contact is already part of this group')] })
 
     def __str__(self):
         return repr(self.group)

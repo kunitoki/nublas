@@ -1,13 +1,15 @@
 {% load i18n %}
 
 {% spaceless %}
+    {% comment %}
     {% if form.non_field_errors %}
-        <div class="alert alert-block alert-error">
+        <div class="alert alert-block alert-danger">
         {% for error in form.non_field_errors %}
             <p>{{ error }}</p>
         {% endfor %}
         </div>
     {% endif %}
+    {% endcomment %}
 
     {% if form.fieldsets %}
         {% for fieldset in form.fieldsets %}

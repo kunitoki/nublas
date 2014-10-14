@@ -8,6 +8,22 @@
 {% endblock %}
 
 
+{% block content-messages %}
+    {{ block.super }}
+    {% comment %}
+    <div class="messages">
+    {% if inline_form.non_field_errors %}
+        {% for message in inline_form.non_field_errors %}
+            <div class="alert alert-danger">
+                <a class="close" data-dismiss="alert" href="#">×</a>
+                    {{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    </div>
+    {% endcomment %}
+{% endblock %}
+
+
 {% block content-inner %}
     <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
 
