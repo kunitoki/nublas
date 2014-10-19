@@ -32,11 +32,11 @@
                 <td class="text-center">
                     <i class="fa {% if s.has_contribution %}fa-check-square-o{% else %}fa-square-o{% endif %}"></i>
                 </td>
-                <td class="text-center">
+                <td>
                     <div class="btn-group pull-right">
-                        <a href="{% url 'nublas:contact_subscription_edit' s.uuid %}" class="btn btn-primary btn-xs">
+                        <a href="{% url 'nublas:contact_subscription_edit' s.uuid %}" class="btn btn-primary btn-xs" title="{% trans 'Edit' %}">
                             <i class="fa fa-pencil fa-fw"></i> {% trans "Edit" %}</a>
-                        <a href="{% url 'nublas:contact_subscription_delete' s.uuid %}" class="btn btn-danger btn-xs nublas-delete-button">
+                        <a href="{% url 'nublas:contact_subscription_delete' s.uuid %}" class="btn btn-danger btn-xs nublas-delete-button" title="{% trans 'Delete' %}">
                             <i class="fa fa-trash-o fa-fw"></i> {% trans "Delete" %}</a>
                     </div>
                 </td>

@@ -3,148 +3,208 @@
 {% load i18n %}
 {% load nublas_tags nublas_filters %}
 
+        
 {% block javascript-after %}
-    <script type="text/javascript">
-        (function($){
-            $(document).ready(function(){
+<script type="text/javascript">
+    (function($){
+        $(document).ready(function(){
 
-                //===== Fix Hidden Table =====//
+            //===== Convenience =====//
+            var fixSelect2 = function(el, parent) {
+                var $select = el.find("select");
+                var $parent = $select.closest(parent || "td");
+                var select_id = $select.attr("id");
+                var select_name = $select.attr("name");
+                $select.remove();
+                $("<input type='hidden' id='" + select_id + "' name='" + select_name + "' />").appendTo($parent);
+                $("<input type='text' id='" + select_id + "_helper' class='form-control' />").appendTo($parent);
+            };
 
-                $("#contactsHiddenTable tbody tr td").each(function(index) {
-                    var re = /(.*-)(\d+)(-.*)/;
-                    $(this).find("select, input, textarea, div").each(function(index) {
-                        $(this).removeAttr("value");
-                        var id = $(this).attr("id");
-                        if (id) {
-                            var m = id.match(re);
-                            if (m && m.length == 4)
-                                $(this).attr("id", m[1] + "X" + m[3]);
-                        }
-                        var name = $(this).attr("name");
-                        if (name) {
-                            var m = name.match(re);
-                            if (m && m.length == 4)
-                                $(this).attr("name", m[1] + "X" + m[3]);
-                        }
+            var fixElementNumber = function(el, counter) {
+                var re = /(.*-)([0-9A-Za-z\_]+)(-.*)/;
+                var id = $(el).attr("id");
+                if (id) {
+                    var m = id.match(re);
+                    if (m && m.length == 4)
+                        $(el).attr("id", m[1] + counter + m[3]);
+                }
+                var name = $(el).attr("name");
+                if (name) {
+                    var m = name.match(re);
+                    if (m && m.length == 4)
+                        $(el).attr("name", m[1] + counter + m[3]);
+                }
+            };
+
+            var fixFormsetNumbers = function(el, count) {
+                if (el) {
+                    $(el).find("select, input, textarea, button, a").each(function(index) {
+                        fixElementNumber(this, count);
                     });
+                }
+                else
+                {
+                    var counter = count || 0;
+                    $(".nublas-event-contacts-table tbody tr").each(function(index) {
+                        $(this).find("select, input, textarea, button, a").each(function(index) {
+                            fixElementNumber(this, counter++);
+                        });
+                    });
+                }
+            };
+
+            //===== Add Button =====//
+            $(".nublas-contacts-add").click(function(evt) {
+                evt.preventDefault();
+
+                var count = parseInt($("#id_contacts-TOTAL_FORMS").val());
+
+                // clone
+                var lastTableRow = $(".nublas-event-hidden-table tbody tr").clone();
+                // replace select2
+                fixSelect2(lastTableRow);
+                // replace id and names
+                fixFormsetNumbers(lastTableRow, count);
+                // append
+                lastTableRow.appendTo($(".nublas-event-contacts-table tbody"));
+
+                // retrigger select2
+                $("#id_contacts-" + count + "-contact_helper").select2({
+                    width: '100%',
+                    placeholder: "---------",
+                    minimumInputLength: 2,
+                    allowClear: true,
+                    ajax: {
+                        url: "",
+                        dataType: 'json',
+                        data: function (term, page) {
+                            return {
+                                q: term,
+                                page_limit: 10
+                            };
+                        },
+                        results: function (data, page) {
+                            return { results: data.results };
+                        }
+                    }
                 });
 
-
-                //===== Add Button =====//
-
-                $("#contactsAddButton").click(function(evt) {
-                    evt.preventDefault();
-
-                    var lastTableRow = $("#contactsHiddenTable tbody tr:last-child").clone();
-                    lastTableRow.appendTo($("#contactsTable tbody"));
-
-                    $("#contactsTable tbody tr:last-child td").each(function(index) {
-                        var $this = $(this);
-                        var field = $this.find("select, input, textarea").each(function(index) {
-                            $(this).removeAttr("value");
-                        });
-
-                        var re = /(.*-)(X)(-.*)/;
-                        $this.find("select, input, textarea, div").each(function(index) {
-                            var count = $("#id_contacts-TOTAL_FORMS").val();
-                            var id = $(this).attr("id");
-                            if (id) {
-                                var m = id.match(re);
-                                if (m && m.length == 4)
-                                    $(this).attr("id", m[1] + parseInt(count) + m[3]);
-                            }
-                            var name = $(this).attr("name");
-                            if (name) {
-                                var m = name.match(re);
-                                if (m && m.length == 4)
-                                    $(this).attr("name", m[1] + parseInt(count) + m[3]);
-                            }
-                        });
-
-                        $this.find("select, input:checkbox, input:radio").uniform();
-                    });
-
-                    $("#id_contacts-TOTAL_FORMS").val(parseInt($("#id_contacts-TOTAL_FORMS").val()) + 1);
-
-                    // TODO - retrigger autocomplete
-                    //$("#contactsTable tbody tr:last-child td span.autocomplete_light_widget[data-bootstrap=user]").each(function() {
-                    //    $(this).autocompleteWidget();
-                    //});
-
-                    return false;
+                $("#id_contacts-" + count + "-contact_helper").on("change", function(e) {
+                    $("#id_contacts-" + count + "-contact").val(e.val);
                 });
 
+                // update formsets number
+                $("#id_contacts-TOTAL_FORMS").val(count + 1);
+
+                return false;
             });
-        })(jQuery);
-    </script>
+
+            //===== Remove button =====//
+            $(".nublas-event-contacts-table").on("click", "a.nublas-formset-delete-button", function(evt) {
+                evt.preventDefault();
+
+                var $this = $(this);
+                var $parent = $this.closest("tr");
+                var $next = $parent.nextAll("tr");
+
+                var counter = 10; // $parent.find("input").attr("id");
+                $next.each(function(index) {
+                    fixElementNumber(this, counter++);
+                });
+
+                $parent.remove();
+
+                var count = parseInt($("#id_contacts-TOTAL_FORMS").val());
+                $("#id_contacts-TOTAL_FORMS").val(count - 1);
+
+                return false;
+            });
+
+        });
+    }(jQuery));
+</script>
 {% endblock %}
 
 
 {% block styles-after %}
-    <!-- HACK - Hide datatables pagination -->
-    <style type="text/css">
-        table.display tr:last-child {border-bottom:0px solid transparent;}
-    </style>
 {% endblock %}
 
 
 {% block form-before %}
-    <table cellpadding="0" cellspacing="0" border="0" id="contactsHiddenTable" class="displayNone no-uniform">
+    <table class="hidden nublas-event-hidden-table">
         <tbody>
-            <tr class="gradeA">
-                {% spaceless %}
-                    {% for form in contact_formset|slice:":1" %}
-                        {% for field in form %}
-                            {% if field.label|lower in form.display_fields %}
-                                <td>{{ field }}</td>
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                {% endspaceless %}
+            <tr>
+            {% for field in contact_formset.empty_form.visible_fields %}
+                {% if field.label != "Delete" %}
+                    <td>{% nublas_include "generic/field_edit_value.html" with avoid_required=1 %}</td>
+                {% endif %}
+            {% endfor %}
+            {% if contact_formset.can_delete %}
+                <td class="text-center">
+                    <a class="btn btn-danger btn-xs nublas-formset-delete-button" name="id_contacts-__prefix__-delete">
+                        <i class="fa fa-remove fa-fw"></i></a>
+                </td>
+            {% endif %}
             </tr>
         </tbody>
     </table>
 {% endblock %}
 
 
-{% block form-before-submit %}
-    <div class="widget first">
-        <div class="head">
-            <h5 class="iUsers2">{% trans "Contacts" %}</h5>
-            <div class="num"><a href="#" id="contactsAddButton" class="blueNum">{% trans "Add" %}</a></div>
-        </div>
+{% block form-after %}
+    <div class="form-group">
+        <label class="control-label col-sm-2">
+            <div class="input-group pull-right">
+                {% trans "Partecipants" %}
+                <a href="#" class="btn btn-primary btn-xs nublas-contacts-add">
+                    <i class="fa fa-plus-circle fa-fw"></i></a>
+            </div>
+        </label>
 
-        {{ contact_formset.management_form }}
+        <div class="col-sm-10">
 
-        <table cellpadding="0" cellspacing="0" border="0" id="contactsTable" class="display tableStatic">
-            <thead>
-            <tr>
-                {% spaceless %}
+            {{ contact_formset.management_form }}
+
+            <table cellpadding="0" cellspacing="0" border="0" class="table table-striped nublas-event-contacts-table">
+                <thead>
+                <tr>
                     {% for form in contact_formset|slice:":1" %}
-                        {% for field in form %}
-                            {% if field.label|lower in form.display_fields %}
+                        {% for field in form.visible_fields %}
+                            {% if field.label != "Delete" %}
                                 <td>{{ field.label|capfirst }}</td>
                             {% endif %}
                         {% endfor %}
+                        {% if contact_formset.can_delete %}
+                            <td>{% trans "Delete" %}</td>
+                        {% endif %}
                     {% endfor %}
-                {% endspaceless %}
-            </tr>
-            </thead>
-            <tbody>
-                {% spaceless %}
+                </tr>
+                </thead>
+                <tbody>
                     {% for form in contact_formset %}
-                    <tr class="gradeA">
-                        {% for field in form %}
-                            {% if field.label|lower in form.display_fields %}
-                                <td>{{ field.errors }}{{ field }}</td>
+                        <tr>
+                        {% for field in form.visible_fields %}
+                            {% if field.label != "Delete" %}
+                                <td {% if field.errors %}class="has-error"{% endif %}>
+                                    {% nublas_include "generic/field_edit_value.html" with avoid_required=1 %}
+                                    {% for error in field.errors %}
+                                        <p class="text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                </td>
                             {% endif %}
                         {% endfor %}
-                    </tr>
+                        {% if contact_formset.can_delete %}
+                            <td class="text-center">{{ form.DELETE }}</td>
+                        {% endif %}
+                        </tr>
                     {% endfor %}
-                {% endspaceless %}
-            </tbody>
-        </table>
+                </tbody>
+            </table>
 
-        <div class="fix"></div>
+            {% for form in contact_formset %}
+                {% for field in form.hidden_fields %}{{ field }}{% endfor %}
+            {% endfor %}
+
+        </div>
     </div>
 {% endblock %}

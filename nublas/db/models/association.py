@@ -57,10 +57,10 @@ class Association(BaseModel, BaseModelFileRepositoryMixin):
         return "%s/" % os.path.join('associations', '%s' % self.uuid)
 
     @staticmethod
-    def get_object_or_404(uuid, user):
+    def get_object_or_404(uuid_value, user):
         # This returns an association in which a user work on
         return get_object_or_404(Association,
-                                 Q(_uuid=uuid) & (Q(owner=user) | Q(collaborators=user)))
+                                 Q(_uuid=uuid_value) & (Q(owner=user) | Q(collaborators=user)))
 
     def __str__(self):
         return self.name

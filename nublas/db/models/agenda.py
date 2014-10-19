@@ -34,7 +34,7 @@ class Calendar(BaseModelLinkedToAssociation('calendars')):
         return re.sub(r'\s', '-', calendar_name).lower() # TODO - strip spaces
 
     def __str__(self):
-        if self.public:
+        if self.is_public:
             return _("%(name)s (Public)") % {'name': self.name}
         else:
             return self.name

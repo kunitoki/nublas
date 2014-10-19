@@ -25,6 +25,7 @@ from django.views.generic.base import View
 from ..files import GenericFileServeView
 from ..skins import get_skin_relative_path
 from ..forms import BaseForm, BaseModelForm # , CustomFieldModelForm
+from ..widgets import TagsWidget
 from ..search import SearchForm, search_contacts, search_events
 from ...conf import settings
 from ...models import Association, Contact, Event
@@ -48,11 +49,16 @@ class AssociationDetailsForm(BaseModelForm):
         model = Association
         exclude = ('owner',
                    'collaborators',)
+        widgets = {
+            'tags': TagsWidget,
+        }
+
 
 #class AssociationCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
 #        model = Association
 #        exclude = ('tags',)
+
 
 class AssociationContactActionForm(BaseForm):
     contact_action = forms.CharField(required=True)
@@ -512,6 +518,7 @@ class AssociationAgendaView(View):
                                       'searchtext': searchtext,
                                       'events': events,
                                       'latest_events': latest_events }))
+
 
 class AssociationAgendaLatestView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))

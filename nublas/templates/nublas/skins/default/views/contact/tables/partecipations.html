@@ -13,7 +13,7 @@
             <th>{% trans "All day" %}</th>
             <th>
                 <div class="btn-group pull-right">
-                    <a href="{#{% url 'nublas:agenda_event_add' association.uuid %}?contact={{ contact.uuid }}#}" class="btn btn-primary btn-xs">
+                    <a href="{% url 'nublas:agenda_event_add' association.uuid %}?contact={{ contact.uuid }}" class="btn btn-primary btn-xs">
                         <i class="fa fa-plus-circle fa-fw"></i> {% trans "Add" %}</a>
                 </div>
             </th>
@@ -28,15 +28,15 @@
                     <td>{{ e.calendar }}</td>
                     <td>{{ e.start_date }}<div style="display:none">{{ e.start_date|date:'U' }}</div></td>
                     <td>{{ e.end_date }}<div style="display:none">{{ e.end_date|date:'U' }}</div></td>
-                    <td class="center"><img src="{% if e.allday %}{% static 'images/forms/checked.png' %}{% else %}{% static 'images/forms/unchecked.png' %}{% endif %}" /></td>
-                    <td class="center">
-                        {% comment %}
-                        <div class="button">
-                            <a href="{% url 'nublas:agenda_partecipation_delete' e.uuid %}" class="nublas-delete-button">{% trans "Delete" %}</a>
-                        </div>
-                        {% endcomment %}
-                        <div class="button">
-                            <a href="{% url 'nublas:agenda_event_edit' e.uuid %}" class="blueNum">{% trans "Edit" %}</a>
+                    <td class="text-center">
+                        <i class="fa {% if e.allday %}fa-check-square-o{% else %}fa-square-o{% endif %}"></i>
+                    </td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            <a href="{% url 'nublas:agenda_event_edit' e.uuid %}" class="btn btn-primary btn-xs nublas-edit-button" title="{% trans 'Edit' %}">
+                                <i class="fa fa-trash-o fa-fw"></i> {% trans "Edit" %}</a>
+                            <a href="{% url 'nublas:agenda_event_delete' e.uuid %}" class="btn btn-danger btn-xs nublas-delete-button" title="{% trans 'Delete' %}">
+                                <i class="fa fa-pencil fa-fw"></i> {% trans "Delete" %}</a>
                         </div>
                     </td>
                 </tr>

@@ -1,0 +1,12 @@
+<script type="text/javascript">
+(function($){
+    $(document).ready(function() {
+        $("#id_{{ name }}").select2({
+            width: '100%'
+            {% if allow_clear %}, allowClear: true{% endif %}
+            {% if placeholder %}, placeholder: '{{ placeholder }}'{% endif %}
+            {% if errors %}, dropdownCssClass: 'has-error'{% endif %}
+        });
+    });
+})(jQuery);
+</script>

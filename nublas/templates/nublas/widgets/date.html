@@ -1,0 +1,20 @@
+<div class="input-group date date-{{ name }}">
+    <input type="text" name="{{ name }}" value="{{ value|default:'' }}" data-date-format="YYYY-MM-DD" {{ attrs }} />
+    <span class="input-group-addon add-on btn"><i class="fa fa-calendar"></i></span>
+</div>
+<script type="text/javascript">
+(function($){
+    $(document).ready(function() {
+        $('.input-group.date.date-{{ name }}').datetimepicker({
+            language: "{{ LANGUAGE_CODE|default:'en' }}",
+            pickTime: false,
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-arrow-up",
+                down: "fa fa-arrow-down"
+            }
+        });
+    });
+}(jQuery));
+</script>

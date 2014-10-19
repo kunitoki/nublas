@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import re
 import itertools
 from django import forms
@@ -8,8 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import six
 
 from ..conf import settings
-
-from taggit.forms import TagField
 
 
 #==============================================================================
@@ -40,13 +39,12 @@ class Fieldline(object):
     def __iter__(self):
         total_cols = 12
         first_label_cols = 2
-        layoout_cols = total_cols - first_label_cols
+        layout_cols = total_cols - first_label_cols
         if len(self.fields) > 1:
-            layoout_cols = int(layoout_cols / len(self.fields) - 1)
+            layout_cols = int(layout_cols / len(self.fields) - 1)
 
         for field, layout in itertools.izip_longest(self.fields, self.layout):
-            yield self.form[field], layout if layout else layoout_cols
-
+            yield self.form[field], layout if layout else layout_cols
 
 
 class Fieldset(object):
@@ -67,7 +65,6 @@ class Fieldset(object):
             )
 
 
-#==============================================================================
 class FieldsetForm(object):
     def _build_fieldsets(self):
         meta = getattr(self, '_meta', None)
@@ -105,7 +102,7 @@ class ValidatingForm(object):
             for k, vs in self.data.lists():
                 new_vs = []
                 for v in vs:
-                    if isinstance(v, basestring):
+                    if isinstance(v, six.text_type):
                         v = v.strip()
                     new_vs.append(v)
                 data.setlist(k, new_vs)
@@ -115,8 +112,8 @@ class ValidatingForm(object):
 #==============================================================================
 class ReadonlyForm(object):
     def set_readonly(self, is_readonly=True):
-        for f in self.fields:
-            self.fields[f].is_readonly = is_readonly
+        for field in self.fields:
+            self.fields[field].is_readonly = is_readonly
 
 
 #==============================================================================
@@ -129,7 +126,48 @@ class TagsForm(object):
 
 
 #==============================================================================
-class BaseForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, forms.Form):
+class DefaultWidgetsForm(object):
+    def _update_default_widgets(self):
+        """
+        Returns custom widgets for each field type
+        """
+        # TODO - implement this for all the fields we need !
+        # TODO - must check this for default values
+        # TODO - must updates original widget attributes
+        for field in self.fields:
+            f = self.fields[field]
+            #if isinstance(f, forms.FloatField):
+            #    f.widget = spinner.SpinnerWidget(attrs={ 'max_value': f.max_value, 'min_value': f.min_value })
+            #elif isinstance(f, forms.IntegerField):
+            #    f.widget = spinner.IntegerSpinnerWidget(attrs={ 'max_value': f.max_value, 'min_value': f.min_value })
+            #elif isinstance(f, forms.DateField):
+            #    f.widget = date.DatePickerWidget()
+            #elif isinstance(f, forms.DateTimeField):
+            #    f.widget = date.DateTimePickerWidget() # TODO - testing
+            #elif isinstance(f, forms.TimeField):
+            #    f.widget = date.TimePickerWidget()
+            # TODO - think a way to reuse this in different apps
+            #elif isinstance(f, forms.ChoiceField):
+            #    placeholder = f.empty_value if hasattr(f, 'empty_value') else None
+            #    f.widget = select.SelectReplacementWidget(choices=f.choices, placeholder=placeholder)
+            #elif isinstance(f, forms.TypedChoiceField):
+            #    placeholder = f.empty_value if hasattr(f, 'empty_value') else None
+            #    f.widget = select.SelectReplacementWidget(choices=f.choices, placeholder=placeholder)
+
+
+#==============================================================================
+class WidgetErrorStateForm(object):
+    def _update_widgets_error_state(self):
+        if self.errors:
+            for name in self.errors:
+                if name in self.fields:
+                    classes = self.fields[name].widget.attrs.get('class', '')
+                    classes += ' has-error' if len(classes) > 0 else 'has-error'
+                    self.fields[name].widget.attrs['class'] = classes
+
+
+#==============================================================================
+class BaseForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, WidgetErrorStateForm, DefaultWidgetsForm, forms.Form):
     """
     Base forms for all unbounded forms in our pages.
     It provides a custom way to initialize widgets from a set of parameters
@@ -143,6 +181,10 @@ class BaseForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, forms.Form)
         super(BaseForm, self).__init__(*args, **kwargs)
         # Update fieldsets
         self._build_fieldsets()
+        # Update default widgets
+        self._update_default_widgets()
+        # Notify about errors all widgets
+        self._update_widgets_error_state()
         # Initialize values from initial parameters
         if initial:
             for key, value in initial.items():
@@ -157,7 +199,7 @@ class BaseForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, forms.Form)
 
 
 #==============================================================================
-class BaseModelForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, forms.ModelForm):
+class BaseModelForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, WidgetErrorStateForm, DefaultWidgetsForm, forms.ModelForm):
     """
     Base forms for all bounded forms to models.
     It provides a custom way to initialize widgets from a set of parameters
@@ -171,6 +213,10 @@ class BaseModelForm(ValidatingForm, FieldsetForm, ReadonlyForm, TagsForm, forms.
         super(BaseModelForm, self).__init__(*args, **kwargs)
         # Update fieldsets
         self._build_fieldsets()
+        # Update default widgets
+        self._update_default_widgets()
+        # Notify about errors all widgets
+        self._update_widgets_error_state()
         # Initialize values from initial parameters
         if initial:
             for key, value in initial.items():

@@ -1,0 +1,11 @@
+<input type="text" id="id_{{ name }}" name="{{ name }}" value="{{ value }}" {{ attrs }} />
+<script type="text/javascript">
+    (function($){
+        $(document).ready(function() {
+            $("#id_{{ name }}").tagsinput({
+                tagClass: 'label label-default',
+                trimValue: true
+            });
+        });
+    })(jQuery);
+</script>

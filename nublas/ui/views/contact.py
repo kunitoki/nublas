@@ -19,6 +19,7 @@ from django.views.generic.base import View
 
 #from nublas.library.db.fields.autocomplete import AutoCompleteWidget
 
+from ..widgets import SelectWidget, AutoCompleteWidget, TagsWidget, DateWidget
 from ..files import GenericFileServeView
 from ..skins import get_skin_relative_path
 from ..forms import BaseForm, BaseModelForm #, CustomFieldModelForm
@@ -247,7 +248,14 @@ class ContactPersonalForm(BaseModelForm):
             }),
         )
         widgets = {
+            'prefix': SelectWidget,
+            'suffix': SelectWidget,
+            'type': SelectWidget,
+            'gender': SelectWidget,
+            'birth_date': DateWidget,
+            'decease_date': DateWidget,
             'notes': forms.Textarea(attrs={'rows': 5}),
+            'tags': TagsWidget,
         }
         exclude = ('association',
                    'groups',)
@@ -454,6 +462,10 @@ class AddressForm(BaseModelForm):
         )
         exclude = ('contact',
                    'tags',)
+        widgets = {
+            'type': SelectWidget,
+            'country': SelectWidget,
+        }
 
 
 class ContactAddressAddView(GenericContactInlineAddView):
@@ -504,6 +516,10 @@ class PhoneForm(BaseModelForm):
         model = Phone
         exclude = ('contact',
                    'tags',)
+        widgets = {
+            'type': SelectWidget,
+            'kind': SelectWidget,
+        }
 
 
 class ContactPhoneAddView(GenericContactInlineAddView):
@@ -553,6 +569,9 @@ class EmailForm(BaseModelForm):
         model = Email
         exclude = ('contact',
                    'tags',)
+        widgets = {
+            'type': SelectWidget,
+        }
 
 
 class ContactEmailAddView(GenericContactInlineAddView):
@@ -602,6 +621,9 @@ class WebsiteForm(BaseModelForm):
         model = Website
         exclude = ('contact',
                    'tags',)
+        widgets = {
+            'type': SelectWidget,
+        }
 
 
 class ContactWebsiteAddView(GenericContactInlineAddView):
@@ -651,6 +673,9 @@ class ContactGroupForm(BaseModelForm):
         model = ContactGroup
         exclude = ('contact',
                    'tags',)
+        widgets = {
+            'group': SelectWidget,
+        }
 
 
 class ContactGroupView(View):
@@ -720,6 +745,12 @@ class SubscriptionForm(BaseModelForm):
     class Meta:
         model = Subscription
         exclude = ('contact',)
+        widgets = {
+            'type': SelectWidget,
+            'from_date': DateWidget,
+            'to_date': DateWidget,
+            'tags': TagsWidget,
+        }
 
 
 #class SubscriptionCustomFieldsForm(CustomFieldModelForm):
@@ -810,14 +841,17 @@ class RelationshipForm(BaseModelForm):
         super(RelationshipForm, self).__init__(*args, **kwargs)
         if a:
             self.fields['type'].queryset = RelationshipType.objects.filter(association=a)
-            self.fields['to_contact'].queryset = Contact.objects.filter(association=a)
-            if c:
-                self.fields['to_contact'].queryset = self.fields['to_contact'].queryset.exclude(pk=c.pk)
+            autocomplete_url = reverse('nublas:contact_search_autocomplete', args=[a.uuid])
+            self.fields['to_contact'].widget = AutoCompleteWidget(autocomplete_url,
+                                                                  model=Contact)
 
     class Meta:
         model = Relationship
         exclude = ('from_contact',
                    'tags',)
+        widgets = {
+            'type': SelectWidget,
+        }
 
 
 class ContactRelationshipView(View):
@@ -888,15 +922,17 @@ class ReverseRelationshipForm(BaseModelForm):
         super(ReverseRelationshipForm, self).__init__(*args, **kwargs)
         if a:
             self.fields['type'].queryset = ReverseRelationshipType.objects.filter(association=a)
-            self.fields['from_contact'].queryset = Contact.objects.filter(association=a)
-            if c:
-                self.fields['from_contact'].queryset = self.fields['from_contact'].queryset.exclude(pk=c.pk)
+            autocomplete_url = reverse('nublas:contact_search_autocomplete', args=[a.uuid])
+            self.fields['from_contact'].widget = AutoCompleteWidget(autocomplete_url,
+                                                                    model=Contact)
 
     class Meta:
         model = Relationship
         exclude = ('to_contact',
                    'tags',)
-
+        widgets = {
+            'type': SelectWidget,
+        }
 
 class ContactReverseRelationshipView(View):
     @method_decorator(login_required(login_url=settings.LOGIN_URL))
@@ -964,14 +1000,22 @@ class ContactAutoCompleteView(View):
     def dispatch(self, request, *args, **kwargs):
         association = kwargs.get('association')
 
-        result = []
-        searchtext = request.GET['q']
-        if len(searchtext) >= 2:
+        res = {
+            'results': [],
+            'more': False,
+        }
+
+        searchtext = request.GET.get('q', None)
+        page_limit = request.GET.get('page_limit', 10)
+        if searchtext:
             query = Q(first_name__icontains=searchtext) | \
                     Q(middle_name__icontains=searchtext) | \
                     Q(last_name__icontains=searchtext)
-            items = Contact.objects.filter(Q(association___uuid=association) & query).order_by('last_name')[:10]
-            for item in items:
-                result.append((item.pk, str(item))) # TODO - handle uuid ?
+            items = Contact.objects.filter(Q(association___uuid=association) & query).order_by('last_name')
+            count = items.count()
+            for item in items[:page_limit]:
+                res['results'].append({ 'id': item.pk, 'text': "%s" % item })
+            if count > page_limit:
+                res['more'] = True
 
-        return HttpResponse(json.dumps(result))
+        return HttpResponse(json.dumps(res))

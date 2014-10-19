@@ -1,0 +1,36 @@
+<input type="hidden" id="id_{{ name }}" name="{{ name }}" value="{{ value }}" />
+<input type="text" id="id_{{ name }}_helper" value="{{ display }}" {{ attrs }} />
+<script type="text/javascript">
+(function($){
+    $(document).ready(function(){
+        $("#id_{{ name }}_helper").select2({
+            width: '100%',
+            placeholder: "{{ placeholder|default:'---------' }}",
+            minimumInputLength: {{ min_length|default:2 }},
+            {% if errors %}dropdownCssClass: 'has-error',{% endif %}
+            {% if allow_clear %}allowClear: true,{% endif %}
+            {% if multiple %}multiple: true,{% endif %}
+            ajax: {
+                url: "{{ url }}",
+                dataType: 'json',
+                data: function (term, page) {
+                    return {
+                        q: term,
+                        page_limit: {{ page_limit|default:10 }}
+                    };
+                },
+                results: function (data, page) {
+                    return { results: data.results };
+                }
+            },
+            initSelection: function(element, callback) {
+                callback({ id: "{{ value }}", text: "{{ display }}" });
+            }
+        });
+
+        $("#id_{{ name }}_helper").on("change", function(e) {
+            $("#id_{{ name }}").val(e.val);
+        });
+    });
+}(jQuery));
+</script>

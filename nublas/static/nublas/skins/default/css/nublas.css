@@ -175,17 +175,20 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 
 
 /** Select2 fixes */
-.select2-drop.has-errors {
+.select2-chosen {
+  color: #555555;
+}
+.select2-drop.has-error {
   border-left: 1px solid #a94442;
   border-right: 1px solid #a94442;
 }
-.select2-drop.select2-drop-active:not(.select2-drop-above).has-errors {
+.select2-drop.select2-drop-active:not(.select2-drop-above).has-error {
   border-bottom: 1px solid #a94442;
 }
-.select2-drop.select2-drop-active.select2-drop-above.has-errors {
+.select2-drop.select2-drop-active.select2-drop-above.has-error {
   border-top: 1px solid #a94442;
 }
-.select2-drop.has-errors .select2-results .select2-highlighted {
+.select2-drop.has-error .select2-results .select2-highlighted {
   background-color: #a94442;
 }
 

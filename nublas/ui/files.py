@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import os
 import mimetypes
 from django.http import HttpResponse, JsonResponse

@@ -1,0 +1,49 @@
+<input type="hidden" id="id_{{ name }}" value="" />
+<input type="text" id="id_{{ name }}_helper" value="" {{ attrs }} />
+<div class="autocomplete-placeholder">
+    {% for val in value_display %}
+        <p>
+            <input name="{{ name }}" type="hidden" value="{{ val.0 }}" />
+            {{ val.1 }}
+            <a href="#" onclick="$(this).parent().remove(); $('#id_{{ name }}_helper').val(''); $('#id_{{ name }}_helper').focus(); return false;"
+               class="btn btn-primary"><i class="fa fa-remove"></i></a>
+        </p>
+    {% endfor %}
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#id_{{ name }}_helper").autocomplete({
+        source: function(request, response){
+            $.ajax({
+                url: "{{ url }}",
+                data: { q: request.term },
+                dataType: "json",
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item[1],
+                            value: item[1],
+                            real_value: item[0]
+                        };
+                    }));
+                }
+            });
+        },
+        select: function(event, ui) {
+            var parent = $('#id_{{ name }}').parent();
+            var target = $('div.autocomplete-placeholder', parent);
+            target.append(
+                '<p>' +
+                '    <input name="{{ name }}" type="hidden" value="' + ui.item.real_value + '" />' +
+                     ui.item.value +
+                '    <a href="#" onclick="$(this).parent().remove(); $(\'#id_{{ name }}_helper\').val(\'\'); $(\'#id_{{ name }}_helper\').focus(); return false;"' +
+                '       class="btn btn-primary"><i class="fa fa-remove"></i></a>' +
+                '<p>');
+        },
+        close: function(event, ui) {
+            $('#id_{{ name }}_helper').val('');
+        },
+        minLength: {{ min_length }}
+    });
+});
+</script>

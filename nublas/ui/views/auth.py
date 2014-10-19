@@ -87,6 +87,7 @@ class LoginView(View):
                 password = form.cleaned_data['password']
                 redirect_to = form.cleaned_data['redirect_to']
                 remember = form.cleaned_data['remember']
+                print remember
                 user = authenticate(username=username, password=password)
                 if user is not None:
                     if user.is_active:

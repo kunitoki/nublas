@@ -19,12 +19,8 @@ from django.utils.timezone import utc
 from django.views.generic.base import View
 from django.views.decorators.csrf import csrf_exempt
 
-from taggit.forms import TagField
-
-#from nublas.library.utils.tokenize import tokenize_string
-#from nublas.library.db.fields.autocomplete import AutoCompleteWidget
-
 from ..skins import get_skin_relative_path
+from ..widgets import DateTimeWidget, SelectWidget, AutoCompleteWidget
 from ..forms import BaseForm, BaseModelForm
 #from ..forms import CustomFieldModelForm
 from ...conf import settings
@@ -35,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 #==============================================================================
-class ListEventByDateForm(forms.Form):
+class ListEventByDateForm(BaseForm):
     start = forms.DateTimeField(required=False) # input_formats=['%Y-%m-%d'],
     end = forms.DateTimeField(required=False) # input_formats=['%Y-%m-%d'],
 
@@ -50,7 +46,7 @@ class ListEventByDateForm(forms.Form):
                 return False
         return instance
 
-class PartialEventForm(forms.Form):
+class PartialEventForm(BaseForm):
     start_date = forms.DateTimeField(required=True) # input_formats=['%Y-%m-%d %H:%M'],
     end_date = forms.DateTimeField(required=False) # input_formats=['%Y-%m-%d %H:%M'],
     allday = forms.BooleanField(required=False)
@@ -60,7 +56,7 @@ class PartialEventForm(forms.Form):
         start_date = cleaned_data.get("start_date")
         end_date = cleaned_data.get("end_date")
         if not end_date:
-            end_date = start_date
+            cleaned_data.set("end_date", start_date)
         return cleaned_data
 
     def update_instance(self, instance, commit=True):
@@ -93,7 +89,7 @@ class AgendaAllEventListJsonView(View):
                 e = e.filter(end_date__lte=end_date)
 
         if not request.user.is_superuser:
-            e = e.exclude(Q(calendar__public=False), ~Q(author=request.user))
+            e = e.exclude(Q(calendar__public=False), ~Q(owner=request.user))
             # TODO - add collaborators
 
         events = []
@@ -160,7 +156,7 @@ class AgendaEventListJsonView(View):
                 e = e.filter(end_date__lte=end_date)
 
         if not request.user.is_superuser:
-            e = e.exclude(Q(calendar__public=False), ~Q(author=request.user))
+            e = e.exclude(Q(calendar__public=False), ~Q(owner=request.user))
             # TODO - add collaborators
 
         events = []
@@ -212,6 +208,9 @@ class AgendaEventListCssView(View):
 
 #==============================================================================
 class AgendaEventForm(BaseModelForm):
+    start_date = forms.DateTimeField(input_formats=('%Y-%m-%d %H:%M',)),
+    end_date = forms.DateTimeField(input_formats=('%Y-%m-%d %H:%M',)),
+
     def __init__(self, *args, **kwargs):
         a = kwargs.pop('association')
         super(AgendaEventForm, self).__init__(*args, **kwargs)
@@ -220,39 +219,48 @@ class AgendaEventForm(BaseModelForm):
 
     class Meta:
         model = Event
-        exclude = ('author',
+        exclude = ('owner',
                    'contacts',)
-        #fields = ('notes',)
+        widgets = {
+            'calendar': SelectWidget,
+            'start_date': DateTimeWidget,
+            'end_date': DateTimeWidget,
+        }
+
 
 #class AgendaEventCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
 #        model = Event
 #        exclude = ('tags',)
 
+
 class AgendaEventContactAppointmentForm(BaseModelForm):
-    id = forms.IntegerField()
-    contact = forms.ModelChoiceField(queryset=Contact.objects.none())
-    info = forms.CharField(widget=forms.TextInput(attrs={'style':'width:90%;'}), required=False)
+    id = forms.IntegerField(widget=forms.HiddenInput())
+    contact = forms.ModelChoiceField(queryset=Contact.objects.all())
+    info = forms.CharField(widget=forms.TextInput(), required=False)
     attended = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super(AgendaEventContactAppointmentForm, self).__init__(*args, **kwargs)
         #self.fields.insert(0, 'id', self.fields['id']) # HACK - keep id first field
 
-    def clean_id(self):
-        id = self.cleaned_data['id']
-        try:
-            return int(id)
-        except:
-            return None
+    def clean_contact(self):
+        value = self.cleaned_data['contact']
+        print(value)
+        return value
 
-    def display_fields(self):
-        return ('id', 'contact', 'info', 'attended', 'delete')
+    #def clean_id(self):
+    #    new_id = self.cleaned_data['id']
+    #    print(new_id)
+    #    try:
+    #        return int(new_id)
+    #    except ValueError:
+    #        return None
 
     class Meta:
         model = ContactAppointment
         fields = ('id', 'contact', 'info', 'attended')
-        exclude = ('events',)
+
 
 class AgendaEventContactAppointmentFormSet(BaseInlineFormSet):
     def __init__(self, *args, **kwargs):
@@ -263,9 +271,14 @@ class AgendaEventContactAppointmentFormSet(BaseInlineFormSet):
             for form in self.forms:
                 if 'contact' in form.fields:
                     form.fields['contact'].queryset = Contact.objects.filter(association=a)
-                    #form.fields['contact'].widget = AutoCompleteWidget(url=autocomplete_url,
-                    #                                                   model=Contact,
-                    #                                                   attrs={'style':'width:90%'})
+                    form.fields['contact'].widget = AutoCompleteWidget(url=autocomplete_url,
+                                                                       model=Contact)
+                form._update_widgets_error_state()
+
+
+def custom_agenda_event_field_callback(field):
+    return field.formfield()
+
 
 #==============================================================================
 class AgendaEventBaseView(View):
@@ -278,10 +291,10 @@ class AgendaEventBaseView(View):
     def message_errors(self, request, form_instance, error_text):
         def _get_form_errors(form):
             if isinstance(form, BaseInlineFormSet):
-                errors = []
-                for f in form.forms:
-                    errors += f.errors.get('__all__', [])
-                return errors
+                err = []
+                for frm in form.forms:
+                    err += frm.errors.get('__all__', [])
+                return err
             else:
                 return form.errors.get('__all__', [])
 
@@ -294,6 +307,7 @@ class AgendaEventBaseView(View):
 
         if len(errors) > 0:
             for e in errors:
+                print e
                 messages.add_message(request, messages.ERROR, e)
         else:
             messages.add_message(request, messages.ERROR, error_text)
@@ -310,25 +324,22 @@ class AgendaEventAddView(AgendaEventBaseView):
         a = Association.get_object_or_404(association, request.user)
 
         # initial precompiled contacts
-        extra = 1
+        extra = 0
         initial = []
 
         contact = request.GET.get('contact', None)
         if contact:
-            try:
-                initial.append({'contact': Contact.objects.get(_uuid=contact) })
+            contacts = Contact.objects.filter(_uuid=contact)
+            for c in contacts:
+                initial.append({'contact': c})
                 extra += 1
-            except:
-                pass
+
         contacts = request.GET.get('contacts', None)
         if contacts:
-            try:
-                contacts = Contact.objects.filter(_uuid__in=contacts.split(','))
-                for c in contacts:
-                    initial.append({'contact': c})
-                    extra += 1
-            except:
-                pass
+            contacts = Contact.objects.filter(_uuid__in=contacts.split(','))
+            for c in contacts:
+                initial.append({'contact': c})
+                extra += 1
 
         # create the formset class
         contact_formset_class = inlineformset_factory(Event,
@@ -336,10 +347,11 @@ class AgendaEventAddView(AgendaEventBaseView):
                                                       form=AgendaEventContactAppointmentForm,
                                                       formset=AgendaEventContactAppointmentFormSet,
                                                       can_delete=False,
-                                                      extra=extra)
+                                                      extra=extra,
+                                                      formfield_callback=custom_agenda_event_field_callback)
 
         if request.method == 'POST':
-            o = Event(author=request.user)
+            o = Event(owner=request.user)
             inline_form = AgendaEventForm(request.POST, instance=o, association=a)
             #custom_form = AgendaEventCustomFieldsForm(request.POST, instance=o, association=a)
             contact_formset = contact_formset_class(request.POST,
@@ -395,12 +407,18 @@ class AgendaEventEditView(AgendaEventBaseView):
                                                       form=AgendaEventContactAppointmentForm,
                                                       formset=AgendaEventContactAppointmentFormSet,
                                                       can_delete=True,
-                                                      extra=1)
+                                                      extra=0,
+                                                      fields=('contact', 'info', 'attended'),
+                                                      formfield_callback=custom_agenda_event_field_callback)
 
         if request.method == 'POST':
             inline_form = AgendaEventForm(request.POST, instance=o, association=a)
             #custom_form = AgendaEventCustomFieldsForm(request.POST, instance=o, association=a)
-            contact_formset = contact_formset_class(request.POST, request.FILES, instance=o, association=a, prefix='contacts')
+            contact_formset = contact_formset_class(request.POST,
+                                                    request.FILES,
+                                                    instance=o,
+                                                    association=a,
+                                                    prefix='contacts')
             if inline_form.is_valid() and contact_formset.is_valid(): # and custom_form.is_valid()
                 inline_form.save()
                 #custom_form.save()

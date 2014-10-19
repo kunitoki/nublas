@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load nublas_tags %}
 
+{% comment %}
+
 {% if use_head %}
 <div class="head">
     <h5 class="iAlarm">{% trans "Incoming events" %}</h5>
@@ -38,3 +40,5 @@
         </div>
     </div>
 {% endfor %}
+
+{% endcomment %}

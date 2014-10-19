@@ -35,6 +35,8 @@
         <div class="tab-content">
             <div class="tab-pane active" id="inline-edit">
 
+                {% block form-before %}{% endblock %}
+
                 <!-- Base inline form -->
                 {% if inline_form and inline_form.fields|length > 0 %}
                     {% nublas_include "generic/form_snippet.html" with form=inline_form %}
@@ -45,6 +47,8 @@
                     {% nublas_include "generic/form_snippet.html" with form=custom_form %}
                 {% endif %}
 
+                {% block form-after %}{% endblock %}
+
             </div>
         </div>
 
@@ -53,10 +57,10 @@
         <div class="form-group">
             <div class="col-sm-6 text-left">
                 {% comment %}
-                {% if back_url %}
-                <a href="{{ back_url }}" class="btn btn-default btn-sm">
-                    <i class="fa fa-arrow-circle-left fa-fw"></i> {{ back_text }}</a>
-                {% endif %}
+                    {% if back_url %}
+                    <a href="{{ back_url }}" class="btn btn-default btn-sm">
+                        <i class="fa fa-arrow-circle-left fa-fw"></i> {{ back_text }}</a>
+                    {% endif %}
                 {% endcomment %}
 
                 <button class="btn btn-primary btn-sm" type="submit">
