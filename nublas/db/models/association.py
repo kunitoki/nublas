@@ -77,17 +77,19 @@ def populate_empty_association(sender, instance, created, **kwargs):
                                     { 'object': instance.pk })
             for obj in serializers.deserialize("json", data, ensure_ascii=False):
                 obj.save()
-            instance.get_documents_path()
+            instance.repository_path()
     # TODO - what to do when the instance is trashed only ? move to thrash too
     #else:
     #    if instance.trashed:
-    #        remove_path(instance.get_documents_root())
+    #        remove_path(instance.repository_path())
 
 
 # Signal for delete file structure
 @receiver(signals.post_delete, sender=Association, dispatch_uid="delete_association_files")
 def delete_association_files(sender, instance, **kwargs):
-    instance.delete_documents_root()
+    # TODO - implement deleting association files
+    # instance.delete_documents_root()
+    pass
 
 
 #==============================================================================
