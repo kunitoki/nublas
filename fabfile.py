@@ -8,6 +8,17 @@ env.hosts = ['localhost']
 
 #==============================================================================
 @task
+def bootstrap_dev_env():
+    with lcd("."):
+        local("pip install -r example/requirements.txt")
+        local("pip install Sphinx")
+
+    with lcd("../lib/python2.7/site-packages/"):
+        local("ln -s ../../../nublas/nublas nublas")
+
+
+#==============================================================================
+@task
 def execute_tests():
     with lcd("."):
         local("python manage.py test nublas")
