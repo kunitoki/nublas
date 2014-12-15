@@ -18,11 +18,13 @@ class TagsWidget(forms.Widget):
                 final_attrs['class'] += ' %s' % v
             else:
                 final_attrs[k] = v
+        if value:
+            value = ','.join([ v.tag.name for v in value ])
         flat_attrs = forms.widgets.flatatt(self.build_attrs(final_attrs))
         errors = 'has-error' in final_attrs.get('class', '')
         return mark_safe(render_to_string(self.template, {
             'name': name,
-            'value': ','.join([ v.tag.name for v in value ]),
+            'value': value,
             'attrs': flat_attrs,
             'errors': errors,
         }))
