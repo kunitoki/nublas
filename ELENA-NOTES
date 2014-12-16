@@ -1,0 +1,16 @@
+Schema isn't ideal for my use case.
+
+This project encourages:
+
+ *many* `contacts` attached to `companies`.
+
+My need is:
+
+ *many* `companies` (nominal `contacts`, but still excellent searchability)
+ *many* notes
+
+also: need to extend to facilitate `campaigns` of some kind.
+
+---
+
+Love the UI, but far enough off the mark (also not using standard django patterns) that effort probably better spent on my use case.
