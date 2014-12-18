@@ -3,9 +3,11 @@ from django import forms
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 
+from .base import NublasWidgetMixin
+
 
 #===============================================================================
-class TimeWidget(forms.TimeInput):
+class TimeWidget(NublasWidgetMixin, forms.TimeInput):
     template = "nublas/widgets/time.html"
 
     def __init__(self, *args, **kwargs):
@@ -14,15 +16,10 @@ class TimeWidget(forms.TimeInput):
 
     def render(self, name, value, attrs={}):
         super(TimeWidget, self).render(name, value, attrs)
-        final_attrs = dict(**self.attrs)
-        for k, v in attrs.items():
-            if k == 'class' and 'class' in final_attrs:
-                final_attrs['class'] += ' %s' % v
-            else:
-                final_attrs[k] = v
+        final_attrs = self.get_attrs(attrs)
         flat_attrs = forms.widgets.flatatt(self.build_attrs(final_attrs))
         errors = 'has-error' in final_attrs.get('class', '')
-        return mark_safe(render_to_string(self.template, {
+        return mark_safe(render_to_string(self.get_template_list(self.template), {
             'name': name,
             'value': value,
             'attrs': flat_attrs,
@@ -31,7 +28,7 @@ class TimeWidget(forms.TimeInput):
 
 
 #===============================================================================
-class DateWidget(forms.DateInput):
+class DateWidget(NublasWidgetMixin, forms.DateInput):
     template = "nublas/widgets/date.html"
 
     def __init__(self, *args, **kwargs):
@@ -40,15 +37,10 @@ class DateWidget(forms.DateInput):
 
     def render(self, name, value, attrs={}):
         super(DateWidget, self).render(name, value, attrs)
-        final_attrs = dict(**self.attrs)
-        for k, v in attrs.items():
-            if k == 'class' and 'class' in final_attrs:
-                final_attrs['class'] += ' %s' % v
-            else:
-                final_attrs[k] = v
+        final_attrs = self.get_attrs(attrs)
         flat_attrs = forms.widgets.flatatt(self.build_attrs(final_attrs))
         errors = 'has-error' in final_attrs.get('class', '')
-        return mark_safe(render_to_string(self.template, {
+        return mark_safe(render_to_string(self.get_template_list(self.template), {
             'name': name,
             'value': value,
             'attrs': flat_attrs,
@@ -57,7 +49,7 @@ class DateWidget(forms.DateInput):
 
 
 #===============================================================================
-class DateTimeWidget(forms.DateTimeInput):
+class DateTimeWidget(NublasWidgetMixin, forms.DateTimeInput):
     template = "nublas/widgets/datetime.html"
 
     def __init__(self, *args, **kwargs):
@@ -66,15 +58,10 @@ class DateTimeWidget(forms.DateTimeInput):
 
     def render(self, name, value, attrs={}):
         super(DateTimeWidget, self).render(name, value, attrs)
-        final_attrs = dict(**self.attrs)
-        for k, v in attrs.items():
-            if k == 'class' and 'class' in final_attrs:
-                final_attrs['class'] += ' %s' % v
-            else:
-                final_attrs[k] = v
+        final_attrs = self.get_attrs(attrs)
         flat_attrs = forms.widgets.flatatt(self.build_attrs(final_attrs))
         errors = 'has-error' in final_attrs.get('class', '')
-        return mark_safe(render_to_string(self.template, {
+        return mark_safe(render_to_string(self.get_template_list(self.template), {
             'name': name,
             'value': value,
             'attrs': flat_attrs,

@@ -4,11 +4,13 @@ from django.forms.widgets import Select, SelectMultiple
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 
+from .base import NublasWidgetMixin
+
 __all__ = [ "SelectWidget" ]
 
 
 #==============================================================================
-class SelectWidget(Select):
+class SelectWidget(NublasWidgetMixin, Select):
     template = "nublas/widgets/select.html"
     placeholder = None
     allow_clear = True
@@ -33,15 +35,10 @@ class SelectWidget(Select):
 
     def render(self, name, value, attrs={}, choices=(), **kwargs):
         html = super(SelectWidget, self).render(name, value, attrs, choices, **kwargs)
-        final_attrs = dict(**self.attrs)
-        for k, v in attrs.items():
-            if k == 'class' and 'class' in final_attrs:
-                final_attrs['class'] += ' %s' % v
-            else:
-                final_attrs[k] = v
+        final_attrs = self.get_attrs(attrs)
         flat_attrs = forms.widgets.flatatt(self.build_attrs(final_attrs))
         errors = 'has-error' in final_attrs.get('class', '')
-        return mark_safe(html + render_to_string(self.template, {
+        return mark_safe(html + render_to_string(self.get_template_list(self.template), {
             'name': name,
             'value': value,
             'placeholder': self.placeholder,

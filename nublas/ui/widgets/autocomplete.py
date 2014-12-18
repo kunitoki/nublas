@@ -4,6 +4,9 @@ from django.forms.widgets import Select, SelectMultiple
 from django.utils.safestring import mark_safe
 from django.template.loader import render_to_string
 
+from .base import NublasWidgetMixin
+from ..skins import get_skin_relative_path
+
 __all__ = [ "AutoCompleteWidget", "AutoCompleteMultipleWidget" ]
 
 """
@@ -22,7 +25,7 @@ Example view:
 
 
 #==============================================================================
-class AutoCompleteWidget(Select):
+class AutoCompleteWidget(NublasWidgetMixin, Select):
     input_type = 'autocomplete'
     url = None
     initial_display = None
@@ -55,14 +58,7 @@ class AutoCompleteWidget(Select):
         super(AutoCompleteWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs={}, choices=(), **kwargs):
-        final_attrs = dict(**self.attrs)
-        for k, v in attrs.items():
-            if k == 'class' and 'class' in final_attrs:
-                final_attrs['class'] += ' %s' % v
-            else:
-                final_attrs[k] = v
-        if 'id' in final_attrs:
-            del final_attrs['id']
+        final_attrs = self.get_attrs(attrs)
         flat_attrs = forms.widgets.flatatt(self.build_attrs(final_attrs))
         errors = 'has-error' in final_attrs.get('class', '')
 
@@ -73,7 +69,7 @@ class AutoCompleteWidget(Select):
             if self.model and value:
                 display = "%s" % self.model.objects.get(pk=value)
 
-        return mark_safe(render_to_string(self.template, {
+        return mark_safe(render_to_string(self.get_template_list(self.template), {
             'name': name,
             'value': value,
             'url': self.url,
@@ -87,7 +83,7 @@ class AutoCompleteWidget(Select):
 
 
 #==============================================================================
-class AutoCompleteMultipleWidget(SelectMultiple):
+class AutoCompleteMultipleWidget(NublasWidgetMixin, SelectMultiple):
     input_type = 'autocomplete_multiple'
     url = None
     initial_display = None
@@ -116,12 +112,7 @@ class AutoCompleteMultipleWidget(SelectMultiple):
         super(AutoCompleteMultipleWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs={}, choices=()):
-        final_attrs = dict(**self.attrs)
-        for k, v in attrs.items():
-            if k == 'class' and 'class' in final_attrs:
-                final_attrs['class'] += ' %s' % v
-            else:
-                final_attrs[k] = v
+        final_attrs = self.get_attrs(attrs)
         flat_attrs = forms.widgets.flatatt(self.build_attrs(final_attrs))
         errors = 'has-error' in final_attrs.get('class', '')
 
@@ -139,7 +130,7 @@ class AutoCompleteMultipleWidget(SelectMultiple):
         for v in value:
             value_display.append([v, "%s" % choices.get(pk=v)])
 
-        return mark_safe(render_to_string(self.template, {
+        return mark_safe(render_to_string(self.get_template_list(self.template), {
             'name': name,
             'url': self.url,
             'display': display,
