@@ -33,7 +33,7 @@ class AutoCompleteWidget(NublasWidgetMixin, Select):
     allow_clear = True
     model = None
     min_length = 2
-    template = "nublas/widgets/autocomplete.html"
+    template = "widgets/autocomplete.html"
 
     def __init__(self, url, initial_display=None, placeholder=None, allow_clear=True,
                  model=None, template=None, *args, **kwargs):
@@ -89,7 +89,7 @@ class AutoCompleteMultipleWidget(NublasWidgetMixin, SelectMultiple):
     initial_display = None
     model = None
     min_length = 2
-    template = "nublas/widgets/autocomplete_multiple.html"
+    template = "widgets/autocomplete_multiple.html"
 
     def __init__(self, url, initial_display=None, model=None, template=None, *args, **kwargs):
         """

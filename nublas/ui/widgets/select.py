@@ -11,7 +11,7 @@ __all__ = [ "SelectWidget" ]
 
 #==============================================================================
 class SelectWidget(NublasWidgetMixin, Select):
-    template = "nublas/widgets/select.html"
+    template = "widgets/select.html"
     placeholder = None
     allow_clear = True
 

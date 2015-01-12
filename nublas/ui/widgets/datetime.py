@@ -8,7 +8,7 @@ from .base import NublasWidgetMixin
 
 #===============================================================================
 class TimeWidget(NublasWidgetMixin, forms.TimeInput):
-    template = "nublas/widgets/time.html"
+    template = "widgets/time.html"
 
     def __init__(self, *args, **kwargs):
         kwargs['format'] = '%H:%M'
@@ -29,7 +29,7 @@ class TimeWidget(NublasWidgetMixin, forms.TimeInput):
 
 #===============================================================================
 class DateWidget(NublasWidgetMixin, forms.DateInput):
-    template = "nublas/widgets/date.html"
+    template = "widgets/date.html"
 
     def __init__(self, *args, **kwargs):
         kwargs['format'] = '%Y-%m-%d'
@@ -50,7 +50,7 @@ class DateWidget(NublasWidgetMixin, forms.DateInput):
 
 #===============================================================================
 class DateTimeWidget(NublasWidgetMixin, forms.DateTimeInput):
-    template = "nublas/widgets/datetime.html"
+    template = "widgets/datetime.html"
 
     def __init__(self, *args, **kwargs):
         kwargs['format'] = '%Y-%m-%d %H:%M'

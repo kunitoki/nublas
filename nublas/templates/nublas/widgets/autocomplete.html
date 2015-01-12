@@ -1,6 +1,6 @@
-<input type="hidden" id="id_{{ name }}" name="{{ name }}" value="{{ value }}" />
+<input type="hidden" id="id_{{ name }}" name="{{ name }}" value="{{ value|default:'' }}" />
 <input type="text" id="id_{{ name }}_helper" value="{{ display }}" {{ attrs }}
-       data-url="{{ url }}" data-value="{{ value }}" data-display="{{ display }}"
+       data-url="{{ url }}" data-value="{{ value|default:'' }}" data-display="{{ display }}"
        data-placeholder="{{ placeholder|default:'---------' }}" data-min-length="{{ min_length|default:2 }}"
        data-allow-clear="{% if allow_clear %}1{% else %}0{% endif %}" data-multiple="{% if multiple %}1{% else %}0{% endif %}"
        data-min-length="{{ min_length|default:2 }}" data-errors="{{ errors|default:'' }}" />
@@ -28,7 +28,7 @@
                 }
             },
             initSelection: function(element, callback) {
-                callback({ id: "{{ value }}", text: "{{ display }}" });
+                callback({ id: "{{ value|default:'' }}", text: "{{ display }}" });
             }
         });
 

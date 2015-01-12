@@ -1,4 +1,4 @@
-<input type="text" id="id_{{ name }}" name="{{ name }}" value="{{ value }}" {{ attrs }} />
+<input type="text" id="id_{{ name }}" name="{{ name }}" value="{{ value|default:'' }}" {{ attrs }} />
 <script type="text/javascript">
     (function($){
         $(document).ready(function() {

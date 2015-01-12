@@ -8,7 +8,7 @@ from .base import NublasWidgetMixin
 
 #===============================================================================
 class TagsWidget(NublasWidgetMixin, forms.Widget):
-    template = "nublas/widgets/tags.html"
+    template = "widgets/tags.html"
 
     def __init__(self, *args, **kwargs):
         super(TagsWidget, self).__init__(*args, **kwargs)
@@ -19,6 +19,7 @@ class TagsWidget(NublasWidgetMixin, forms.Widget):
         errors = 'has-error' in final_attrs.get('class', '')
         if value and len(value) > 0:
             value = ','.join([ v.tag.name for v in value ])
+        print value
         return mark_safe(render_to_string(self.get_template_list(self.template), {
             'name': name,
             'value': value,
