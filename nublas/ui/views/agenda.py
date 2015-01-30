@@ -377,7 +377,8 @@ class AgendaEventAddView(AgendaEventBaseView):
                                                     prefix='contacts')
 
         return render_to_response(get_skin_relative_path('views/agenda/event_view.html'),
-            RequestContext(request, { 'inline_form': inline_form,
+            RequestContext(request, { 'association': a,
+                                      'inline_form': inline_form,
                                       #'custom_form': custom_form,
                                       'contact_formset': contact_formset,
                                       'title': _('Adding new event for '),
@@ -434,7 +435,8 @@ class AgendaEventEditView(AgendaEventBaseView):
             contact_formset = contact_formset_class(instance=o, association=a, prefix='contacts')
 
         return render_to_response(get_skin_relative_path('views/agenda/event_view.html'),
-            RequestContext(request, { 'inline_form': inline_form,
+            RequestContext(request, { 'association': a,
+                                      'inline_form': inline_form,
                                       #'custom_form': custom_form,
                                       'contact_formset': contact_formset,
                                       'title': _('Edit event for '),

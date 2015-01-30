@@ -75,7 +75,7 @@
                     minimumInputLength: 2,
                     allowClear: true,
                     ajax: {
-                        url: "",
+                        url: "{% url 'nublas:contact_search_autocomplete' association.uuid %}",
                         dataType: 'json',
                         data: function (term, page) {
                             return {
