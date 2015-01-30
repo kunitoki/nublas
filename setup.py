@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from pip.req import parse_requirements
 
 from nublas import __author__, __version__, __license__, __email__
 
@@ -15,14 +16,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=[
-        "Django >= 1.7.4",
-        "django-modeltranslation >= 0.8",
-        "django-taggit >= 0.12.2",
-        "django-widget-tweaks >= 1.3",
-        "django-formaldehyde >= 0.2",
-        "django-custard >= 0.8",
-    ],
+    install_requires=[str(r.req) for r in parse_requirements('requirements.txt')],
     keywords=[
         'django',
         'crm',

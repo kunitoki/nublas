@@ -3,6 +3,7 @@ include LICENSE.txt
 include CHANGELOG.rst
 include README.rst
 include MANIFEST.in
+include requirements.txt
 include nublas-logo.png
 recursive-include docs *.rst
 recursive-include nublas *
