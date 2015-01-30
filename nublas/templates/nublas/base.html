@@ -7,7 +7,7 @@
         {% block meta-inner %}{% endblock %}
         {% block meta-after %}{% endblock %}
 
-        <title>{% block title %}{% endblock %}</title>
+        <title>{% block title-before %}{% endblock %}{% block title-inner %}{% endblock %}{% block title-after %}{% endblock %}</title>
 
         {% block styles-before %}{% endblock %}
         {% block styles-inner %}{% endblock %}
