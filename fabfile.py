@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+import subprocess
 from fabric.api import env, task, cd, lcd, run, local, settings
 
 from nublas import __version__
@@ -37,6 +36,11 @@ def demo_rebuild_db():
 @task
 def demo_server():
     with lcd("example"):
+        # open browser
+        subprocess.Popen(['xdg-open', 'http://127.0.0.1:8000/'],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+        # start server
         local("python manage.py runserver")
 
 @task
@@ -73,7 +77,7 @@ def create_release(version=None):
         # update version file if present
         if version is not None:
             version_todo = version
-            local("sed -ie 's/[0-9]*\.[0-9]*/%s/' custard/__init__.py" % version_todo)
+            local("sed -ie 's/[0-9]*\.[0-9]*/%s/' nublas/__init__.py" % version_todo)
             local("git commit -a -m 'Bump release %s'" % version_todo)
             local("git push")
 

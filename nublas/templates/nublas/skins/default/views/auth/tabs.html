@@ -1,0 +1,5 @@
+{% load i18n %}
+
+<li {% if activetab == 'profile' %}class="active"{% endif %}>
+    <a href="{% if activetab != 'profile' %}{% url 'nublas:auth_profile' %}{% else %}#{% endif %}" role="tab">
+        {% trans "My profile" %}</a></li>

@@ -30,6 +30,7 @@ from ...conf import settings
 #from ...db.fields import currency, captcha
 #from ...signals import user_registered, user_activated, user_profile_changed
 #from ...tasks import GearmanClient
+from ..widgets import SelectWidget
 from ..forms import BaseForm, BaseAuthValidatingForm
 from ..skins import get_skin_relative_path
 
@@ -153,7 +154,8 @@ class RegisterForm(BaseAuthValidatingForm):
     #captcha = captcha.ReCaptchaField()
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
+        if 'request' in kwargs:
+            request = kwargs.pop('request')
         super(RegisterForm, self).__init__(*args, **kwargs)
         #self.fields['captcha'] = captcha.ReCaptchaField(remoteip=request.META['REMOTE_ADDR'])
 
@@ -298,7 +300,8 @@ class LostPasswordForm(BaseAuthValidatingForm):
     #captcha = captcha.ReCaptchaField()
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
+        if 'request' in kwargs:
+            request = kwargs.pop('request')
         super(LostPasswordForm, self).__init__(*args, **kwargs)
         #self.fields['captcha'] = captcha.ReCaptchaField(remoteip=request.META['REMOTE_ADDR'])
         self.user = None
@@ -450,7 +453,8 @@ class LostUsernameForm(BaseAuthValidatingForm):
     #captcha = captcha.ReCaptchaField()
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
+        if 'request' in kwargs:
+            request = kwargs.pop('request')
         super(LostUsernameForm, self).__init__(*args, **kwargs)
         #self.fields['captcha'] = captcha.ReCaptchaField(remoteip=request.META['REMOTE_ADDR'])
         self.user = None
@@ -511,29 +515,35 @@ class LostUsernameView(View):
 class ProfileForm(BaseAuthValidatingForm):
     first_name = forms.CharField(required=True)
     last_name = forms.CharField(required=True)
+    username = forms.CharField(required=False)
     email = forms.EmailField(required=True)
-    password1 = forms.CharField(max_length=60, required=False, widget=forms.PasswordInput())
-    password2 = forms.CharField(max_length=60, required=False, widget=forms.PasswordInput())
+    password1 = forms.CharField(label=_('New password'), max_length=60, required=False, widget=forms.PasswordInput())
+    password2 = forms.CharField(label=_('Repeat it'), max_length=60, required=False, widget=forms.PasswordInput())
 
     if settings.LANGUAGES:
         preferred_language = forms.TypedChoiceField(label=_('Preferred language:'),
                                                     required=False,
                                                     empty_value=settings.LANGUAGES[0][0],
-                                                    choices=settings.LANGUAGES)
+                                                    choices=settings.LANGUAGES,
+                                                    widget=SelectWidget)
 
     ## TODO - this creates problems in demo
     #preferred_currency = forms.TypedChoiceField(label=_('Preferred currency:'),
     #                                            required=True,
     #                                            empty_value=currency.PAYPAL_CURRENCIES[0][0],
-    #                                            choices=currency.PAYPAL_CURRENCIES)
+    #                                            choices=currency.PAYPAL_CURRENCIES,
+    #                                            widget=SelectWidget)
 
     def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
+        if 'request' in kwargs:
+            self.request = kwargs.pop('request', None)
         self.UserModel = get_user_model()
         super(ProfileForm, self).__init__(*args, **kwargs)
+        self.fields['username'].is_readonly = True
 
     def clean_email(self):
-        return self.validate_new_email(self.cleaned_data['email'], ~Q(pk__exact=self.request.user.pk))
+        return self.validate_new_email(self.cleaned_data['email'],
+                                       ~Q(pk__exact=self.request.user.pk))
 
     def clean_password1(self):
         return self.validate_password(self.cleaned_data['password1'], strict=False)
@@ -560,6 +570,18 @@ class ProfileForm(BaseAuthValidatingForm):
             if cleaned_data.has_key('password2'):
                 del cleaned_data['password2']
         return cleaned_data
+
+    class MetaForm:
+        fieldsets = (
+            (None, {
+                'fields': (
+                    ('username', 'password1', 'password2'),
+                    ('first_name', 'last_name'),
+                    'email',
+                    'preferred_language',
+                )
+            }),
+        )
 
 
 #==============================================================================

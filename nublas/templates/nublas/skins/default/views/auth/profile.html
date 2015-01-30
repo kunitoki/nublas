@@ -1,0 +1,123 @@
+{% nublas_extends "base_site.html" %}
+{% load i18n %}
+
+
+{% block javascript-extra %}
+    <script type="text/javascript">
+/*
+        (function($){
+            $(document).ready(function(){
+
+                //===== Delete rows =====//
+
+                var postForm = function(elem) {
+                    $('<form>', {
+                        'action': $(elem).attr('href'),
+                        'method': 'POST',
+                        'target': '_top'
+                    }).append($('<input>', {
+                        'type': 'hidden',
+                        'name': 'csrfmiddlewaretoken',
+                        'value': '{{ csrf_token }}'
+                    })).appendTo('body').submit();
+                };
+
+                $(".nublas-contact-address-table .nublas-delete-button").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the address ?' %}",
+                        $.proxy(function(result) {
+                            if (result)
+                                postForm(this);
+                        }, $(this));
+                    );
+                });
+
+                $(".nublas-contact-email-table .nublas-delete-button").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the email ?' %}",
+                        $.proxy(function(result) {
+                            if (result)
+                                postForm(this);
+                        }, $(this));
+                    );
+                });
+
+                $(".nublas-contact-phone-table .nublas-delete-button").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the phone number ?' %}",
+                        $.proxy(function(result) {
+                            if (result)
+                                postForm(this);
+                        }, $(this));
+                    );
+                });
+
+                $(".nublas-contact-website-table .nublas-delete-button").click(function(e){
+                    e.preventDefault();
+                    bootbox.confirm(
+                        "{% trans 'Are you sure you want to delete the website ?' %}",
+                        $.proxy(function(result) {
+                            if (result)
+                                postForm(this);
+                        }, $(this));
+                    );
+                });
+
+            });
+        })(jQuery);
+*/
+    </script>
+{% endblock %}
+
+
+{% block content-title %}
+    <div class="page-header">
+        <h1>{% trans "My Profile" %}</h1>
+    </div>
+{% endblock %}
+
+
+{% block content-breadcrumb-inner %}
+    <li><a href="{% url 'nublas:home' %}">{% trans 'Home' %}</a></li>
+    <li class="active">{% trans "My Profile" %}</li>
+{% endblock %}
+
+
+{% block content-inner %}
+
+    <form action="." method="POST" class="form-horizontal" role="form">{% csrf_token %}
+
+        <ul class="nav nav-tabs" role="tablist">
+            {% nublas_include "views/auth/tabs.html" with activetab="profile" %}
+        </ul>
+
+        <div class="tab-content">
+
+            <!-- Personal details -->
+            <div class="tab-pane active">
+
+                <!-- Main form -->
+                {% nublas_include "generic/form_snippet.html" with form=user_form %}
+
+                <!-- Buttons -->
+                {% if editing or adding %}
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <div class="pull-left">
+                            <button class="btn btn-primary btn-sm" type="submit">
+                                <i class="fa fa-floppy-o fa-fw"></i> {% trans 'Save' %}</button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </form>
+
+{% endblock %}

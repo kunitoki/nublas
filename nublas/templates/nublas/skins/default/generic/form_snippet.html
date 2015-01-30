@@ -25,10 +25,7 @@
                     {% for field, field_size in fieldline %}
                         {% if field.is_hidden %}
                             {{ field }}
-                        {% endif %}
-                    {% endfor %}
-                    {% for field, field_size in fieldline %}
-                        {% if not field.is_hidden %}
+                        {% else %}
                             {% if not field.field.is_readonly %}
                                 {% nublas_include "generic/field_edit.html" with first=forloop.first %}
                             {% else %}

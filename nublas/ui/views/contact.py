@@ -232,6 +232,20 @@ class ContactPersonalForm(BaseModelForm):
 
     class Meta:
         model = Contact
+        widgets = {
+            'prefix': SelectWidget,
+            'suffix': SelectWidget,
+            'type': SelectWidget,
+            'gender': SelectWidget,
+            'birth_date': DateWidget,
+            'decease_date': DateWidget,
+            'notes': forms.Textarea(attrs={'rows': 5}),
+            'tags': TagsWidget,
+        }
+        exclude = ('association',
+                   'groups',)
+
+    class MetaForm:
         fieldsets = (
             (None, {
                 'fields': (
@@ -247,18 +261,6 @@ class ContactPersonalForm(BaseModelForm):
                 )
             }),
         )
-        widgets = {
-            'prefix': SelectWidget,
-            'suffix': SelectWidget,
-            'type': SelectWidget,
-            'gender': SelectWidget,
-            'birth_date': DateWidget,
-            'decease_date': DateWidget,
-            'notes': forms.Textarea(attrs={'rows': 5}),
-            'tags': TagsWidget,
-        }
-        exclude = ('association',
-                   'groups',)
 
 #class ContactCustomFieldsForm(CustomFieldModelForm):
 #    class Meta:
@@ -442,6 +444,14 @@ class AddressForm(BaseModelForm):
 
     class Meta:
         model = Address
+        exclude = ('contact',
+                   'tags',)
+        widgets = {
+            'type': SelectWidget,
+            'country': SelectWidget,
+        }
+
+    class MetaForm:
         fieldsets = (
             (None, {
                 'fields': (
@@ -460,12 +470,6 @@ class AddressForm(BaseModelForm):
                 ),
             }),
         )
-        exclude = ('contact',
-                   'tags',)
-        widgets = {
-            'type': SelectWidget,
-            'country': SelectWidget,
-        }
 
 
 class ContactAddressAddView(GenericContactInlineAddView):
