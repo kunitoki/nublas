@@ -11,7 +11,7 @@ setup(
     author=__author__,
     author_email=__email__,
     description='Constituent Relationship Management and Content Management system solution, built for non-profit and governmental groups.',
-    long_description=open('README.rst', encoding='utf-8').read(),
+    long_description=open('README.rst').read(),
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
