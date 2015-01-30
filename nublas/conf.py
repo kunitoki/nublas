@@ -106,6 +106,7 @@ class LazySettingsDict(object):
     def FRONTEND_SKIN_OPTIONS(self):
         return dict({
             'is_fluid':            False,
+            'site_title':          'Nublas',
             'company_name':        'Your Company',
             'company_url':         '#',
             'company_tos_url':     '#',
