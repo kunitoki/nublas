@@ -53,7 +53,7 @@ Default bootstrap skin
 .. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/associationslist_screen.png
    :alt: Association list
 
-.. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/associations_screen.png
+.. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/association_screen.png
    :alt: Association edit page
 
 .. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/agenda_screen.png
