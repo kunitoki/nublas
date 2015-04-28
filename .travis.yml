@@ -5,10 +5,11 @@ python:
   - 3.3
   - 3.4
 env:
-  - DJANGO=1.7.4
+  - DJANGO=1.7.7
 before_install:
   - export DJANGO_SETTINGS_MODULE=nublas.tests.settings
 install:
+  - pip install --upgrade pip
   - pip install -q Django==$DJANGO
   - pip install coveralls
   - pip install .

@@ -10,28 +10,28 @@ Constituent Relationship Management and Content Management `Django <http://www.d
 built in for non-profit and governmental groups.
 
 .. |travis| image:: https://travis-ci.org/kunitoki/nublas.png?branch=master
-   :alt: Build Status - master branch
    :target: https://travis-ci.org/kunitoki/nublas
+   :alt: Build Status - master branch
 
 .. |coveralls| image:: https://coveralls.io/repos/kunitoki/nublas/badge.png?branch=master
-   :alt: Source code coverage - master branch
    :target: https://coveralls.io/r/kunitoki/nublas
+   :alt: Source code coverage - master branch
 
 .. |pythonversions| image:: https://pypip.in/py_versions/nublas/badge.png
-    :target: https://pypi.python.org/pypi/nublas/
-    :alt: Supported Python versions
+   :target: https://pypi.python.org/pypi/nublas/
+   :alt: Supported Python versions
 
 .. |pypi| image:: https://pypip.in/v/nublas/badge.png
-   :alt: Pypi latest version
    :target: https://pypi.python.org/pypi/nublas/
+   :alt: Pypi latest version
 
 .. |downloads| image:: https://pypip.in/d/nublas/badge.png
-   :alt: Pypi downloads
    :target: https://pypi.python.org/pypi/nublas/
+   :alt: Pypi downloads
 
 .. |license| image:: https://pypip.in/license/nublas/badge.png
-    :target: https://pypi.python.org/pypi/nublas/
-    :alt: License
+   :target: https://pypi.python.org/pypi/nublas/
+   :alt: License
 
 |pypi| |travis| |coveralls| |downloads| |pythonversions| |license|
 
@@ -42,3 +42,22 @@ built in for non-profit and governmental groups.
 * Changelog: `Changelog.rst <https://github.com/kunitoki/nublas/blob/master/CHANGELOG.rst>`_
 * License: `The MIT License (MIT) <http://opensource.org/licenses/MIT>`_
 * Supports: Django 1.7 - Python 2.7, 3.2
+
+
+Default bootstrap skin
+----------------------
+
+.. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/login_screen.png
+   :alt: Login screen
+
+.. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/associationslist_screen.png
+   :alt: Association list
+
+.. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/association_screen.png
+   :alt: Association edit page
+
+.. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/agenda_screen.png
+   :alt: Association agenda page
+
+.. image:: https://raw.github.com/kunitoki/nublas/master/docs/images/filemanager_screen.png
+   :alt: Association file manager
