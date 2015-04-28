@@ -1,3 +1,4 @@
+import uuid
 from setuptools import setup, find_packages
 from pip.req import parse_requirements
 
@@ -16,7 +17,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=[str(r.req) for r in parse_requirements('requirements.txt')],
+    install_requires=[str(r.req) for r in parse_requirements('requirements.txt', session=uuid.uuid1())],
     keywords=[
         'django',
         'crm',
