@@ -41,7 +41,7 @@ built in for non-profit and governmental groups.
 * Example app on Github: https://github.com/kunitoki/nublas/example
 * Changelog: `Changelog.rst <https://github.com/kunitoki/nublas/blob/master/CHANGELOG.rst>`_
 * License: `The MIT License (MIT) <http://opensource.org/licenses/MIT>`_
-* Supports: Django 1.7 - Python 2.7, 3.2
+* Supports: Django 1.7 - Python 2.7, 3.2, 3.3, 3.4
 
 
 Default bootstrap skin
